@@ -1,0 +1,29 @@
+{  "arr": [
+        {   "profilePicture": "../pictures/gum.jpg",
+            "name": "Alec",
+            "date": 12.4,
+            "year": 2023,
+            "messages":["I love this album so much", "it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything is gonna be ok when our country sucks 100 bad days", "about how even the worst days can  about how even the worst", "days can make you interesting"],
+            "last_message": "days can make you interesting"
+            
+        },
+
+        {   "profilePicture": "../pictures/gradient.jpg",
+            "name": "Jayy",
+            "date": 12.4,
+            "year": 2023,
+            "messages":"I love this album so much, it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything is gonna be ok when our country sucks 100 bad days: about how even the worst days can make you interesting"
+    
+        },
+
+        {   "profilePicture": "../pictures/gradient.jpg",
+            "name": "Oliya",
+            "date": 12.4,
+            "year": 2023,
+            "messages":"I love this album so much, it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything is gonna be ok when our country sucks 100 bad days: about how even the worst days can make you interesting"
+    
+        }
+]
+    
+}
+

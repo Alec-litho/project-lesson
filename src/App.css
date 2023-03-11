@@ -1,38 +1,198 @@
+
 .App {
   text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  /* @font-face: {
+    font-family: deadlycomic;
+    src: url('./deadlyfont.ttf');
+  }; */
+  font-size: 16px;
+}
+body {
+  /* font-family: deadlycomic; */
+  background-color: rgb(233, 240, 240);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.wrapper {
+  padding: 10px;
+  width: 1250px;
+  margin-right: auto;
+  margin-left: auto;
+}
+.headerBackground {
+  width: 100%;
+  z-index: 100;
+}
+.logo{
+  width: 35px;
+  height: 35px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.header {
+  padding: 5px;
+  background-color: white;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: auto;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+}
+.header .rightSideContent {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+}
+.header .logo {
+  margin-right: 50px;
+}
+.nav a {
+  text-decoration: none;
+  color: rgb(95, 95, 95);
+  transition: color .2s;
+}
+.nav a:hover {
+  color: rgb(33, 114, 219);
+}
+.leftSideContent .nav {
+  display: flex;
+  gap: 20px;
+}
+.header .leftSideContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rightSideContent .search {
+  position: relative;
+  display: flex;
+}
+.rightSideContent .search input {
+  width: 200px;
+  height: 30px;
+  border: 1px solid white;
+  border-radius: 10px;
+  background-color: rgb(231, 231, 231);
+  outline: none;
+}
+.rightSideContent .search input::placeholder {
+  padding-left: 30px;
+}
+.rightSideContent .search .searchSvg {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+.rightSideContent .profile {
+  display: flex;
+  gap: 10px;
+}
+.level {
+  background-color: blueviolet;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
+.profileCircle, .level {
+  cursor: pointer;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.body .wrapper {
+  gap: 40px ;
+  display: flex;
+  margin-top: 40px;
+}
+.mainpage {
+  display: flex;
+  gap: 40px;
+}
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.profileContainer {
+  background-color: white;
+  border-radius: 10px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+.profileContainer img {
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.infoBlock{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+}
+
+.infoBlock .book {
+  align-self: center;
+  background-color: rgb(58, 101, 241);
+  border: 1px solid white;
+  color: white;
+  border-radius: 5px;
+  height: 40px;
+  width: 200px;
+  transition: color .1s;
+}
+.infoBlock h1 {
+  align-self: center;
+  color: rgb(83, 83, 83);
+  margin: 0;
+}
+.infoBlock ul {
+  color: rgb(131, 131, 131);
+  padding: 0;
+  list-style: none;
+}
+.infoBlock .book:hover {
+  color: rgb(221, 221, 221);
+  background-color: rgb(46, 82, 197);
+}
+
+.post {
+  border-radius: 10px;
+  width: 800px;
+  background-color: white;
+}
+.post .profileCircle {
+
+  border: 1px solid white;
+  width: 40px;
+  height: 40px;
+}
+.profileCircle:hover {
+  border: 1px solid rgb(53, 121, 199);
+}
+
+.post .postHeader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgb(212, 218, 218);
+  margin-bottom: 10px;
+}
+.postHeader .date {
+  color: rgb(133, 133, 133);
+  position: absolute;
+  top: 0px;
+  left: 40px;
+  margin-left: 20px;
+}
+.post .comment {
+  padding: 10px;
 }
