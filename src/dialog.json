@@ -1,27 +1,48 @@
 {  "arr": [
-        {   "profilePicture": "../pictures/gum.jpg",
+        {   "profilePicture": "gum",
             "name": "Alec",
             "date": 12.4,
             "year": 2023,
             "messages":["I love this album so much", "it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything is gonna be ok when our country sucks 100 bad days", "about how even the worst days can  about how even the worst", "days can make you interesting"],
-            "last_message": "days can make you interesting"
+            "last_message": "days cou interesg..."
             
         },
 
-        {   "profilePicture": "../pictures/gradient.jpg",
+        {   "profilePicture": "gradient",
             "name": "Jayy",
             "date": 12.4,
             "year": 2023,
-            "messages":"I love this album so much, it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything is gonna be ok when our country sucks 100 bad days: about how even the worst days can make you interesting"
-    
+            "messages":["I love this album so much, it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything", "not wanting to grow up because you miss your childhood ", "sucks 100 bad days:", "about how even the worst days can make you interesting"],
+            "last_message": "days can make you interesting..."
         },
 
-        {   "profilePicture": "../pictures/gradient.jpg",
+        {   "profilePicture": "dude",
             "name": "Oliya",
             "date": 12.4,
             "year": 2023,
-            "messages":"I love this album so much, it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything is gonna be ok when our country sucks 100 bad days: about how even the worst days can make you interesting"
-    
+            "messages":["*(You hear the droplets of rain hitting the ground while a lovely music plays from the heavens.)"],
+            "last_message": "*(It fills you with Determination.)..."
+        },
+        {   "profilePicture": "lups",
+            "name": "Anna",
+            "date": 12.4,
+            "year": 2023,
+            "messages":["Well, I can positively", "say I'm in tears because of how much I miss undertale TwT", "feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything" ,"is gonna be ok when our country sucks 100 bad days: about how even the worst days can make you", "interesting"],
+            "last_message": "fills  Determination..."
+        },
+        {   "profilePicture": "Dan",
+            "name": "Dan",
+            "date": 12.4,
+            "year": 2023,
+            "messages":["I love this album so much, it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything is gonna be ok when our country sucks 100 bad days: about how even the worst days can make you interesting"],
+            "last_message": "this album so much..."
+        },
+        {   "profilePicture": "p",
+            "name": "Vova",
+            "date": 12.4,
+            "year": 2023,
+            "messages":["I love this album so much, it feels like every song actually","as a meaning to it, Next up forever: about not wanting to grow up because you miss your childhood  Birthday Party: how kids think everything is gonna be ok when", "our country sucks 100 bad days: about how even the worst days can make you interesting"],
+            "last_message": "every song actually..."
         }
 ]
     
