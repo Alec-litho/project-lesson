@@ -1,0 +1,50 @@
+{  "Jayy":
+    [ 
+    {   
+         "id": 1,
+        "messages": [
+            {"id": 1, "profilePicture": "Dan", "user": "Alec","time": "9:00", "message":"You hear the droplets of rain hitting the ground while a lovely music plays from the heavens."},
+            {"id": 1, "profilePicture": "Dan", "user": "Alec","time": "9:01", "message":"Well, I can positively"},
+            {"id": 1, "profilePicture": "Dan", "user": "Alec","time": "9:01", "message":"I love this album so much, it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because, say I'm in tears because of how much I miss undertale TwT"},
+            {"id": 1, "profilePicture": "Dan", "user": "Alec","time": "9:05", "message":"Youlovely music plays from the heavens."},
+            {"id": 1, "profilePicture": "Dan", "user": "Alec","time": "9:11", "message":"You hear the droplets of rain hitting  plays from the heavens."}
+        ]
+    },
+
+    {  
+        "id": 2,
+        "messages": [
+            {"id": 2, "profilePicture": "gradient", "user": "Jayy", "time": "9:00", "message":"You hear the droplets heavens."},
+            {"id": 2, "profilePicture": "gradient", "user": "Jayy", "time": "9:02", "message":"I can"},
+            {"id": 2, "profilePicture": "gradient", "user": "Jayy", "time": "9:02", "message":"I love every song because, say I'm in tears because of how much I miss undertale TwT"},
+            {"id": 2, "profilePicture": "gradient", "user": "Jayy", "time": "9:07", "message":"Youlovely music plays from the heavens. I love this album so much, it feels like every song actually has a meaning to it, Next up forever, I love this album so much, it feels like every song "},
+            {"id": 2, "profilePicture": "gradient", "user": "Jayy", "time": "9:10", "message":"plays from the heavens."}
+        ]
+    }
+    ],   
+    "Anna":
+    [
+    {   "profilePicture": "Dan",
+        "id": 1,
+        "messages": [
+            {"user": "Alec", "time": "12:00", "message":"You the heavens."},
+            {"user": "Alec", "time": "13:11", "message":"Well, I can positively"},
+            {"user": "Alec", "time": "13:11", "message":"I love this album so much, it feels like every song actually has a meaning to it, Next up forever: about not wanting to grow up because, say I'm in tears because of how much I miss undertale TwT"},
+            {"user": "Alec", "time": "13:15", "message":"heavens."},
+            {"user": "Alec", "time": "13:21", "message":"You hear the droplets of rain hitting  plays from the heavens."}
+        ]
+    },
+
+    {   "profilePicture": "gradient",
+        "id": 3,
+        "messages": [
+            {"user": "Anna", "time": "12:10", "message":"You hear."},
+            {"user": "Anna", "time": "13:02", "message":"I can I love every song because,"},
+            {"user": "Anna", "time": "13:02", "message":"I love every song because, say I'm in tears because of how much I miss undertale TwT"},
+            {"user": "Anna", "time": "14:07", "message":"Youlovely music plays from the heavens. I love this album so much, it feels like every song actually has a meaning to it, Next up forever, I love this album so much, it feels like every song "}
+
+        ]
+    }
+    ]
+}
+
