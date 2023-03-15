@@ -6,6 +6,7 @@ import Dialog from './components/DialogPage.jsx'
 import Main from './components/MainPage.jsx'
 import Music from './components/MusicPage.jsx'
 import Subscriptions from './components/SubscriptionsPage.jsx'
+import Gallery from './components/Gallery.jsx'
 //-----------------------------------------------//
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/main" element={<Main/>}/>
                 <Route path="/music" element={<Music/>}/>
                 <Route path="/subscriptions" element={<Subscriptions/>}/>
+                <Route path="/gallery" element={<Gallery/>}/>
             </Routes>
             
             </div>
@@ -55,7 +57,7 @@ function Header() {
 function Nav() {
     return (
         <div className='nav'>
-           <Link to="/dialogs" element={<Dialog/>}>Dialogs</Link>
+           <Link to="/gallery" element={<Gallery/>}>Gallery</Link>
            <Link to="/music" element={<Music/>}>Music</Link>
            <Link to="/main" element={<Main/>}>Home</Link>
            <Link to="/subscriptions" element={<Subscriptions/>}>Subscriptions</Link>

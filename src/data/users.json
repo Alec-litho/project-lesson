@@ -1,11 +1,10 @@
 {  
     "users": [
-        {"id":1, "name":"Alec", "age":18, "profilePicture": "gum"},
         {"id":2, "name":"Jayy", "age":28, "profilePicture": "dude"},
         {"id":3, "name":"Anna", "age":12, "profilePicture": "gradient"},
         {"id":4, "name":"Oliya", "age":20, "profilePicture": "lups"},
         {"id":5, "name":"Dan", "age":18, "profilePicture": "Dan"},
-        {"id":6, "name":"Vova", "age":16, "profilePicture": "p"}
+        {"id":6, "name":"Vova", "age":16, "profilePicture": "gum"}
     ]
 
 }

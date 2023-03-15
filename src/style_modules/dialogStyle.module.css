@@ -48,6 +48,9 @@ input::placeholder {
     position: absolute;
 }
 .dialogList {
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     background-color: white;
     height: 500px;
     width: 300px;
@@ -90,32 +93,38 @@ input::placeholder {
 }
 
 .dialogBody {
-    overflow-y: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     width: 100%;
     height: 100%;
     padding: 10px;
     display: flex;
     justify-content: space-between;
 }
+.dialogBody::-webkit-scrollbar {
+  display: none;
+}
 .message {
-    position: relative;
     display: flex;
-    justify-content: center;
     align-items: center;
 }
 .timeMessage {
+    color: rgb(66, 66, 66);
+    font-size: 12px;
     position: absolute;
     top: 50px;
-    left: 5px;
+    left: 10px;
 }
 .leftSideMessage {
-    margin-right: 20px;
+    margin: 5px 0px 5px 45px;
+    position: relative;
 }
 .messageText, .myMessageText {
     display: flex;
     border-radius: 10px;
     width: auto;
-    width: 200px;
+    max-width: 500px;
     padding: 10px;
     background-color: rgb(237, 245, 245);
 }
@@ -178,7 +187,6 @@ input::placeholder {
 }
 
 .friendsMessage {
-    width: 100%;
     display: flex;
     gap: 10px;
     flex-direction: column;

@@ -32,7 +32,7 @@ export default function DialogPage() {
                 </div>
             </div>
             <div className={classes.rightSide}>
-                <MessagesWindow people={friendsList} name={name}/>
+                <MessagesWindow  people={friendsList} name={name}/>
                 <div className={classes.keyboard}>
                    <Emoji className={classes.emoji}/>
                     <input placeholder='Type'></input>
@@ -49,8 +49,11 @@ export default function DialogPage() {
 
 function MessagesWindow(props) {
     let name = props.name
+    function handleScroll(e) {
+        console.log(e);
+    }
     return (
-        <div className={classes.dialogBody}>
+        <div className={classes.dialogBody} onScroll={handleScroll} >
             <div className={classes.friendsMessage}>
                     {props.people.map(person => {
                         if(person.name === name) {
@@ -60,7 +63,7 @@ function MessagesWindow(props) {
                                 messages.sort((me, friend) => parseInt(me.time.replace(':','')) - parseInt(friend.time.replace(':','')))//sorting array by message time
                             })
                             return messages.map(message => {
-                                    return message.id === 1? <Message obj={message} who={'me'} pp={message.profilePicture}/> : <Message obj={message} who={'friend'} pp={message.profilePicture}/>//id = 1 is always you
+                                    return message.id === 1? <Message time={message.time} message={message.message} who={'me'} pp={message.profilePicture}/> : <Message time={message.time} message={message.message} who={'friend'} pp={message.profilePicture}/>//id = 1 is always you
                             })
                         }
                       })
@@ -75,20 +78,21 @@ function Message(props) {
         <div className={classes.message}>
            <div className={classes.leftSideMessage}>
                <img className={classes.profilePicture} src={require(`../friends/${props.pp}.jpg`)}></img>
-               <span className={classes.timeMessage}>09:00</span>
+               <span className={classes.timeMessage}>{props.time}</span>
            </div>
            <div className={classes.rightSideMessage}>
-               <span className={classes.messageText}>{props.obj.message}</span>
+               <span className={classes.messageText}>{props.message}</span>
            </div>
         </div>
     )  : 
     (
         <div className={classes.message}>
-           <div className={classes.leftSideMessage}>
-               <span className={classes.myMessageText}>{props.obj.message}</span>
+            <div className={classes.leftSideMessage}>
+               <img className={classes.profilePicture} src={require(`../friends/${props.pp}.jpg`)}></img>
+               <span className={classes.timeMessage}>{props.time}</span>
            </div>
            <div className={classes.rightSideMessage}>
-               <img className={classes.profilePicture} src={require(`../friends/${props.pp}.jpg`)}></img>
+               <span className={classes.myMessageText}>{props.message}</span>
            </div>
         </div>
     )
