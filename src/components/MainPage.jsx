@@ -3,14 +3,14 @@ import photos from '../data/myPictures/photoData.json'
 import {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 let {gallery} = photos
-let {user} = data
+
 export default function Main() {
     return (
         <div className='mainpage'>
         <Profile/>
                 <div className='mainContent'>
                     <AboutMeBlock/>
-                    <PostBlock posts={user}/>
+                    <PostBlock posts={data}/>
                 </div>
         </div>
     )
@@ -71,9 +71,11 @@ function PostBlock(props) {
     let date = new Date()
     let day = date.getDate()
     let month = date.getMonth() + 1
-    axios.get('http://localhost:3001').then(res => {
-        console.log(res.data);
-    })
+    function savePost(data) {
+        axios.post('http://localhost:3001/', JSON.stringify(data)).then(res => console.log(res)).catch(err => console.log(err))
+    }
+    savePost(post)
+
     return (
         <div>
             <div className='makePost'>
