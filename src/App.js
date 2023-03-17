@@ -5,7 +5,7 @@ import { Route, Routes, Link} from 'react-router-dom';
 import Dialog from './components/DialogPage.jsx'
 import Main from './components/MainPage.jsx'
 import Music from './components/MusicPage.jsx'
-import Subscriptions from './components/SubscriptionsPage.jsx'
+import Subscribtions from './components/SubscribtionsPage.jsx'
 import Gallery from './components/Gallery.jsx'
 //-----------------------------------------------//
 function App() {
@@ -22,7 +22,7 @@ function App() {
                 <Route path="/dialogs" element={<Dialog/>}/>
                 <Route path="/main" element={<Main/>}/>
                 <Route path="/music" element={<Music/>}/>
-                <Route path="/subscriptions" element={<Subscriptions/>}/>
+                <Route path="/subscribtions" element={<Subscribtions/>}/>
                 <Route path="/gallery" element={<Gallery/>}/>
             </Routes>
             
@@ -60,7 +60,7 @@ function Nav() {
            <Link to="/gallery" element={<Gallery/>}>Gallery</Link>
            <Link to="/music" element={<Music/>}>Music</Link>
            <Link to="/main" element={<Main/>}>Home</Link>
-           <Link to="/subscriptions" element={<Subscriptions/>}>Subscriptions</Link>
+           <Link to="/subscribtions" element={<Subscribtions/>}>Subscribtions</Link>
            <Link to="/dialogs" element={<Dialog/>}>Dialogs</Link>
         </div>
     )

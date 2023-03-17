@@ -1,8 +1,12 @@
 import data from '../data/posts.json'
+
 import photos from '../data/myPictures/photoData.json'
 import {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
-let {gallery} = photos
+import {Link} from 'react-router-dom';
+import Gallery from '../components/Gallery.jsx'
+import Dialog from '../components/DialogPage.jsx'
+import { ReactComponent as Append } from '../icons/append.svg'
 
 export default function Main() {
     return (
@@ -22,45 +26,38 @@ function Profile() {
            <img src={require('../friends/p.jpg')}></img>
            <div className='infoBlock'>
             <h1>Jacob Sunny</h1>
-            <ul>
-                <li className='location'>Amsterdam</li>
-                <li className='status'>Available now</li>
-                <li className='cost'>50 per hour</li>
-                <li className='contacts'>Contacts</li>
-            </ul>
-            <button className='book'> Book a meeting</button>
+            <div className='defaultInfo'>
+                <div className='leftInfoBlock'>
+                    <p>Location:</p>
+                    <p>Friends:</p>
+                    <p>Groups:</p>
+                    <p>Subscribors:</p>
+                </div>
+                <div className='rightInfoBlock'>
+                    <a href="#">STpeterburg</a>
+                    <a href="#">10...</a>
+                    <a href="#">11...</a>
+                    <a href="#">21...</a>
+                </div>
+            </div>
+            <button className='book'> <Link to="/dialogs" element={<Dialog/>}>Message</Link></button>
+            <button className='subscribe'>Subscribe</button>
            </div>
         </div>
     )
 }
 function AboutMeBlock() {
-    function seeMore() {
 
-    }
     return (
         <div className='aboutMeBlock'>
             <div className='aboutMeHeader'>
                 <span>20 views</span>
-                <a onClick={seeMore}>See all</a>
+                <Link to="/gallery" element={<Gallery/>}>See all</Link>
             </div>
             <div className='gallery'>
-                {gallery.map(photoObj => {
-                    return (<div className='photoGallery'><img src={require(`../data/myPictures/${photoObj.id}.jpg`)}></img></div>)
+                {photos.slice(0,8).map(photoObj => {
+                    return (<div className='photoGallery'><img src={require(`../data/myPictures/${photoObj.name}.jpg`)}></img></div>)
                 })}
-            </div>
-            <div className='information'>
-                <div className='years'>
-                    <span>9 years</span>
-                    <p>Expirience</p>
-                </div>
-                <div className='age'>
-                    <span>20 years</span>
-                    <p>Age</p>
-                </div>
-                <div className='friends'>
-                    <span>20 friends</span>
-                    <p>frineds</p>
-                </div>
             </div>
         </div>
     )
@@ -71,17 +68,31 @@ function PostBlock(props) {
     let date = new Date()
     let day = date.getDate()
     let month = date.getMonth() + 1
+    let tools = useRef(null)
+    let textArea = useRef(<textarea>nothing</textarea>)
     function savePost(data) {
-        axios.post('http://localhost:3001/', JSON.stringify(data)).then(res => console.log(res)).catch(err => console.log(err))
+        axios.post('http://localhost:3001/', JSON.stringify(data)).then(res => textArea.current.value = '').catch(err => console.log(err))
     }
     savePost(post)
-
+    function showTools() { tools.current.style.display = "flex"}
+    function hideTools() {
+        setTimeout(_ => {
+            tools.current.style.display = "none"
+        },200)
+    }
+    function addMore(e) {
+        let num = (e.target.value.length)/10
+        textArea.current.style.height = 50 + num + 'px'
+    }
     return (
         <div>
             <div className='makePost'>
                 <h2>Make post</h2>
-                <textarea placeholder='Text'></textarea>
-                <button onClick={e => setPost(prev => [...prev, {date: day + '.' + month, year: date.getFullYear(),comments: e.target.parentNode.childNodes[1].value}])}>Publish</button>
+                <textarea ref={textArea}placeholder='Text' onFocus={showTools} onBlur={hideTools} onInput={addMore}></textarea>
+                <div className='tools' ref={tools}>
+                   <button className="publish hide" onClick={e => setPost(prev => [...prev, {date: day + '.' + month, year: date.getFullYear(),comments: e.target.parentNode.parentNode.childNodes[1].value}])} >Publish</button>
+                   <a href='' className='append'> <Append className='appendIcon'/> <p>Append</p></a>
+                </div>
             </div>
             <div className='postsList'>{props.posts.map(post => {
                 return <Post date={post.date} yeaer={post.year} comments={post.comments}/>

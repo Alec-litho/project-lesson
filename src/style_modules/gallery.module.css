@@ -1,0 +1,84 @@
+.gallery {
+    display: flex;
+    gap: 100px;
+}
+
+.rightPanel {
+    width: 300px;
+    height: 600px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.galleryBody {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 5px;
+    width: 815px;
+    height: 610px;
+    background-color: white;
+    border-radius: 10px;
+}
+.galleryBody img {
+    width: 200px;
+	height: 200px;
+	transition: transform .5s;
+	object-fit: cover;
+	user-select: none;
+  cursor: pointer;
+}
+.arrowLeft {
+    display: none;
+    transform: rotate(180deg);
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 50%;
+    left: 5px;
+}
+.arrowRight {
+    display: none;
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 50%;
+    right: 5px;
+}
+.leftBorder, .rightBorder {
+    cursor: pointer;
+    position: absolute;
+    width: 100px;
+    height: 100%;
+}
+.rightBorder {
+    right: 0;
+}
+.albums {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+.album {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: calc(100% - 1px);
+    height: 50px;
+    /* border-bottom: 1px solid rgb(53, 121, 199); */
+}
+.album .underline {
+    transition: .5s;
+    display: block;
+    margin-left: 20px;
+    height: 2px;
+    width: 100px;
+    background-color: rgb(53, 121, 199);
+}
+
+.album p {
+    padding-left: 20px;
+    color:   rgb(53, 121, 199);
+}

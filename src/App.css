@@ -32,6 +32,7 @@ body {
   padding: 5px;
   background-color: white;
   position: fixed;
+  z-index: 100;
   left: 0;
   top: 0;
   width: 100%;
@@ -126,9 +127,32 @@ body {
   background-color: white;
   border-radius: 10px;
   width: 300px;
+  height: 650px;
   display: flex;
   flex-direction: column;
 }
+.profileContainer .defaultInfo {
+  display: flex;
+  gap: 50px;
+  margin: 20px 0;
+}
+.defaultInfo .leftInfoBlock, .defaultInfo .rightInfoBlock {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-template-rows: repeat(4, 30px);
+  gap: 10px;
+}
+.defaultInfo .leftInfoBlock p {
+  font-weight: 500;
+  font-size: 18px;
+}
+.defaultInfo .rightInfoBlock a  {
+  color: black;
+  text-decoration: none;
+  
+}
+
 .profileContainer img {
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
@@ -141,7 +165,9 @@ body {
   padding: 20px;
 }
 
-.infoBlock .book {
+.infoBlock .book, .infoBlock .subscribe {
+  font-weight: 600;
+  font-size: 15px;
   align-self: center;
   background-color: rgb(58, 101, 241);
   border: 1px solid white;
@@ -150,6 +176,21 @@ body {
   height: 40px;
   width: 200px;
   transition: color .1s;
+  cursor: pointer;
+}
+.infoBlock .subscribe {
+  margin-top: 5px;
+  color: rgb(58, 101, 241);
+  font-weight: 600;
+  font-size: 15px;
+  background-color: white;
+  width: 199px;
+  border: 1px solid rgb(58, 101, 241);
+}
+.infoBlock .subscribe:hover {
+  background-color: rgb(240, 240, 240);
+  border: 1px solid rgb(240, 240, 240);
+  transition: .1s;
 }
 .infoBlock h1 {
   align-self: center;
@@ -209,39 +250,49 @@ body {
   border-radius: 10px;
 
 }
+.aboutMeHeader {
+  display: flex;
+  justify-content: space-between;
+}
 .gallery {
+  margin: 15px 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
 }
 .photoGallery {
-	display: block;
+  position: relative;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
 }
+
 .photoGallery img {
   width: 100%;
 	height: 100%;
-	transition: transform 1s;
+	transition: transform .5s;
 	object-fit: cover;
 	user-select: none;
+  cursor: pointer;
 }
-
-.information {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 100px;
+.photoGallery img:hover {
+  transform: scale(1.2);
 }
 
 .makePost {
+  padding-top: 5px;
   position: relative;
   width: 100%;
   height: auto;
   background-color: white;
 }
+.makePost h2 {
+  margin-left: 10px;
+}
 .makePost textarea {
+  box-sizing: border-box;
   overflow: hidden;
+  padding: 5px;
   resize: none;
   width: 100%;
   height: 50px;
@@ -251,6 +302,8 @@ body {
   background-color: rgb(239, 247, 247);
 }
 .makePost button {
+
+  margin-right: 10px;
   border-radius: 5px;
   font-size: 16px;
   font-weight: 600;
@@ -260,11 +313,27 @@ body {
   width: 70px;
   height: 30px;
   border: none;
-  position: absolute;
-  top: 100%;
-  left: 830px;
-}
 
+}
+.tools {
+  width: 100%;
+  padding: 10px;
+  display: none;
+  align-items: center;
+}
+.tools .append{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.append {
+  text-decoration: none;
+  color: rgb(39, 39, 39);
+}
+.tools .append .appendIcon {
+  width: 20px;
+  height: 20px;
+}
 .postsList {
-  margin-top: 30px;
+  margin-top: 50px;
 }
