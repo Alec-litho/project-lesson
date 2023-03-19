@@ -1,6 +1,5 @@
 import data from '../data/posts.json'
 
-import photos from '../data/myPictures/photoData.json'
 import {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 import {Link} from 'react-router-dom';
@@ -9,11 +8,20 @@ import Dialog from '../components/DialogPage.jsx'
 import { ReactComponent as Append } from '../icons/append.svg'
 
 export default function Main() {
+    let [isLoaded, setFinish] = useState(false)
+    let [photos, setPhotos] = useState(null)
+    useEffect(() => {
+        (async function loadPhotos() {
+            let photos = await axios.get('http://localhost:3001/pictures').then(res => res.data)
+            setFinish(true)
+            setPhotos(photos)
+        })()
+    },[isLoaded])
     return (
         <div className='mainpage'>
         <Profile/>
                 <div className='mainContent'>
-                    <AboutMeBlock/>
+                    <AboutMeBlock galleryPhotos={photos} isloadedState={isLoaded}/>
                     <PostBlock posts={data}/>
                 </div>
         </div>
@@ -46,8 +54,8 @@ function Profile() {
         </div>
     )
 }
-function AboutMeBlock() {
-
+function AboutMeBlock(props) {
+    if(!props.isloadedState) return null
     return (
         <div className='aboutMeBlock'>
             <div className='aboutMeHeader'>
@@ -55,8 +63,9 @@ function AboutMeBlock() {
                 <Link to="/gallery" element={<Gallery/>}>See all</Link>
             </div>
             <div className='gallery'>
-                {photos.slice(0,8).map(photoObj => {
-                    return (<div className='photoGallery'><img src={require(`../data/myPictures/${photoObj.name}.jpg`)}></img></div>)
+                {props.galleryPhotos.slice(0,8).map(photoObj => {
+                    console.log(props.galleryPhotos)
+                    return (<div className='photoGallery'><img src={photoObj.displayURL}></img></div>)
                 })}
             </div>
         </div>
@@ -82,7 +91,7 @@ function PostBlock(props) {
     }
     function addMore(e) {
         let num = (e.target.value.length)/10
-        textArea.current.style.height = 50 + num + 'px'
+        textArea.current.style.height = 50 + (5 + num) + 'px'
     }
     return (
         <div>
