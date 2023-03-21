@@ -6,17 +6,18 @@ import {Link} from 'react-router-dom';
 import Gallery from '../components/Gallery.jsx'
 import Dialog from '../components/DialogPage.jsx'
 import { ReactComponent as Append } from '../icons/append.svg'
-
 export default function Main() {
     let [isLoaded, setFinish] = useState(false)
-    let [photos, setPhotos] = useState(null)
+    let [photos, setPhotos] = useState([])
+
     useEffect(() => {
-        (async function loadPhotos() {
-            let photos = await axios.get('http://localhost:3001/pictures').then(res => res.data)
-            setFinish(true)
-            setPhotos(photos)
+        ( function loadPhotos() {
+             let data = axios.post('http://localhost:3001/pictures').then(res => {
+                setFinish(true)
+                setPhotos(res.data)
+            }).catch(err => console.log(err))
         })()
-    },[isLoaded])
+    },[])
     return (
         <div className='mainpage'>
         <Profile/>
@@ -63,9 +64,8 @@ function AboutMeBlock(props) {
                 <Link to="/gallery" element={<Gallery/>}>See all</Link>
             </div>
             <div className='gallery'>
-                {props.galleryPhotos.slice(0,8).map(photoObj => {
-                    console.log(props.galleryPhotos)
-                    return (<div className='photoGallery'><img src={photoObj.displayURL}></img></div>)
+                {props.galleryPhotos.slice(0,8).map((photoObj, id) => {
+                    return (<div className='photoGallery' key={id}><img src={photoObj.displayURL}></img></div>)
                 })}
             </div>
         </div>
@@ -73,7 +73,6 @@ function AboutMeBlock(props) {
 }
 function PostBlock(props) {
     let [post, setPost] = useState([...props.posts])
-    console.log(post);
     let date = new Date()
     let day = date.getDate()
     let month = date.getMonth() + 1
@@ -82,7 +81,7 @@ function PostBlock(props) {
     function savePost(data) {
         axios.post('http://localhost:3001/', JSON.stringify(data)).then(res => textArea.current.value = '').catch(err => console.log(err))
     }
-    savePost(post)
+    // savePost(post)
     function showTools() { tools.current.style.display = "flex"}
     function hideTools() {
         setTimeout(_ => {
@@ -97,14 +96,14 @@ function PostBlock(props) {
         <div>
             <div className='makePost'>
                 <h2>Make post</h2>
-                <textarea ref={textArea}placeholder='Text' onFocus={showTools} onBlur={hideTools} onInput={addMore}></textarea>
+                <textarea ref={textArea} placeholder='Text' onFocus={showTools} onBlur={hideTools} onInput={addMore}></textarea>
                 <div className='tools' ref={tools}>
                    <button className="publish hide" onClick={e => setPost(prev => [...prev, {date: day + '.' + month, year: date.getFullYear(),comments: e.target.parentNode.parentNode.childNodes[1].value}])} >Publish</button>
                    <a href='' className='append'> <Append className='appendIcon'/> <p>Append</p></a>
                 </div>
             </div>
-            <div className='postsList'>{props.posts.map(post => {
-                return <Post date={post.date} yeaer={post.year} comments={post.comments}/>
+            <div className='postsList'>{props.posts.map((post,id) => {
+                return <Post key={id} date={post.date} yeaer={post.year} comments={post.comments}/>
             })}</div>
         </div>
     )

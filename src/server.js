@@ -25,9 +25,21 @@ app.post('/pictures', (req,res) => {
             console.log(err);
         })
     })
+    res.sendFile('C:/Users/opall/OneDrive/Рабочий стол/programming/JavaScript/3 React/project lesson/src//data/myPictures/photoData.json')
 })
+app.post('/albums', (req,res) => {
+    fs.readFile('./data/myPictures/albums.json', (err, data) => {
+        data.map(album => {
+            if(album === 'My photos') {
+                console.log(album);
+            }
+        })
+    })
+})
+
 app.get('/pictures', (req,res) => {
     res.sendFile('C:/Users/opall/OneDrive/Рабочий стол/programming/JavaScript/3 React/project lesson/src//data/myPictures/photoData.json')
+    console.log('pictures are taken');
 })
 app.get('/', (req,res) => {
     res.sendFile('C:/Users/opall/OneDrive/Рабочий стол/programming/JavaScript/3 React/project lesson/src//data/posts.json')
