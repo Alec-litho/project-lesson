@@ -12,7 +12,7 @@ export default function Main() {
 
     useEffect(() => {
         ( function loadPhotos() {
-             let data = axios.post('http://localhost:3001/pictures').then(res => {
+             let data = axios.post('http://localhost:3001/albums').then(res => {
                 setFinish(true)
                 setPhotos(res.data)
             }).catch(err => console.log(err))
@@ -64,8 +64,12 @@ function AboutMeBlock(props) {
                 <Link to="/gallery" element={<Gallery/>}>See all</Link>
             </div>
             <div className='gallery'>
-                {props.galleryPhotos.slice(0,8).map((photoObj, id) => {
-                    return (<div className='photoGallery' key={id}><img src={photoObj.displayURL}></img></div>)
+                {props.galleryPhotos.map(album => {
+                    if(album.name === 'My photos') {
+                        return album.albumPhotos.slice(0,8).map((photoObj, id) => {
+                           return (<div className='photoGallery' key={id}><img src={photoObj.displayURL}></img></div>)
+                        })
+                    }
                 })}
             </div>
         </div>
@@ -81,7 +85,7 @@ function PostBlock(props) {
     function savePost(data) {
         axios.post('http://localhost:3001/', JSON.stringify(data)).then(res => textArea.current.value = '').catch(err => console.log(err))
     }
-    // savePost(post)
+    savePost(post)
     function showTools() { tools.current.style.display = "flex"}
     function hideTools() {
         setTimeout(_ => {

@@ -13,21 +13,38 @@ export default function Gallery(props) {
     slider = useRef(null)
     let [currentPictures, setPictures] = useState([])
     let [isLoaded, finishLoading] = useState(false)
-    let [callfunc, setCallfunc] = useState(false)
-    
+    let [currentAlbum, setAlbum] = useState()
+    console.log(currentPictures);
     savePicture(currentPictures)
     useEffect(()=> {
-        axios.post('http://localhost:3001/pictures').then(res => {
-
+        axios.post('http://localhost:3001/albums').then(res => {
             setPictures(res.data)
-            setCallfunc(true)
             finishLoading(true)
         }).catch(err => console.log(err))
         
     },[])
+    
+    function showAlbum(e) {
+        setAlbum(e.target.innerText)
 
-    function showAlbum() {
-        setPictures()
+        if(e.target.parentNode.childNodes[0].innerText !== currentAlbum) {
+            console.log(currentAlbum);
+            [...e.target.parentNode.parentNode.childNodes].map(album => {
+                if(album.id !== 'albums') return
+                if(album.childNodes[0].innerText === currentAlbum) {
+                   album.childNodes[0].style.backgroundColor = 'white' 
+                   album.childNodes[0].style.paddingLeft = 20 + 'px'
+                   album.childNodes[0].style.fontSize = 16 + 'px'
+                } else{
+                    e.target.parentNode.childNodes[0].style.backgroundColor = 'rgb(233, 243, 255)' 
+                    e.target.parentNode.childNodes[0].style.paddingLeft = 25 + 'px'
+                    e.target.parentNode.childNodes[0].style.fontSize = 18 + 'px'
+                }
+            })
+        } 
+        
+        
+        
     }
     function showSlider() {
         slider.current.style.display = 'flex'
@@ -35,11 +52,13 @@ export default function Gallery(props) {
     function doAnimation(e) {e.target.childNodes.forEach(child => {
         underlines.current.forEach(item => item.id === child.id?  item.style.width = 200 + 'px' : null)
     })}
-    function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
+    function removeAnimation(e) {
+         underlines.current.forEach(underline => underline.style.width = 100 + 'px')
+    }
 
     function savePicture(picture) {
         return picture.length === 0? console.log('empty') : 
-        axios.post('http://localhost:3001/pictures', JSON.stringify(picture)).catch(err => console.log(err))
+        axios.post('http://localhost:3001/albums', JSON.stringify(picture)).catch(err => console.log(err))
     }
     function showArrows(e) {e.target.id === "left"? leftArrow.current.style.display = 'block' : rightArrow.current.style.display = 'block'}
     function hideArrows(e) {e.target.id === "left"? leftArrow.current.style.display = 'none' : rightArrow.current.style.display = 'none'}
@@ -61,7 +80,14 @@ export default function Gallery(props) {
                 let date = new Date()
                 let day = date.getDate()
                 let month = date.getMonth() + 1
-                setPictures(prev => [...prev, {name: imgName.slice(0, imgName.lastIndexOf('.')), displayURL: res.data.display_url  ,uploaded: day + '.' + month, year: date.getFullYear()}])
+                currentPictures.map(album => {
+                    if(album.name === currentAlbum) {
+                        album.albumPhotos.push({name: imgName.slice(0, imgName.lastIndexOf('.')), displayURL: res.data.display_url  ,uploaded: day + '.' + month, year: date.getFullYear()})
+                    }
+                })
+                console.log(currentPictures);
+                setPictures(currentPictures)
+                savePicture(currentPictures)
             })
         }
     }
@@ -77,7 +103,7 @@ export default function Gallery(props) {
                <h1>Albums</h1>
                {albums.map((album, id) => {
                 return (
-                    <div key={id} onClick={showAlbum} className={classes.album} onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}>
+                    <div id="albums" key={id} onClick={showAlbum} className={classes.album} onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}>
                     <p>{album.name}</p>
                     <div ref={el => underlines.current[id] = el}  id={id} className={classes.underline}><p></p></div>
                     </div>
@@ -95,8 +121,12 @@ export default function Gallery(props) {
                <div id='left' className={classes.leftBorder} onMouseEnter={showArrows} onMouseLeave={hideArrows}></div>
                <div id='right' className={classes.rightBorder} onMouseEnter={showArrows} onMouseLeave={hideArrows}></div>
                     {
-                    currentPictures.map((photo, id) => {
-                        return (<div key={id} className={classes.imgWrapper} onClick={showSlider}><img className={classes.img} src={photo.displayURL}></img></div>)
+                    currentPictures.map((album, id) => {
+                         if(album.name === currentAlbum) {
+                            return album.albumPhotos.map((photo, id) => {
+                                return (<div key={id} className={classes.imgWrapper} onClick={showSlider}><img className={classes.img} src={photo.displayURL}></img></div>)
+                            }) 
+                         }
                     })
                     }
             </div>
