@@ -1,12 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
-import { ReactComponent as Search } from './icons/search.svg';
+import { ReactComponent as Search } from './assets/icons/search.svg';
 import { Route, Routes, Link} from 'react-router-dom';
-import Dialog from './components/DialogPage.jsx'
-import Main from './components/MainPage.jsx'
-import Music from './components/MusicPage.jsx'
-import Subscriptions from './components/SubscriptionsPage.jsx'
-import Gallery from './components/Gallery.jsx'
+import Dialog from './pages/dialog-page/DialogPage.jsx'
+import Main from './pages/main-page/MainPage.jsx'
+import Music from './pages/music-page/MusicPage.jsx'
+import Subscriptions from './pages/subscriptions-page/SubscriptionsPage.jsx'
+import Gallery from './pages/gallery-page/Gallery.jsx'
 //-----------------------------------------------//
 function App() {
     return (
@@ -47,7 +47,7 @@ function Header() {
                 </div>
                 <div className='profile'>
                 <div className='level'>9</div>
-                <div><img  className="profileCircle" src={require('./friends/p.jpg')}></img></div>
+                {/* <div><img  className="profileCircle" src={require('./friends/p.jpg')}></img></div> */}
                 </div>
             </div>
         </div>

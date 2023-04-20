@@ -1,15 +1,21 @@
-import data from '../data/posts.json'
+import data from '../../data/posts.json'
 
 import {useState, useEffect, useRef} from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios'
 import {Link} from 'react-router-dom';
-import Gallery from '../components/Gallery.jsx'
-import Dialog from '../components/DialogPage.jsx'
-import { ReactComponent as Append } from '../icons/append.svg'
+import Gallery from '../gallery-page/Gallery.jsx'
+import Dialog from '../dialog-page/DialogPage.jsx'
+import { ReactComponent as Append } from '../../assets/icons/append.svg'
+import { search } from '../../features/userSlice';
+
+
 export default function Main() {
     let [isLoaded, setFinish] = useState(false)
     let [photos, setPhotos] = useState([])
-
+    let dispatch = useDispatch()
+    let result = useSelector(state => state.main)
+    console.log(result);
     useEffect(() => {
         ( function loadPhotos() {
              let data = axios.post('http://localhost:3001/albums').then(res => {
@@ -32,7 +38,7 @@ export default function Main() {
 function Profile() {
     return (
         <div className='profileContainer'>
-           <img src={require('../friends/p.jpg')}></img>
+           <img src={require('../../assets/friends/p.jpg')}></img>
            <div className='infoBlock'>
             <h1>Jacob Sunny</h1>
             <div className='defaultInfo'>
@@ -116,7 +122,7 @@ function Post(props) {
     return (
         <div className='post'>
         <div className='postHeader'>
-        <div><img className="profileCircle" src={require('../friends/p.jpg')}></img></div>
+        <div><img className="profileCircle" src={require('../../assets/friends/p.jpg')}></img></div>
         <div className='date'>published on {props.date} {props.year}</div>
         </div>
         <div className='comment'>{props.comments}</div>

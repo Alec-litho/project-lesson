@@ -151,6 +151,13 @@ input::placeholder {
 .keyboard input::placeholder {
     padding-left: 60px;
 }
+svg {
+    transition: .2s;
+    fill: rgb(52, 53, 58)
+}
+svg:hover {
+    fill: rgb(34, 34, 37)
+}
 .svg {
     cursor: pointer;
     position: absolute;
@@ -174,13 +181,9 @@ input::placeholder {
     align-items: center;
     width: 50px;
     height: 50px;
-    border: 2px solid rgb(30, 172, 89);
     border-radius: 50%;
 }
-.send:hover {
-    background-color: rgb(215, 226, 226);
-    border: 2px solid rgb(215, 226, 226);
-}
+
 .sendIcon {
     width: 30px;
     height: 30px;
