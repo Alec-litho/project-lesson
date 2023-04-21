@@ -1,4 +1,3 @@
-import data from '../../data/posts.json'
 
 import {useState, useEffect, useRef} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,18 +6,18 @@ import {Link} from 'react-router-dom';
 import Gallery from '../gallery-page/Gallery.jsx'
 import Dialog from '../dialog-page/DialogPage.jsx'
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
-import { search } from '../../features/userSlice';
-
+import {fetchData} from '../../features/userSlice'
 
 export default function Main() {
     let [isLoaded, setFinish] = useState(false)
     let [photos, setPhotos] = useState([])
     let dispatch = useDispatch()
-    let result = useSelector(state => state.main)
-    console.log(result);
+    let userData = useSelector(state => state.main)
+
     useEffect(() => {
         ( function loadPhotos() {
-             let data = axios.post('http://localhost:3001/albums').then(res => {
+            dispatch(fetchData())
+            let data = axios.post('http://localhost:3001/albums').then(res => {
                 setFinish(true)
                 setPhotos(res.data)
             }).catch(err => console.log(err))
@@ -26,33 +25,33 @@ export default function Main() {
     },[])
     return (
         <div className='mainpage'>
-        <Profile/>
+        <Profile firstName={userData.userInfo.name} lastName={userData.userInfo.lastName} age={userData.userInfo.age} friends={userData.userInfo.friends} profilePicture={userData.userInfo.profilePicture} location={userData.userInfo.location} subscriptions={userData.userInfo.subscriptions}/>
                 <div className='mainContent'>
                     <AboutMeBlock galleryPhotos={photos} isloadedState={isLoaded}/>
-                    <PostBlock posts={data}/>
+                    <PostBlock posts={userData.userPosts}/>
                 </div>
         </div>
     )
 }
 
-function Profile() {
+function Profile(props) {
     return (
         <div className='profileContainer'>
-           <img src={require('../../assets/friends/p.jpg')}></img>
-           <div className='infoBlock'>
-            <h1>Jacob Sunny</h1>
+            <img src={props.profilePicture}></img>
+            <div className='infoBlock'>
+            <h1>{props.firstName} {props.lastName}</h1>
             <div className='defaultInfo'>
                 <div className='leftInfoBlock'>
                     <p>Location:</p>
                     <p>Friends:</p>
-                    <p>Groups:</p>
-                    <p>Subscribors:</p>
+                    <p>Age:</p>
+                    <p>Subscriptions:</p>
                 </div>
                 <div className='rightInfoBlock'>
-                    <a href="#">STpeterburg</a>
-                    <a href="#">10...</a>
-                    <a href="#">11...</a>
-                    <a href="#">21...</a>
+                    <a href="#">{props.location}</a>
+                    <a href="#">{props.friends}</a>
+                    <a href="#">{props.age}</a>
+                    <a href="#">{props.subscriptions}</a>
                 </div>
             </div>
             <button className='book'> <Link to="/dialogs" element={<Dialog/>}>Message</Link></button>
