@@ -6,17 +6,22 @@ import {Link} from 'react-router-dom';
 import Gallery from '../gallery-page/Gallery.jsx'
 import Dialog from '../dialog-page/DialogPage.jsx'
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
-import {fetchData} from '../../features/userSlice'
+import { ReactComponent as Delete } from '../../assets/icons/delete.svg'
+import { ReactComponent as Change } from '../../assets/icons/change.svg'
+import {fetchData, updatePosts} from '../../features/userSlice'
+import {fetchPosts, addPost} from '../../features/postSlice'
 
 export default function Main() {
     let [isLoaded, setFinish] = useState(false)
     let [photos, setPhotos] = useState([])
     let dispatch = useDispatch()
     let userData = useSelector(state => state.main)
-
+    let userPosts = useSelector(state => state.userPosts)
+    console.log(userPosts);
     useEffect(() => {
         ( function loadPhotos() {
             dispatch(fetchData())
+            dispatch(fetchPosts())
             let data = axios.post('http://localhost:3001/albums').then(res => {
                 setFinish(true)
                 setPhotos(res.data)
@@ -28,7 +33,7 @@ export default function Main() {
         <Profile firstName={userData.userInfo.name} lastName={userData.userInfo.lastName} age={userData.userInfo.age} friends={userData.userInfo.friends} profilePicture={userData.userInfo.profilePicture} location={userData.userInfo.location} subscriptions={userData.userInfo.subscriptions}/>
                 <div className='mainContent'>
                     <AboutMeBlock galleryPhotos={photos} isloadedState={isLoaded}/>
-                    <PostBlock posts={userData.userPosts}/>
+                    <PostBlock posts={userPosts.posts} dispatch={dispatch}/>
                 </div>
         </div>
     )
@@ -88,7 +93,7 @@ function PostBlock(props) {
     let tools = useRef(null)
     let textArea = useRef(<textarea>nothing</textarea>)
     function savePost(data) {
-        axios.post('http://localhost:3001/', JSON.stringify(data)).then(res => textArea.current.value = '').catch(err => console.log(err))
+      
     }
     savePost(post)
     function showTools() { tools.current.style.display = "flex"}
@@ -117,12 +122,17 @@ function PostBlock(props) {
         </div>
     )
 }
+
 function Post(props) {
     return (
         <div className='post'>
         <div className='postHeader'>
-        <div><img className="profileCircle" src={require('../../assets/friends/p.jpg')}></img></div>
-        <div className='date'>published on {props.date} {props.year}</div>
+          <div><img className="profileCircle" src={require('../../assets/friends/p.jpg')}></img></div>
+          <div className='date'>published on {props.date} {props.year}</div>
+          <div className='postTools'>
+            <Delete className='icon'/>
+            <Change className='icon'/>
+          </div>
         </div>
         <div className='comment'>{props.comments}</div>
         </div>
