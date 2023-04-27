@@ -21,8 +21,8 @@ export const deletePost = createAsyncThunk('addPost/fetchPosts', async(post) => 
     let result;
     await axios.get(userDataBin, {headers: {"X-MASTER-KEY": userDBkey}}).then(data => {//get data from users bin
         let userData = data.filter(user => user.userId === currUserId)[0]//get current user's data
-        userData.posts.filter
-        axios.put(userDataBin,{...userData, posts: [...initialState.posts, newPost]}, {//update posts in user bin
+        // userData.posts.filter
+        axios.put(userDataBin,{...userData, posts: [...initialState.posts, post]}, {//update posts in user bin
             headers: {"X-MASTER-KEY": userDBkey}}).then( _ => result = userData.posts)
     })
     return result
@@ -39,7 +39,7 @@ const postSlice = createSlice({
             let userData = action.payload.filter(user => user.userId === currUserId)[0]
             state.posts = userData.posts
           })
-          .addCase(addPost.fulfilled, (state, action) => {
+          .addCase(deletePost.fulfilled, (state, action) => {
             state.status = 'fulfilled'
             state.posts = action.payload
           })

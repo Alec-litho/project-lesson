@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+
 import './App.css';
 import { ReactComponent as Search } from './assets/icons/search.svg';
 import { Route, Routes, Link} from 'react-router-dom';
@@ -37,7 +37,7 @@ function Header() {
     return (
         <div className="header">
             <div className='leftSideContent'>
-                <img className='logo' src={require('./logo.png')}></img>
+                <img className='logo' src={require('./assets/icons/logo.png')}></img>
                 <Nav/>
             </div>
             <div className='rightSideContent'>

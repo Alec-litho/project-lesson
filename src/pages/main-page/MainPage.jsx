@@ -40,9 +40,10 @@ export default function Main() {
 }
 
 function Profile(props) {
+    let profPicture = props.profilePicture? props.profilePicture : require('../../assets/friends/profilePictureLoading.png')
     return (
         <div className='profileContainer'>
-            <img src={props.profilePicture}></img>
+            <img src={profPicture}></img>
             <div className='infoBlock'>
             <h1>{props.firstName} {props.lastName}</h1>
             <div className='defaultInfo'>

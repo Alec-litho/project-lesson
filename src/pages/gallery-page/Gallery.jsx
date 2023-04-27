@@ -16,7 +16,7 @@ export default function Gallery(props) {
     let [isLoaded, finishLoading] = useState(false)
     let [currentAlbum, setAlbum] = useState()
     let sliderContainer = useRef(null)
-    savePicture(currentPictures)
+    // savePicture(currentPictures)
     useEffect(()=> {
         axios.get('https://api.jsonbin.io/v3/b/643d5d2aebd26539d0acd9d4', {
             headers: {
@@ -77,7 +77,7 @@ export default function Gallery(props) {
         images[curr].className = 'img-cont-slider show' 
         
     }
-    function sliderMoveBackwords(e) {
+    function sliderMoveBackwards(e) {
         let images = [...sliderContainer.current.childNodes]
         let curr = ''
         images.map((div, id) => [...div.classList].forEach(elem => elem === 'show'? curr = id : null ))
@@ -181,7 +181,7 @@ export default function Gallery(props) {
                             return album.albumPhotos.map((photo, id) => {
                             return <div key={id} className={id===0? 'img-cont-slider show' : 'img-cont-slider'} >
                                         <div className='image-slider-header'>
-                                           <Arrow ref={leftArrow} className='arrowLeft' onClick={sliderMoveBackwords}/>
+                                           <Arrow ref={leftArrow} className='arrowLeft' onClick={sliderMoveBackwards}/>
                                            <img className='img-slider' src={photo.displayURL} onClick={sliderMoveForward}/>
                                            <Arrow ref={rightArrow} className='arrowRight' onClick={sliderMoveForward}/>
                                         </div>
