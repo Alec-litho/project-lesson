@@ -14,7 +14,7 @@ module.exports.checkAuth = (req,res,next) => {
         }
     }else {
         return res.status(404).json({
-            message: "Not allowed"
+            message: "Not allowed 404"
         })
     }
 }

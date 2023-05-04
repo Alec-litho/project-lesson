@@ -1,17 +1,20 @@
 let {PostModel} = require('../models/post')
+let {UserModel} = require('../models/user')
 
 let getAll = async(req,res) => {
     try {
-        //let posts = await PostModel.find() возращает id пользователя
-        let posts = await PostModel.find().populate('user').exec()//возращает обьект пользователя
+        let posts = await PostModel.find().populate('user').exec()
 
         res.json(posts)
-    } catch (error) {
+    } catch (error) { 
         console.log(error);
         res.status(500).json({message:'Could not get posts'})
     }
 }
-
+let getMyPosts = function(req, res) {
+    let user = UserModel.findById(req.userId)
+    res.send(user._doc)
+}
 let getOne = async(req,res) => {
     try {
         const postId = req.params['id']
@@ -78,5 +81,6 @@ module.exports = {
     getAll,
     getOne,
     deletePost,
-    update
+    update,
+    getMyPosts
 }

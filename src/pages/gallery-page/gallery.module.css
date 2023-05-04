@@ -1,37 +1,45 @@
 .gallery {
+  background-color: white;
+    width: 100vw;
+  
+    height: auto;
     display: flex;
     position: relative;
-    gap: 100px;
+}
+.background {
+  width: 100vw;
+  height: 600px;
+  background-color: white;
 }
 
 .rightPanel {
+  position: absolute;
+  left: 0;
+  right: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 300px;
+    width: 275px;
     height: 600px;
-    background-color: white;
-    border-radius: 10px;
+    background-color: rgba(228, 232, 243, 0.822);
+    border-right: 2px solid rgb(206, 215, 228);
 }
-
 .galleryBody {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 5px;
-    width: 815px;
-    height: 610px;
+    margin-left: 275px;
     background-color: white;
-    border-radius: 10px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 .img {
-  width: 200px;
+  width: auto;
 	height: 200px;
 	transition: transform .5s;
-	object-fit: cover;
 	user-select: none;
-    cursor: pointer;
+  cursor: pointer;
 }
 .img:hover {
     transform: scale(1.15);
@@ -40,8 +48,6 @@
 .imgWrapper {
     display: flex;
     position: relative;
-	width: 100%;
-	height: 100%;
 	overflow: hidden;
 }
 .arrowLeft {
@@ -92,7 +98,7 @@
 .album:hover p{
     padding-left: 25px;
     font-size: 18px;
-    background-color: rgb(233, 243, 255);
+    background-color: rgba(255, 255, 255, 0.822);
 }
 
 .album .underline {

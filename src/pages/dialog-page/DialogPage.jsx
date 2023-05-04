@@ -93,7 +93,7 @@ function Message(props) {
      (
         <div className={classes.message}>
            <div className={classes.leftSideMessage}>
-               <img className={classes.profilePicture} src={require(`../../assets/friends/${props.pp}.jpg`)}></img>
+               <img className={classes.profilePicture}></img>
                <span className={classes.timeMessage}>{props.time}</span>
            </div>
            <div className={classes.rightSideMessage}>
@@ -104,7 +104,7 @@ function Message(props) {
     (
         <div className={classes.message}>
             <div className={classes.leftSideMessage}>
-               <img className={classes.profilePicture} src={require(`../../assets/friends/${props.pp}.jpg`)}></img>
+               <img className={classes.profilePicture} ></img>
                <span className={classes.timeMessage}>{props.time}</span>
            </div>
            <div className={classes.rightSideMessage}>

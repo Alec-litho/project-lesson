@@ -10,54 +10,63 @@ import { ReactComponent as Delete } from '../../assets/icons/delete.svg'
 import { ReactComponent as Change } from '../../assets/icons/change.svg'
 import {fetchData, updatePosts} from '../../features/userSlice'
 import {fetchPosts, addPost} from '../../features/postSlice'
-
+import {selectIsAuth} from '../../features/authSlice.js'
 export default function Main() {
     let [isLoaded, setFinish] = useState(false)
     let [photos, setPhotos] = useState([])
     let dispatch = useDispatch()
+    let token = useSelector(state => state.auth.data.token)
+    let isAuth = useSelector(selectIsAuth)
+    console.log(isAuth);
     let userData = useSelector(state => state.main)
     let userPosts = useSelector(state => state.userPosts)
-    console.log(userPosts);
+    console.log(userData);
     useEffect(() => {
         ( function loadPhotos() {
-            dispatch(fetchData())
+            dispatch(fetchData(token))
             dispatch(fetchPosts())
-            let data = axios.post('http://localhost:3001/albums').then(res => {
+            let data = axios.post('http://').then(res => {
                 setFinish(true)
                 setPhotos(res.data)
             }).catch(err => console.log(err))
         })()
-    },[])
+    },[isAuth])
     return (
         <div className='mainpage'>
-        <Profile firstName={userData.userInfo.name} lastName={userData.userInfo.lastName} age={userData.userInfo.age} friends={userData.userInfo.friends} profilePicture={userData.userInfo.profilePicture} location={userData.userInfo.location} subscriptions={userData.userInfo.subscriptions}/>
-                <div className='mainContent'>
-                    <AboutMeBlock galleryPhotos={photos} isloadedState={isLoaded}/>
-                    <PostBlock posts={userPosts.posts} dispatch={dispatch}/>
-                </div>
+            <Profile fullName={userData.userInfo.name} age={userData.userInfo.age} friends={userData.userInfo.friends} profilePicture={userData.userInfo.profilePicture} location={userData.userInfo.location}/>
+            <div className='mainContent'>
+                <AboutMeBlock galleryPhotos={photos} isloadedState={isLoaded}/>
+                <PostBlock posts={userPosts.posts} dispatch={dispatch}/>
+            </div>
+            <Sidebar/>
         </div>
     )
 }
-
+function Sidebar() {
+    return (
+        <div className='sidebar'>
+          
+        </div>
+    )
+}
 function Profile(props) {
-    let profPicture = props.profilePicture? props.profilePicture : require('../../assets/friends/profilePictureLoading.png')
+    console.log(props);
+    // let profPicture = props.profilePicture? props.profilePicture : null
     return (
         <div className='profileContainer'>
-            <img src={profPicture}></img>
+            <img src={props.profilePicture} className='pofilePicture'></img>
             <div className='infoBlock'>
-            <h1>{props.firstName} {props.lastName}</h1>
+            <h1>{props.fullName}</h1>
             <div className='defaultInfo'>
                 <div className='leftInfoBlock'>
                     <p>Location:</p>
                     <p>Friends:</p>
                     <p>Age:</p>
-                    <p>Subscriptions:</p>
                 </div>
                 <div className='rightInfoBlock'>
                     <a href="#">{props.location}</a>
                     <a href="#">{props.friends}</a>
                     <a href="#">{props.age}</a>
-                    <a href="#">{props.subscriptions}</a>
                 </div>
             </div>
             <button className='book'> <Link to="/dialogs" element={<Dialog/>}>Message</Link></button>
@@ -128,7 +137,7 @@ function Post(props) {
     return (
         <div className='post'>
         <div className='postHeader'>
-          <div><img className="profileCircle" src={require('../../assets/friends/p.jpg')}></img></div>
+          <div><img className="profileCircle" ></img></div>
           <div className='date'>published on {props.date} {props.year}</div>
           <div className='postTools'>
             <Delete className='icon'/>

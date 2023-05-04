@@ -1,16 +1,18 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 import axios from "axios"
-const currUserId = 1
+import { useSelector } from "react-redux"
 
-
-export const fetchData = createAsyncThunk('data/fetchData', async () => {
+export const fetchData = createAsyncThunk('data/fetchData', async (token) => {
+    console.log('w');
+    console.log(token);
     try {
-        const response = await axios.get('https://api.jsonbin.io/v3/b/644143c3ebd26539d0af1bad', {
+        const response = await axios.get('http://localhost:3001/auth/me', {
             headers: {
-                "X-MASTER-KEY": "$2b$10$y3p8j1CGw2n5ZUmWh4kE9OW8R.RqoGXrYo7Q7tlS2mAPj5SKqu.o2"
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`
             }
         })
-        return [...response.data.record]
+        return response.data
     } catch(err) {
         console.log('error')
     }
@@ -18,7 +20,7 @@ export const fetchData = createAsyncThunk('data/fetchData', async () => {
 })
 
 let initialState = {
-    userInfo: {name: '', },
+    userInfo: {name: '', age: "",profilePicture:"",friends:"",location:""},
     userDialogs: [],
     status: 'idle',//"loading" | "succeded" | "failed"
     error: null
@@ -39,9 +41,16 @@ let initialState = {
            })
            .addCase(fetchData.fulfilled, (state, action) => {
             state.status = 'succeded'
-            let userData = action.payload.filter(user => user.userId === currUserId)
-            state.userInfo = {name: userData[0].userFirstname, lastName: userData[0].userLastname,  age: userData[0].userAge, profilePicture: userData[0].userProfilePicture, friends: userData[0].fiends, subscriptions: userData[0].subscriptions, location: userData[0].location}
-            state.userDialogs = userData[0].dialogs
+            console.log(action.payload);
+            state.userInfo.age =  action.payload.age
+            state.userInfo.name = action.payload.fullName
+            state.userInfo.profilePicture = action.payload.avatarUrl
+            state.userInfo.friends = action.payload.friends
+            state.userInfo.location = action.payload.location
+            })
+            .addCase(fetchData.rejected, (state, action) => {
+                state.status = 'error'
+                state.error = "error"
             })
     }
 })

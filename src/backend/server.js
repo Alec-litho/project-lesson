@@ -1,17 +1,30 @@
 let express = require('express')
 let mongoose = require('mongoose')
-let {registerValidation, loginValidation, postCreateValidation} = require('./validations')
+let {registerValidation, loginValidation, postCreateValidation, imageValidation} = require('./validations')
 const cors = require("cors");
 const {checkAuth} = require('./utils/checkAuth')
 const {register, login, getMe} = require('./controllers/UserController')
-const {create, getAll, getOne, deletePost} = require('./controllers/postController')
-
+const {create, getAll, getOne, deletePost, update, getMyPosts} = require('./controllers/postController')
+const {uploadImage, getOneImage, getAllImages, getOneAlbum, getAlbums, uploadAlbum, deleteImage} = require('./controllers/imageController')
+const multer = require('multer')
 
 mongoose
   .connect('mongodb+srv://opaltaco:eamV2B1PXGjNFX3y@cluster0.iyapupi.mongodb.net/blog?retryWrites=true&w=majority')
   .then(res => console.log('ok'))
   .catch(err => console.log(err))
 let app = express()
+
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'uploads')
+//   },
+//   filename: (_, file, cb) => {
+//     cb(null, file.originalname)
+//   },
+// })
+
+// const upload = multer({storage})
+app.use('/uploads', express.static('uploads'))
 app.use(cors());
 app.use(express.json())//enable json format for express
 //user paths----------------------------------------
@@ -21,10 +34,24 @@ app.post('/auth/register', registerValidation, register)
 //post paths----------------------------------------
 app.get('/posts', getAll)
 app.get('/posts/:id', getOne)
+app.get('/posts/myposts', getMyPosts)
 app.post('/posts', checkAuth, postCreateValidation, create)
-app.delete('/posts/:id', deletePost)
-// app.patch('/posts', update)
-
+app.delete('/posts/:id', checkAuth, deletePost)
+app.patch('/posts',checkAuth, update)//dont forget to finish it
+//images paths---------------------------------------
+app.get('/images',getAllImages)
+app.get('/images/:id', getOneImage)
+app.delete('/images/:id', deleteImage)
+app.post('/images', checkAuth, imageValidation, uploadImage)
+app.get('/albums',getAlbums)
+app.get('/albums/:id', getOneAlbum)
+app.post('/albums', checkAuth, imageValidation, uploadAlbum)
+//storage------------------------------------------
+// app.post('/upload', checkAuth, upload.single('uploads'), (req,res) => {
+//   res.json({
+//     url: `/uploads/${req.file.originalname}`
+//   })
+// })
 app.listen(3001, (w) => {
-    console.log('w');
+    console.log('server started');
 })

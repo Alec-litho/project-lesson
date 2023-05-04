@@ -15,10 +15,16 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    avatarUrl: String,
+    location: String,
+    friends: Number,
+    age: String,
+    avatarUrl: {
+        type: String,
+        default: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp"
+    }
 
 }, {
     timestamps: true
 }) 
 
-module.exports.UserModel = mongoose.model('User', UserSchema)
+module.exports.UserModel = mongoose.model('User', UserSchema) 

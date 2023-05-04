@@ -23,9 +23,12 @@ const PostSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',                              //relation-ship
         required: true,
-    },
+    }, 
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    }],
     imageUrl: String,
-
 }, {
     timestamps: true
 }) 
