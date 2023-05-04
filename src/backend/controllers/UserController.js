@@ -16,7 +16,10 @@ module.exports.register = async(req, res) => {
             email: req.body.email,
             fullName: req.body.fullName,
             password: req.body.password,
-            avatarUrl: req.body.avatarUrl
+            avatarUrl: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp",
+            friends: 0,
+            location: "not mentioned",
+            age: 'not mentioned'
         })
         const user = await doc.save();
     
@@ -25,6 +28,7 @@ module.exports.register = async(req, res) => {
         }, 'secret', {
             expiresIn: '30d'
         });
+        console.log(user);
         const {passwordHash, ...userData} = user._doc;
         res.json({
             userData,

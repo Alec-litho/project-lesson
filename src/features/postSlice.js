@@ -9,12 +9,8 @@ const initialState = {
     error: null
 }
 export const fetchPosts = createAsyncThunk('getPosts/fetchPosts', async() => {
-    const response = await axios.get(userDataBin, {
-        headers: {
-            "X-MASTER-KEY": userDBkey
-        }
-    })
-    return [...response.data.record]
+    const response = await axios.get("http://localhost:3001/posts")
+    return response.data
 })
 export const deletePost = createAsyncThunk('addPost/fetchPosts', async(post) => {
     console.log(post);
@@ -36,7 +32,6 @@ const postSlice = createSlice({
         builder
           .addCase(fetchPosts.fulfilled, (state, action) => {
             state.status = 'fulfilled'
-            let userData = action.payload.filter(user => user.userId === currUserId)[0]
             state.posts = userData.posts
           })
           .addCase(deletePost.fulfilled, (state, action) => {
