@@ -1,7 +1,8 @@
 let jwt = require('jsonwebtoken')
 let bcrypt = require('bcrypt')
 let {validationResult} = require('express-validator')
-const {UserModel} = require('../models/user')//DB
+const {UserModel} = require('../models/user')
+const {AlbumModel} = require('../models/album')
 
 module.exports.register = async(req, res) => {
     try {
@@ -11,7 +12,7 @@ module.exports.register = async(req, res) => {
         }
         const password = req.body.password;
         const salt = await bcrypt.genSalt(10)
-        const hash = await bcrypt.hash(password, salt)
+        // await bcrypt.hash(password, salt) error
         const doc = new UserModel({
             email: req.body.email,
             fullName: req.body.fullName,
@@ -22,7 +23,6 @@ module.exports.register = async(req, res) => {
             age: 'not mentioned'
         })
         const user = await doc.save();
-    
         const token = jwt.sign({
             _id: user._id
         }, 'secret', {
@@ -30,13 +30,19 @@ module.exports.register = async(req, res) => {
         });
         console.log(user);
         const {passwordHash, ...userData} = user._doc;
+        console.log('user id',user._id);
+        const album = new AlbumModel({
+            name: "All",
+            user: user._id
+        })
+        album.save()
         res.json({
             userData,
             token
         })
     } catch (error) {
         res.status(500).json({
-            message: "Not successful logging"
+            message: error
         })
     }
 }

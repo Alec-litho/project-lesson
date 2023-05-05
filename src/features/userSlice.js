@@ -1,10 +1,7 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit"
 import axios from "axios"
-import { useSelector } from "react-redux"
 
 export const fetchData = createAsyncThunk('data/fetchData', async (token) => {
-    console.log('w');
-    console.log(token);
     try {
         const response = await axios.get('http://localhost:3001/auth/me', {
             headers: {
@@ -41,7 +38,6 @@ let initialState = {
            })
            .addCase(fetchData.fulfilled, (state, action) => {
             state.status = 'succeded'
-            console.log(action.payload);
             state.userInfo.age =  action.payload.age
             state.userInfo.name = action.payload.fullName
             state.userInfo.profilePicture = action.payload.avatarUrl

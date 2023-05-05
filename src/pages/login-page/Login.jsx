@@ -18,7 +18,6 @@ export default function Login() {
   const onSubmit = (vals) => {
     dispatch(fetchAuth(vals))
   }
-  console.log(isAuth)
     return (
         <div className={classes.background}>
           <div className={classes.window}>

@@ -1,5 +1,4 @@
 let {PostModel} = require('../models/post')
-let {UserModel} = require('../models/user')
 
 let getAll = async(req,res) => {
     try {
@@ -11,9 +10,9 @@ let getAll = async(req,res) => {
         res.status(500).json({message:'Could not get posts'})
     }
 }
-let getMyPosts = function(req, res) {
-    let user = UserModel.findById(req.userId)
-    res.send(user._doc)
+let getMyPosts = async function(req, res) {
+    let posts = await PostModel.find({user: req.body.id})
+    res.send(posts)
 }
 let getOne = async(req,res) => {
     try {
@@ -47,7 +46,6 @@ let update = async(req,res) => {
         const postId = req.params['id']
         await PostModel.updateOne({_id: postId},
             {   
-                title: req.body.title,
                 text: req.body.text,
                 imageUrl: req.body.imageUrl,
                 tags: req.body.tags,
@@ -62,11 +60,10 @@ let update = async(req,res) => {
 let create = async(req,res) => {
     try {
         const doc = new PostModel({
-            title: req.body.title,
             text: req.body.text,
             imageUrl: req.body.imageUrl,
             tags: req.body.tags,
-            user: req.userId
+            user: req.body.id
         })
         const post = await doc.save()
         res.json(post)

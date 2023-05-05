@@ -4,11 +4,14 @@ import { ReactComponent as Arrow } from '../../assets/icons/arrow.svg'
 import {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 import { ReactComponent as AddPhoto } from '../../assets/icons/addPhoto.svg'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch} from 'react-redux'
 import Slider from '../../components/slider.jsx'
+import {fetchMyAlbums, savePicture} from '../../features/albumSlice'
 
 export default function Gallery(props) {
-    let token = useSelector(state => state.auth.data.token)
+    let myData = useSelector(state => state.auth.data)
+    let albums = useSelector(state => state.albums.albums)
+    let dispatch = useDispatch()
     let leftArrow = useRef(null),
     rightArrow = useRef(null)
     let addPicture = useRef(null), 
@@ -19,11 +22,9 @@ export default function Gallery(props) {
     let [currentAlbum, setAlbum] = useState('All')
     let [currPictureId, setcurrPictureId] = useState(null)
     useEffect(()=> { 
-        axios.get('http://localhost:3001/albums').then(res => {
-            setPictures(res.data)
-            finishLoading(true)
-        }).catch(err => console.log(err))
-        
+        dispatch(fetchMyAlbums({userid: myData._id, token: myData.token}))//IT SHOULD UPDATE OTHERWISE COMPONENT DOESNT UPDATE AND DOESNT SHOW ALBUM
+        setPictures(albums)
+        finishLoading(true)
     },[setAlbum])
     
     function showAlbum(e) {
@@ -55,12 +56,7 @@ export default function Gallery(props) {
     function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
 
     function savePicture(picture) {
-        axios.post('http://localhost:3001/images', JSON.stringify(picture), {
-            headers: {
-                'Content-Type': 'application/json',
-                "Authorization": `Bearer ${token}`
-            }
-        }).catch(err => console.log(err))
+        dispatch(savePicture({picture, token: myData.token}))
     }
     function showArrows(e) {e.target.id === "left"? leftArrow.current.style.display = 'block' : rightArrow.current.style.display = 'block'}
     function hideArrows(e) {e.target.id === "left"? leftArrow.current.style.display = 'none' : rightArrow.current.style.display = 'none'}
