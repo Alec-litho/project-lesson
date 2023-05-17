@@ -41,12 +41,12 @@ app.patch('/posts',checkAuth, update)//dont forget to finish it
 //images paths---------------------------------------
 app.get('/images',getAllImages)
 app.get('/images/:id', getOneImage)
-app.delete('/images/:id', deleteImage)
+app.delete('/images/:id', checkAuth, deleteImage)
 app.post('/images', checkAuth, imageValidation, uploadImage)
 app.post('/albums/myalbums', checkAuth, imageValidation, getMyAlbums)
 app.get('/albums',getAlbums)
 app.get('/albums/:id', getOneAlbum)
-app.post('/albums', checkAuth, imageValidation, uploadAlbum)
+app.post('/albums', checkAuth, uploadAlbum)
 //storage------------------------------------------
 // app.post('/upload', checkAuth, upload.single('uploads'), (req,res) => {
 //   res.json({

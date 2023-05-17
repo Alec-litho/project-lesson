@@ -1,31 +1,31 @@
 import classes from './gallery.module.css'
 import './gallery_slider_style.css'
-import { ReactComponent as Arrow } from '../../assets/icons/arrow.svg'
 import {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 import { ReactComponent as AddPhoto } from '../../assets/icons/addPhoto.svg'
+import { ReactComponent as Plus } from '../../assets/icons/plus.svg'
 import { useSelector, useDispatch} from 'react-redux'
 import Slider from '../../components/slider.jsx'
 import {fetchMyAlbums, savePicture} from '../../features/albumSlice'
+import CreateModal from '../../components/create_modal'
 
 export default function Gallery(props) {
     let myData = useSelector(state => state.auth.data)
     let albums = useSelector(state => state.albums.albums)
     let dispatch = useDispatch()
-    let leftArrow = useRef(null),
-    rightArrow = useRef(null)
     let addPicture = useRef(null), 
     underlines = useRef([<input value={'text'}/>])
     let [sliderTrue, setSliderTrue] = useState(false)
+    let [closeModal, setModal] = useState(true)
     let [currentPictures, setPictures] = useState([])
     let [isLoaded, finishLoading] = useState(false)
     let [currentAlbum, setAlbum] = useState('All')
     let [currPictureId, setcurrPictureId] = useState(null)
+    let [updatePictures, setUpdate] = useState(false)
     useEffect(()=> { 
-        dispatch(fetchMyAlbums({userid: myData._id, token: myData.token}))//IT SHOULD UPDATE OTHERWISE COMPONENT DOESNT UPDATE AND DOESNT SHOW ALBUM
-        setPictures(albums)
-        finishLoading(true)
-    },[setAlbum])
+        console.log('updated');
+        loadPictures()
+    },[updatePictures])
     
     function showAlbum(e) {
         setAlbum(e.target.innerText)
@@ -54,14 +54,14 @@ export default function Gallery(props) {
         underlines.current.forEach(item => item.id === child.id?  item.style.width = 200 + 'px' : null)
     })}
     function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
-
-    function savePicture(picture) {
-        dispatch(savePicture({picture, token: myData.token}))
+    async function loadPictures() {
+        await dispatch(fetchMyAlbums({userid: myData._id, token: myData.token, update: setUpdate}))
+        setPictures(albums)
+        finishLoading(true)
     }
-    function showArrows(e) {e.target.id === "left"? leftArrow.current.style.display = 'block' : rightArrow.current.style.display = 'block'}
-    function hideArrows(e) {e.target.id === "left"? leftArrow.current.style.display = 'none' : rightArrow.current.style.display = 'none'}
-
-
+    function savePictureDB(picture) {
+        dispatch(savePicture({picture, token: myData.token, update: setUpdate}))
+    }
     function uploadPicture(e) {
         let imgName = addPicture.current.value.slice(12)
         const rf = new FileReader();
@@ -76,7 +76,7 @@ export default function Gallery(props) {
             }).then(res => res.json()).then(res => {
                 console.log(res)
                 const currentImage = {title: imgName.slice(0, imgName.lastIndexOf('.')), imageURL: res.data.url, id: Math.random().toString(36), album:currentAlbum}
-                savePicture(currentImage)
+                savePictureDB(currentImage)
                 setPictures(currentPictures)
             })
         }
@@ -96,6 +96,7 @@ export default function Gallery(props) {
                     </div>
                 )
                })}
+               <Plus className={classes.addAlbum} onClick={() => setModal(prev => prev = !closeModal)}/>
                </div>
                <div className={classes.addPicture}>
                   <label htmlFor="file-upload" className={classes.customUpload}><AddPhoto className={classes.addPhoto}/></label>
@@ -103,10 +104,6 @@ export default function Gallery(props) {
                </div>
             </div>
             <div className={classes.galleryBody}>
-               <Arrow ref={leftArrow} className={classes.arrowLeft}/>
-               <Arrow ref={rightArrow} className={classes.arrowRight}/>
-               <div id='left' className={classes.leftBorder} onMouseEnter={showArrows} onMouseLeave={hideArrows}></div>
-               <div id='right' className={classes.rightBorder} onMouseEnter={showArrows} onMouseLeave={hideArrows}></div>
                     {
                     currentPictures.map((album, id) => {
                          if(album.name === currentAlbum) {
@@ -117,7 +114,8 @@ export default function Gallery(props) {
                     })
                     }
             </div>
-            <Slider currentPictures={currentPictures} sliderTrue={sliderTrue} setPictures={setPictures} setSliderTrue={setSliderTrue} currPictureId={currPictureId} setcurrPictureId={setcurrPictureId} currentAlbum={currentAlbum}></Slider>
+            <CreateModal closeModal={closeModal} setModal={setModal} userId={myData._id} update={setUpdate} token={myData.token}/>
+            <Slider setUpdate={setUpdate} token={myData.token} currentPictures={currentPictures} sliderTrue={sliderTrue} setPictures={setPictures} setSliderTrue={setSliderTrue} currPictureId={currPictureId} setcurrPictureId={setcurrPictureId} currentAlbum={currentAlbum}></Slider>
         </div>
         </div>
     )

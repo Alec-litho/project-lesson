@@ -7,6 +7,7 @@ module.exports.getAllImages = function(req,res) {
 module.exports.uploadImage = async function(req,res) {
     let albumId = await AlbumModel.findOne({name:req.body.album}, '_id')
     let test = req.body
+    console.log(req.body, req.userId);
     let doc = new imageModel({
         title: req.body.title,
         imageURL: req.body.imageURL,
@@ -15,7 +16,6 @@ module.exports.uploadImage = async function(req,res) {
         user: req.userId,
         album: albumId
     })
-    console.log(test);
     doc.save()
     let album = await AlbumModel.findOne({name:req.body.album})
     album.images.push(doc)
@@ -28,12 +28,14 @@ module.exports.getOneImage = function(req,res) {
 }
 module.exports.deleteImage = (req,res) => {
     const id = req.params.id
-    imageModel.deleteOne({id: id}).then(resp => res.send(resp))
+    imageModel.deleteOne({_id: id}).then(resp => res.send(resp))
 }
 module.exports.uploadAlbum = function(req,res) {
+    console.log( req.body, req.userId);
     let doc = new AlbumModel({
         name: req.body.name,
         user: req.userId,
+        description: req.body.description
     })
     doc.save()
     res.json(doc)
@@ -44,7 +46,8 @@ module.exports.getAlbums = async function(req,res) {
 }
 
 module.exports.getMyAlbums = async function(req,res) {
-    const albums = await AlbumModel.find({user:req.body.id})
+    const albums = await AlbumModel.find({user:req.body.id}).populate('images')
+    console.log(req.body.id);
     res.send(albums)
 }
 module.exports.getOneAlbum = function(req,res) {

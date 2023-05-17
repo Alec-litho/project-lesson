@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react"
 import { ReactComponent as Arrow } from '../assets/icons/arrow.svg'
 import { ReactComponent as Delete } from '../assets/icons/delete.svg'
+import {deletePicture, fetchMyAlbums} from '../features/albumSlice'
+import { useSelector, useDispatch } from "react-redux"
 import axios from 'axios'
 
 export default function Slider(props) {
@@ -8,19 +10,19 @@ export default function Slider(props) {
     rightArrow = useRef(null)
     let sliderContainer = useRef(null)
     let slider = useRef(null)
+    let albums = useSelector(state => state.albums.albums)
+    let myData = useSelector(state => state.auth.data)
+    let dispatch = useDispatch()
 
     async function deleteImage(id) {
-        await axios.delete(`http://localhost:3001/images/${id}`)
-        axios.get('http://localhost:3001/albums').then(res => {
-            props.setPictures(res.data)
-            props.setSliderTrue(!props.sliderTrue)
-        })
+        await dispatch(deletePicture({token: myData.token, id, update:props.setUpdate}))
+        props.setSliderTrue(!props.sliderTrue)
     }
     useEffect(_ => {
         [...sliderContainer.current.childNodes].map((img, id) => {
             img.className = id == props.currPictureId? 'img-cont-slider show' : 'img-cont-slider'
         })
-    })
+    }, [])
     function hideSlider(e) {
         if(e.target.className === 'imageContainer') {
             props.setSliderTrue(!props.sliderTrue)
@@ -62,7 +64,7 @@ export default function Slider(props) {
                                  </div>
                                  <div className='comments-slider'>
                                      <div>
-                                        <Delete className="icon" onClick={_ => deleteImage(photo.id)}/>
+                                        <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>
                                      </div>
                                      <p>{props.desc}</p>
                                  </div>
