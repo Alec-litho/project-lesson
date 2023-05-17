@@ -8,17 +8,16 @@ const AlbumSchema = new mongoose.Schema({
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',                              //relation-ship
+        ref: 'User',       
         required: true,
     },
     images: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'
     }],
-    id: {
+    description: {
         type: String,
-        unique: true
-    }
+    },
 }, {
     timestamps: true
 }) 
