@@ -35,6 +35,7 @@ module.exports.uploadAlbum = function(req,res) {
     let doc = new AlbumModel({
         name: req.body.name,
         user: req.userId,
+        images: [],
         description: req.body.description
     })
     doc.save()

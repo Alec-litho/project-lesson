@@ -9,7 +9,7 @@ const imageSchema = new mongoose.Schema({
     }, 
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',                              //relation-ship
+        ref: 'User',                         
         required: true,
     },
     description: {

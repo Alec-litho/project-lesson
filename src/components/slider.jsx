@@ -13,7 +13,6 @@ export default function Slider(props) {
     let albums = useSelector(state => state.albums.albums)
     let myData = useSelector(state => state.auth.data)
     let dispatch = useDispatch()
-
     async function deleteImage(id) {
         await dispatch(deletePicture({token: myData.token, id, update:props.setUpdate}))
         props.setSliderTrue(!props.sliderTrue)
@@ -22,7 +21,7 @@ export default function Slider(props) {
         [...sliderContainer.current.childNodes].map((img, id) => {
             img.className = id == props.currPictureId? 'img-cont-slider show' : 'img-cont-slider'
         })
-    }, [])
+    }, [props.sliderTrue])
     function hideSlider(e) {
         if(e.target.className === 'imageContainer') {
             props.setSliderTrue(!props.sliderTrue)
@@ -47,7 +46,6 @@ export default function Slider(props) {
         curr--
         images.forEach(elem => elem.className = 'img-cont-slider')
         if(curr < 0) curr = images.length-1
-        console.log(curr);
         images[curr].className = 'img-cont-slider show' 
     }
     return (
@@ -56,7 +54,7 @@ export default function Slider(props) {
              {props.currentPictures.map(album => {
                  if(album.name === props.currentAlbum) {
                      return album.images.map((photo, id) => {
-                     return <div key={id} className={id===0? 'img-cont-slider show' : 'img-cont-slider'} >
+                     return <div key={id} className={'img-cont-slider'} >
                                  <div className='image-slider-header'>
                                     <Arrow ref={leftArrow} className='arrowLeft' onClick={sliderMoveBackwards}/>
                                     <img className='img-slider' src={photo.imageURL} onClick={sliderMoveForward}/>

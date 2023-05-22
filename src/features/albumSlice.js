@@ -21,9 +21,9 @@ export const savePicture = createAsyncThunk("albums/savePicture", async(data) =>
     await axios.post('http://localhost:3001/images', JSON.stringify(data.picture), {
             headers: {
                 'Content-Type': 'application/json',
-                "Authorization": `Bearer ${data.token}`
+                "Authorization": `Bearer ${data.myData.token}`
             }
-        }).then(res => data.update())
+        }).then(res => data.setUpdate())
 })
 export const deletePicture = createAsyncThunk("albums/deletePicture", async(data) => {
     await axios.delete(`http://localhost:3001/images/${data.id}`, {
@@ -33,6 +33,7 @@ export const deletePicture = createAsyncThunk("albums/deletePicture", async(data
             }
         }).then(res => data.update())
 })
+
 export const uploadAlbum = createAsyncThunk("albums/createAlbum", async(data) => {
     console.log(data, data.user);
     await axios.post(`http://localhost:3001/albums`,{name: data.name, user:data.user, description:data.desc}, {

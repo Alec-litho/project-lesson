@@ -1,13 +1,14 @@
 import classes from './gallery.module.css'
 import './gallery_slider_style.css'
 import {useState, useEffect, useRef} from 'react'
-import axios from 'axios'
 import { ReactComponent as AddPhoto } from '../../assets/icons/addPhoto.svg'
 import { ReactComponent as Plus } from '../../assets/icons/plus.svg'
 import { useSelector, useDispatch} from 'react-redux'
-import Slider from '../../components/slider.jsx'
+import Slider from '../../components/Slider.jsx'
 import {fetchMyAlbums, savePicture} from '../../features/albumSlice'
-import CreateModal from '../../components/create_modal'
+import CreateModal from '../../components/Create_modal'
+import postImage  from '../../helper_functions/postImage'
+import Loader from '../../components/Loader'
 
 export default function Gallery(props) {
     let myData = useSelector(state => state.auth.data)
@@ -23,13 +24,11 @@ export default function Gallery(props) {
     let [currPictureId, setcurrPictureId] = useState(null)
     let [updatePictures, setUpdate] = useState(false)
     useEffect(()=> { 
-        console.log('updated');
         loadPictures()
     },[updatePictures])
     
     function showAlbum(e) {
         setAlbum(e.target.innerText)
-
         if(e.target.parentNode.childNodes[0].innerText !== currentAlbum) {
             console.log(currentAlbum);
             [...e.target.parentNode.parentNode.childNodes].map(album => {
@@ -54,34 +53,21 @@ export default function Gallery(props) {
         underlines.current.forEach(item => item.id === child.id?  item.style.width = 200 + 'px' : null)
     })}
     function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
-    async function loadPictures() {
-        await dispatch(fetchMyAlbums({userid: myData._id, token: myData.token, update: setUpdate}))
+    function loadPictures() {
+        dispatch(fetchMyAlbums({userid: myData._id, token: myData.token, update: setUpdate}))
         setPictures(albums)
         finishLoading(true)
     }
-    function savePictureDB(picture) {
-        dispatch(savePicture({picture, token: myData.token, update: setUpdate}))
-    }
     function uploadPicture(e) {
-        let imgName = addPicture.current.value.slice(12)
-        const rf = new FileReader();
-        rf.readAsDataURL(addPicture.current.files[0])
-        rf.onloadend = function (event) {
-            const body = new FormData();
-            body.append("image", event.target.result.split(",").pop()); 
-            body.append("name", imgName.slice(0, imgName.lastIndexOf('.')));
-            fetch('https://api.imgbb.com/1/upload?key=432e8ddaeeb70d2d1be863e87c0f354e', {
-                method: "POST",
-                body: body
-            }).then(res => res.json()).then(res => {
-                console.log(res)
-                const currentImage = {title: imgName.slice(0, imgName.lastIndexOf('.')), imageURL: res.data.url, id: Math.random().toString(36), album:currentAlbum}
-                savePictureDB(currentImage)
+        postImage(e.target, currentAlbum).then(res => {
+            dispatch(savePicture({picture:res, myData, setUpdate})).then(_ => {//save in db
+                setUpdate()
                 setPictures(currentPictures)
             })
-        }
+        })
     }
-    if(isLoaded === false) return <Wait/>
+
+    if(isLoaded === false) return <Loader/>
     return (
         <div className={classes.background}>
         <div className={classes.gallery}>
@@ -122,10 +108,3 @@ export default function Gallery(props) {
 }
 
 
-function Wait() {//animation component
-    return (
-        <div className={classes.wait}>
-            <div className={classes.ldsRoller}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-        </div>
-    )
-}

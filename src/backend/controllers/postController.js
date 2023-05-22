@@ -13,7 +13,7 @@ let getAll = async(req,res) => {
 let getMyPosts = async function(req, res) {
     let posts = await PostModel.find({user: req.body.id})
     res.send(posts)
-}
+}  
 let getOne = async(req,res) => {
     try {
         const postId = req.params['id']

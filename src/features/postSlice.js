@@ -7,12 +7,16 @@ const initialState = {
     status: 'idle',
     error: null
 }
-export const fetchMyPosts = createAsyncThunk('getPosts/fetchMyPosts', async(userId) => {
-    console.log(userId);
+export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async(userId) => {
     const response = await axios.post("http://localhost:3001/posts/myposts", {id:userId})
     return response.data
 })
-export const deletePost = createAsyncThunk('addPost/fetchPosts', async(post) => {
+
+export const createPost = createAsyncThunk('posts/createPost', async(data) => {
+  const response = await axios.post("http://localhost:3001/posts", {text: data.text, tags: data.tags, user: data.user, imageUrl:data.imageUrl})
+  return response.data
+})
+export const deletePost = createAsyncThunk('posts/fetchPosts', async(post) => {
     let result;
     // await axios.get(userDataBin, {headers: {"X-MASTER-KEY": userDBkey}}).then(data => {
     //     let userData = data.filter(user => user.userId === currUserId)[0]
