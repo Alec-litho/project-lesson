@@ -1,16 +1,18 @@
 import {useState, useEffect, useRef} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios'
 import {Link} from 'react-router-dom';
 import Gallery from '../gallery-page/Gallery.jsx'
 import Dialog from '../dialog-page/DialogPage.jsx'
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
-import { ReactComponent as Delete } from '../../assets/icons/delete.svg'
-import { ReactComponent as Change } from '../../assets/icons/change.svg'
+import { ReactComponent as ZoomIn } from '../../assets/icons/zoom-in.svg'
+import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
 import {fetchData, updatePosts} from '../../features/userSlice'
-import {fetchMyPosts, addPost} from '../../features/postSlice'
-import {fetchMyAlbums} from '../../features/albumSlice'
+import {fetchMyPosts, createPost,} from '../../features/postSlice'
+import {fetchMyAlbums, savePicture} from '../../features/albumSlice'
 import {selectIsAuth} from '../../features/authSlice.js'
+import Post from '../../components/Post.jsx';
+import postImage from '../../helper_functions/postImage.js'
+import classes from './mainPage.module.css'
 
 export default function Main() {
     let [isLoaded, setFinish] = useState(false)
@@ -21,22 +23,21 @@ export default function Main() {
     let userData = useSelector(state => state.main)
     let albums = useSelector(state => state.albums.albums)
     let userPosts = useSelector(state => state.userPosts.myPosts)
-    console.log(albums);
     useEffect(() => {
         ( async function loadPhotos() {
             dispatch(fetchData(myData.token))
             dispatch(fetchMyPosts(myData._id))
-            await dispatch(fetchMyAlbums({userid: myData._id, token: myData.token}))
+            dispatch(fetchMyAlbums({userid: myData._id, token: myData.token}))
             setFinish(true)
             setPhotos(albums)
         })()
     },[isAuth])
     return (
-        <div className='mainpage'>
+        <div className={classes.mainpage}>
             <Profile fullName={userData.userInfo.name} age={userData.userInfo.age} friends={userData.userInfo.friends} profilePicture={userData.userInfo.profilePicture} location={userData.userInfo.location}/>
-            <div className='mainContent'>
+            <div className={classes.mainContent}>
                 <AboutMeBlock galleryPhotos={photos} isloadedState={isLoaded}/>
-                <PostBlock posts={userPosts} dispatch={dispatch}/>
+                <PostBlock postImage={postImage} posts={userPosts} dispatch={dispatch} userData={userData} useState={useState} savePicture={savePicture}/>
             </div>
             <Sidebar/>
         </div>
@@ -44,33 +45,32 @@ export default function Main() {
 }
 function Sidebar() {
     return (
-        <div className='sidebar'>
+        <div className={classes.sidebar}>
           
         </div>
     )
 }
 function Profile(props) {
-    console.log(props);
     // let profPicture = props.profilePicture? props.profilePicture : null
     return (
-        <div className='profileContainer'>
-            <img src={props.profilePicture} className='pofilePicture'></img>
-            <div className='infoBlock'>
+        <div className={classes.profileContainer}>
+            <img src={props.profilePicture} className={classes.pofilePicture}></img>
+            <div className={classes.infoBlock}>
             <h1>{props.fullName}</h1>
-            <div className='defaultInfo'>
-                <div className='leftInfoBlock'>
+            <div className={classes.defaultInfo}>
+                <div className={classes.leftInfoBlock}>
                     <p>Location:</p>
                     <p>Friends:</p>
                     <p>Age:</p>
                 </div>
-                <div className='rightInfoBlock'>
+                <div className={classes.rightInfoBlock}>
                     <a href="#">{props.location}</a>
                     <a href="#">{props.friends}</a>
                     <a href="#">{props.age}</a>
                 </div>
             </div>
-            <button className='book'> <Link to="/dialogs" element={<Dialog/>}>Message</Link></button>
-            <button className='subscribe'>Subscribe</button>
+            <button className={classes.book}> <Link to="/dialogs" element={<Dialog/>}>Message</Link></button>
+            <button className={classes.subscribe}>Subscribe</button>
            </div>
         </div>
     )
@@ -78,16 +78,16 @@ function Profile(props) {
 function AboutMeBlock(props) {
     if(!props.isloadedState) return null
     return (
-        <div className='aboutMeBlock'>
-            <div className='aboutMeHeader'>
+        <div className={classes.aboutMeBlock}>
+            <div className={classes.aboutMeHeader}>
                 <span>20 views</span>
                 <Link to="/gallery" element={<Gallery/>}>See all</Link>
             </div>
-            <div className='gallery'>
+            <div className={classes.gallery}>
                 {props.galleryPhotos.map(album => {
                     if(album.name === 'My photos') {
                         return album.albumPhotos.slice(0,8).map((photoObj, id) => {
-                           return (<div className='photoGallery' key={id}><img src={photoObj.displayURL}></img></div>)
+                           return (<div className={classes.photoGallery} key={id}><img src={photoObj.displayURL}></img></div>)
                         })
                     }
                 })}
@@ -99,28 +99,70 @@ function PostBlock(props) {
     // let [post, setPost] = useState([...props.posts])
     let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     let tools = useRef(null)
+    let tags = useRef(null)
+    let append = useRef(null)
     let textArea = useRef(<textarea>nothing</textarea>)
-    // function savePost(e) {
-    //     setPost(prev => [...prev, {date: day + '.' + month, year: date.getFullYear(),comments: e.target.parentNode.parentNode.childNodes[1].value}])
-    // }
-    // savePost(post)
+    let [focus, setFocus] = useState(false)
+    let [imagesToAppend, setImagesToAppend] = useState([])
+    console.log(imagesToAppend);
+    function appendImage(e) {
+        props.postImage(e.target, 'All').then(res => {
+            props.dispatch(props.savePicture({picture:res, myData:props.userData}))
+            .then(_ => setImagesToAppend(prev => [...prev, res]))
+        })
+    }
+    function filterTags(strTags) {
+        let result = strTags.split(' ')
+        for (let i = 0; i < result.length-1; i++) {//gets rib of repeating tags
+            for (let j = i; j < result.length-1; j++) {
+                if(result[i] === result[j+1]) result[i] = ''
+            }    
+        }
+        return result.filter(str => str.length > 0)
+    }
+    function savePost(e) {
+        let result = filterTags(tags.current.value)
+        if(imagesToAppend.length>0) appendImage(e)
+        props.dispatch(createPost({text: textArea.current.value, id:props.userData._id, tags:result, imageUrl: ''}))
+    }
     function showTools() { tools.current.style.display = "flex"}
-    function hideTools() {setTimeout(_ => tools.current.style.display = "none",200)}
+    function hideTools() {
+        if(focus==false && imagesToAppend.length === 0)setTimeout(_ => tools.current.style.display = "none",200)
+    }
     function addMore(e) {
         let num = (e.target.value.length)/10
         textArea.current.style.height = 50 + (5 + num) + 'px'
     }
+    function addTags(e) {
+        e.preventDefault()
+        tags.current.style.display = 'flex'
+    }
     return (
         <div>
-            <div className='makePost'>
+            <div className={classes.makePost} onMouseLeave={hideTools} onMouseEnter={showTools}>
                 <h2>Make post</h2>
-                <textarea ref={textArea} placeholder='Text' onFocus={showTools} onBlur={hideTools} onInput={addMore}></textarea>
-                <div className='tools' ref={tools}>
-                   <button className="publish hide" >Publish</button>
-                   <a href='' className='append'> <Append className='appendIcon'/> <p>Append</p></a>
+                <textarea ref={textArea} placeholder='Text' onFocus={_ => setFocus(true)} onBlur={_ => setFocus(false)} onInput={addMore}></textarea>
+                <div className={imagesToAppend.length !== 0? classes.imagesToAppend_show :  classes.imagesToAppend_hide}>
+                    {imagesToAppend.map(image => {
+                        console.log(image);
+                        return <div className={classes.imgToAppendWrapper}>
+                            <div className={classes.background}></div>
+                                   <ZoomIn className={classes.zoom_in} />
+                                   <img src={image.imageURL} className={classes.imageToAppend} />
+                               </div>
+                    })}
+                </div>
+                <div className={classes.tools} ref={tools}>
+                   <button className={classes.publish} onClick={savePost}>Publish</button>
+                   <input className={classes.append} id="image-append" ref={append} type="file" onInput={appendImage}></input>
+                   <Append className={classes.appendIcon}/>
+                   <a href='' className={classes.tag}> <Tags className={classes.tagsIcon} onClick={addTags}/></a>
+                   <div>
+                      <input ref={tags} className={classes.tagsInput} onFocus={_ => setFocus(true)} onBlur={_ => setFocus(false)} placeholder='firstTag secondTag...'/>
+                   </div>
                 </div>
             </div>
-            <div className='postsList'>{props.posts.map((post,id) => {
+            <div className={classes.postsList}>{props.posts.map((post,id) => {
                 let year = post.createdAt.slice(0,4)
                 let month = post.createdAt.slice(5,7)
                 month = month[0] === '0'?  +month[1] - 1 : +month - 1
@@ -133,18 +175,3 @@ function PostBlock(props) {
     )
 }
 
-function Post(props) {
-    return (
-        <div className='post'>
-        <div className='postHeader'>
-          <div><img className="profileCircle" ></img></div>
-          <div className='date'>published on {props.date} {props.year} at {props.time}</div>
-          <div className='postTools'>
-            <Delete className='icon'/>
-            <Change className='icon'/>
-          </div>
-        </div>
-        <div className='text'>{props.text}</div>
-        </div>
-    )
-}
