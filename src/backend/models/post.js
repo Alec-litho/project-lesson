@@ -24,7 +24,10 @@ const PostSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
     }],
-    imageUrl: String,
+    imageUrl: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Image'
+    }], 
 }, {
     timestamps: true
 }) 

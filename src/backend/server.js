@@ -34,7 +34,7 @@ app.post('/auth/register', registerValidation, register)
 //post paths----------------------------------------
 app.get('/posts', getAll)
 app.get('/posts/:id', getOne)
-app.post('/posts/myposts', getMyPosts)
+app.post('/posts/myposts', getMyPosts) 
 app.post('/posts', checkAuth, postCreateValidation, create)
 app.delete('/posts/:id', checkAuth, deletePost)
 app.patch('/posts',checkAuth, update)//dont forget to finish it

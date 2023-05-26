@@ -1,11 +1,12 @@
 .slider {
+    z-index: 10;
     display: none;
-    position: fixed;
+    position: absolute;
     left: 0;
     top: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0,0,0, .2)
+    background-color: rgba(0,0,0, .2) 
 }
 .imageContainer {
     overflow: auto;
@@ -54,4 +55,8 @@
     padding: 5px;
     border-radius: 10px;
     background-color: white;
+}
+.icon {
+    width: 20px;
+    height: 20px;
 }

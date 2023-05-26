@@ -1,5 +1,5 @@
 import classes from './gallery.module.css'
-import './gallery_slider_style.css'
+
 import {useState, useEffect, useRef} from 'react'
 import { ReactComponent as AddPhoto } from '../../assets/icons/addPhoto.svg'
 import { ReactComponent as Plus } from '../../assets/icons/plus.svg'
@@ -24,7 +24,9 @@ export default function Gallery(props) {
     let [currPictureId, setcurrPictureId] = useState(null)
     let [updatePictures, setUpdate] = useState(false)
     useEffect(()=> { 
-        loadPictures()
+        dispatch(fetchMyAlbums({userid: myData._id, token: myData.token, update: setUpdate}))
+        finishLoading(true)
+        setPictures(albums)
     },[updatePictures])
     
     function showAlbum(e) {
@@ -53,11 +55,6 @@ export default function Gallery(props) {
         underlines.current.forEach(item => item.id === child.id?  item.style.width = 200 + 'px' : null)
     })}
     function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
-    function loadPictures() {
-        dispatch(fetchMyAlbums({userid: myData._id, token: myData.token, update: setUpdate}))
-        setPictures(albums)
-        finishLoading(true)
-    }
     function uploadPicture(e) {
         postImage(e.target, currentAlbum).then(res => {
             dispatch(savePicture({picture:res, myData, setUpdate})).then(_ => {//save in db
@@ -84,24 +81,25 @@ export default function Gallery(props) {
                })}
                <Plus className={classes.addAlbum} onClick={() => setModal(prev => prev = !closeModal)}/>
                </div>
-               <div className={classes.addPicture}>
-                  <label htmlFor="file-upload" className={classes.customUpload}><AddPhoto className={classes.addPhoto}/></label>
-                  <input className={classes.inputHide} id="file-upload" ref={addPicture} type="file" onInput={uploadPicture}/>
-               </div>
             </div>
             <div className={classes.galleryBody}>
                     {
                     currentPictures.map((album, id) => {
                          if(album.name === currentAlbum) {
                             return album.images.map((photo, id) => {
-                                return <div  key={id} className={classes.imgWrapper} onClick={e => showSlider(e)}><img data-id={id} date={photo.date} title={photo.title} className={classes.img} src={photo.imageURL} desc={photo.description}></img></div>
+                                console.log(photo);
+                                return <div  key={id} className={classes.imgWrapper} onClick={e => showSlider(e)}><img data-id={photo._id} date={photo.date} title={photo.title} className={classes.img} src={photo.imageURL} desc={photo.description}></img></div>
                             }) 
                          }
                     })
                     }
+                                   <div className={classes.addPicture}>
+                  <label htmlFor="file-upload" className={classes.customUpload}><Plus className={classes.addPhoto}/></label>
+                  <input className={classes.inputHide} id="file-upload" ref={addPicture} type="file" onInput={uploadPicture}/>
+               </div>
             </div>
             <CreateModal closeModal={closeModal} setModal={setModal} userId={myData._id} update={setUpdate} token={myData.token}/>
-            <Slider setUpdate={setUpdate} token={myData.token} currentPictures={currentPictures} sliderTrue={sliderTrue} setPictures={setPictures} setSliderTrue={setSliderTrue} currPictureId={currPictureId} setcurrPictureId={setcurrPictureId} currentAlbum={currentAlbum}></Slider>
+            <Slider setUpdate={setUpdate} token={myData.token} currentPictures={currentPictures} sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={currPictureId}></Slider>
         </div>
         </div>
     )

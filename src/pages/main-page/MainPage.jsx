@@ -4,13 +4,13 @@ import {Link} from 'react-router-dom';
 import Gallery from '../gallery-page/Gallery.jsx'
 import Dialog from '../dialog-page/DialogPage.jsx'
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
-import { ReactComponent as ZoomIn } from '../../assets/icons/zoom-in.svg'
 import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
 import {fetchData, updatePosts} from '../../features/userSlice'
 import {fetchMyPosts, createPost,} from '../../features/postSlice'
 import {fetchMyAlbums, savePicture} from '../../features/albumSlice'
 import {selectIsAuth} from '../../features/authSlice.js'
 import Post from '../../components/Post.jsx';
+import Slider from '../../components/Slider.jsx';
 import postImage from '../../helper_functions/postImage.js'
 import classes from './mainPage.module.css'
 
@@ -18,16 +18,18 @@ export default function Main() {
     let [isLoaded, setFinish] = useState(false)
     let [photos, setPhotos] = useState([])
     let dispatch = useDispatch()
-    let myData = useSelector(state => state.auth.data)
+    let auth = useSelector(state => state.auth.data)
     let isAuth = useSelector(selectIsAuth)
     let userData = useSelector(state => state.main)
     let albums = useSelector(state => state.albums.albums)
     let userPosts = useSelector(state => state.userPosts.myPosts)
+    let [sliderTrue, setSliderTrue] = useState(false)
+    let [currPictureId, setcurrPictureId] = useState(null)
     useEffect(() => {
-        ( async function loadPhotos() {
-            dispatch(fetchData(myData.token))
-            dispatch(fetchMyPosts(myData._id))
-            dispatch(fetchMyAlbums({userid: myData._id, token: myData.token}))
+        (function loadPhotos() {
+            dispatch(fetchData(auth.token))
+            dispatch(fetchMyPosts(auth._id))
+            dispatch(fetchMyAlbums({userid: auth._id, token: auth.token}))
             setFinish(true)
             setPhotos(albums)
         })()
@@ -37,9 +39,10 @@ export default function Main() {
             <Profile fullName={userData.userInfo.name} age={userData.userInfo.age} friends={userData.userInfo.friends} profilePicture={userData.userInfo.profilePicture} location={userData.userInfo.location}/>
             <div className={classes.mainContent}>
                 <AboutMeBlock galleryPhotos={photos} isloadedState={isLoaded}/>
-                <PostBlock postImage={postImage} posts={userPosts} dispatch={dispatch} userData={userData} useState={useState} savePicture={savePicture}/>
+                <PostBlock setcurrPictureId={setcurrPictureId} setSliderTrue={setSliderTrue} postImage={postImage} posts={userPosts} dispatch={dispatch} useSelector={useSelector} auth={auth} useState={useState} savePicture={savePicture}/>
             </div>
             <Sidebar/>
+            <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={currPictureId}></Slider>
         </div>
     )
 }
@@ -104,11 +107,13 @@ function PostBlock(props) {
     let textArea = useRef(<textarea>nothing</textarea>)
     let [focus, setFocus] = useState(false)
     let [imagesToAppend, setImagesToAppend] = useState([])
-    console.log(imagesToAppend);
+
     function appendImage(e) {
-        props.postImage(e.target, 'All').then(res => {
-            props.dispatch(props.savePicture({picture:res, myData:props.userData}))
-            .then(_ => setImagesToAppend(prev => [...prev, res]))
+        props.postImage(e.target).then(res => {
+            props.dispatch(props.savePicture({picture:res, myData:props.auth}))
+            .then(resp => {
+                setImagesToAppend(prev => [...prev, resp.payload])
+            })
         })
     }
     function filterTags(strTags) {
@@ -122,8 +127,9 @@ function PostBlock(props) {
     }
     function savePost(e) {
         let result = filterTags(tags.current.value)
-        if(imagesToAppend.length>0) appendImage(e)
-        props.dispatch(createPost({text: textArea.current.value, id:props.userData._id, tags:result, imageUrl: ''}))
+        let imgs = imagesToAppend.map(img => img._id)
+        // if(imagesToAppend.length>0) appendImage(e)
+        props.dispatch(createPost({text: textArea.current.value, id:props.auth._id, tags:result, imageUrl: imgs, token:props.auth.token}))
     }
     function showTools() { tools.current.style.display = "flex"}
     function hideTools() {
@@ -143,18 +149,19 @@ function PostBlock(props) {
                 <h2>Make post</h2>
                 <textarea ref={textArea} placeholder='Text' onFocus={_ => setFocus(true)} onBlur={_ => setFocus(false)} onInput={addMore}></textarea>
                 <div className={imagesToAppend.length !== 0? classes.imagesToAppend_show :  classes.imagesToAppend_hide}>
-                    {imagesToAppend.map(image => {
-                        console.log(image);
-                        return <div className={classes.imgToAppendWrapper}>
-                            <div className={classes.background}></div>
-                                   <ZoomIn className={classes.zoom_in} />
-                                   <img src={image.imageURL} className={classes.imageToAppend} />
+                    {imagesToAppend.map((image, id) => {
+                        return <div key={id} className={classes.imgToAppendWrapper}>
+                                   <div className={classes.background}></div>
+                                   <img data-id={image._id} src={image.imageURL} className={classes.imageToAppend} onClick={e => {
+                                       props.setSliderTrue(true)
+                                       props.setcurrPictureId(e.target.dataset.id)
+                                    }}/>
                                </div>
                     })}
                 </div>
                 <div className={classes.tools} ref={tools}>
                    <button className={classes.publish} onClick={savePost}>Publish</button>
-                   <input className={classes.append} id="image-append" ref={append} type="file" onInput={appendImage}></input>
+                   <input className={classes.append} id="image-append" ref={append} type="file" onInput={e => appendImage(e)}></input>
                    <Append className={classes.appendIcon}/>
                    <a href='' className={classes.tag}> <Tags className={classes.tagsIcon} onClick={addTags}/></a>
                    <div>

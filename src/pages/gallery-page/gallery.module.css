@@ -120,22 +120,24 @@
 }
 
 .addPhoto {
-    width: 35px;
-    height: 35px;
+    width: 60px;
+    height: 60px;
     cursor: pointer;
+}
+.addPhoto:hover {
+    transform: scale(110%);
 }
 .inputHide {
     display: none;
 }
 
 .addPicture {
-    padding: 0 0 10px 20px;
-    position: relative;
+    background-color: rgba(0, 0, 0, 0.123);
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
-    width: 100%;
-    height: 100px;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 200px;
 
 }
 .addAlbum {

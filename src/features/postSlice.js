@@ -5,7 +5,7 @@ const initialState = {
     posts: [],
     myPosts: [{'createdAt': "2023-04-27T13:32:31.145+00:00"}],
     status: 'idle',
-    error: null
+    error: null 
 }
 export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async(userId) => {
     const response = await axios.post("http://localhost:3001/posts/myposts", {id:userId})
@@ -13,7 +13,10 @@ export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async(userId)
 })
 
 export const createPost = createAsyncThunk('posts/createPost', async(data) => {
-  const response = await axios.post("http://localhost:3001/posts", {text: data.text, tags: data.tags, user: data.user, imageUrl:data.imageUrl})
+  const response = await axios.post("http://localhost:3001/posts/",
+    {text: data.text, tags: data.tags, id: data.id, imageUrl:data.imageUrl},
+    {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${data.token}`}
+  })
   return response.data
 })
 export const deletePost = createAsyncThunk('posts/fetchPosts', async(post) => {

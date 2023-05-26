@@ -1,5 +1,6 @@
 let {PostModel} = require('../models/post')
-
+let {AlbumModel} = require('../models/album')
+let {ObjectID} = require('mongodb')
 let getAll = async(req,res) => {
     try {
         let posts = await PostModel.find().populate('user').exec()
@@ -58,10 +59,13 @@ let update = async(req,res) => {
 }
 
 let create = async(req,res) => {
-    try {
+    try { 
+        let imgs = req.body.imageUrl.map(img => {
+            AlbumModel.find({"_id":img})
+        })
         const doc = new PostModel({
             text: req.body.text,
-            imageUrl: req.body.imageUrl,
+            imageUrl: imgs,
             tags: req.body.tags,
             user: req.body.id
         })

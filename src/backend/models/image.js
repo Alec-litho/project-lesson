@@ -23,10 +23,6 @@ const imageSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    id: {
-        type: String,
-        unique: true
-    },
     date: {
       type: Date,
       default: Date.now

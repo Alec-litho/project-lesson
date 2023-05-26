@@ -1,36 +1,45 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ReactComponent as Arrow } from '../assets/icons/arrow.svg'
 import { ReactComponent as Delete } from '../assets/icons/delete.svg'
-import {deletePicture, fetchMyAlbums} from '../features/albumSlice'
+import {deletePicture, fetchMyAlbums, fetchImg} from '../features/albumSlice'
 import { useSelector, useDispatch } from "react-redux"
+import Loader from "./Loader"
 import axios from 'axios'
+import '../styles/gallery_slider_style.css'
+
 
 export default function Slider(props) {
-    let leftArrow = useRef(null),
-    rightArrow = useRef(null)
+    let leftArrow = useRef(null), rightArrow = useRef(null);
     let sliderContainer = useRef(null)
     let slider = useRef(null)
-    let albums = useSelector(state => state.albums.albums)
     let myData = useSelector(state => state.auth.data)
+    let [pictures, setPictures] = useState([])
     let dispatch = useDispatch()
-    async function deleteImage(id) {
-        await dispatch(deletePicture({token: myData.token, id, update:props.setUpdate}))
+    console.log(pictures);
+    function deleteImage(id) {
+        dispatch(deletePicture({token: myData.token, id, update:props.setUpdate}))
         props.setSliderTrue(!props.sliderTrue)
     }
     useEffect(_ => {
-        [...sliderContainer.current.childNodes].map((img, id) => {
-            img.className = id == props.currPictureId? 'img-cont-slider show' : 'img-cont-slider'
-        })
-    }, [props.sliderTrue])
+        if(!props.currPictureId) return
+        let headers = {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${myData.token}`}}
+        axios.get(`http://localhost:3001/images/${props.currPictureId}`,headers)//get info of selected image and thus find out its album
+            .then(res => {
+                if(!res.data.album) axios.get(`http://localhost:3001/images/${res.data._id}`,headers).then(res => setPictures([res.data])) 
+                else {axios.get(`http://localhost:3001/albums/${res.data.album}`,headers).then(res => setPictures(res.data.images))}
+            })
+    }, [props.currPictureId])
     function hideSlider(e) {
         if(e.target.className === 'imageContainer') {
-            props.setSliderTrue(!props.sliderTrue)
+            setPictures([])
+            props.setSliderTrue(prev => prev = false)
         }
     }
     function sliderMoveForward(e) {
         let images = [...sliderContainer.current.childNodes]
         let curr = ''
         images.map((div, id) => {
+            console.log(div);
             [...div.classList].forEach(elem => elem === 'show'? curr = id : null )
         })
         curr++
@@ -51,10 +60,27 @@ export default function Slider(props) {
     return (
         <div style={{"display": props.sliderTrue? "flex" : "none"}} ref={slider} className='slider'>
         <div className='imageContainer' ref={sliderContainer} onClick={e => hideSlider(e)}>
-             {props.currentPictures.map(album => {
-                 if(album.name === props.currentAlbum) {
-                     return album.images.map((photo, id) => {
-                     return <div key={id} className={'img-cont-slider'} >
+            {pictures.map((photo, id) => {
+                if(!photo.album ) {//if image doesnt have album then show only one image
+                    return <div key={id} className='img-cont-slider show'>
+                                <div className='image-slider-header'><img className='img-slider' src={photo.imageURL}/></div>
+                                <div className='comments-slider'>
+                                    <div>{props.token & <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}</div>
+                                    <p>{props.desc}</p>
+                                </div>
+                            </div>
+                    }
+                else if(pictures.length<=0) {
+                    console.log('loa');
+                    return  <div key={id} className='img-cont-slider show'>
+                                <Loader/>
+                                <div className='comments-slider'>
+                                    <div>{props.token & <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}</div>
+                                    <p>{props.desc}</p>
+                                </div>
+                            </div>
+                }
+                    return <div key={id} className={props.currPictureId === photo._id? 'img-cont-slider show' : 'img-cont-slider'} >
                                  <div className='image-slider-header'>
                                     <Arrow ref={leftArrow} className='arrowLeft' onClick={sliderMoveBackwards}/>
                                     <img className='img-slider' src={photo.imageURL} onClick={sliderMoveForward}/>
@@ -62,14 +88,14 @@ export default function Slider(props) {
                                  </div>
                                  <div className='comments-slider'>
                                      <div>
-                                        <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>
+                                        {props.token & <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}
                                      </div>
                                      <p>{props.desc}</p>
                                  </div>
                              </div>
-                    })}
-             })}
-        </div>
+                })
+            }
+        </div> 
      </div>
     )
 }

@@ -1,39 +1,46 @@
 let {imageModel} = require('../models/image')
 let {AlbumModel} = require('../models/album')
+let {ObjectID} = require('mongodb')
+const { isRouteErrorResponse } = require('react-router-dom')
 module.exports.getAllImages = function(req,res) {
     const images = imageModel.find()
     res.send(images)
 }
 module.exports.uploadImage = async function(req,res) {
-    let albumId = await AlbumModel.findOne({name:req.body.album}, '_id')
+    let albumId = req.body.album !== undefined? await AlbumModel.findOne({name:req.body.album}, '_id') : undefined
     let test = req.body
-    console.log(req.body, req.userId);
+
     let doc = new imageModel({
         title: req.body.title,
         imageURL: req.body.imageURL,
         description: req.body.description,
-        id: req.body.id,
         user: req.userId,
-        album: albumId
+        album: albumId != undefined? albumId : null
     })
-    doc.save()
-    let album = await AlbumModel.findOne({name:req.body.album})
-    album.images.push(doc)
-    album.save()
-    res.json(album)
+    if(req.body.album!=undefined) {
+        let album = await AlbumModel.findOne({name:req.body.album})
+        doc.save()
+        album.images.push(doc)
+        album.save()
+        res.json(album)
+    } else {
+        doc.save()
+        res.json(doc)
+    }
+
 }
 module.exports.getOneImage = function(req,res) {
-    const id = req.params.id
-    imageModel.findOne({id: id}).then(resp => res.send(resp))
+    const id = new ObjectID(`${req.params.id}`)  
+    imageModel.findOne({"_id": id}).then(resp => res.send(resp))
 }
 module.exports.deleteImage = (req,res) => {
     const id = req.params.id
-    imageModel.deleteOne({_id: id}).then(resp => res.send(resp))
+    imageModel.deleteOne({"_id": id}).then(resp => res.send(resp))
 }
 module.exports.uploadAlbum = function(req,res) {
     console.log( req.body, req.userId);
     let doc = new AlbumModel({
-        name: req.body.name,
+        name: req.body.name, 
         user: req.userId,
         images: [],
         description: req.body.description
@@ -52,7 +59,6 @@ module.exports.getMyAlbums = async function(req,res) {
     res.send(albums)
 }
 module.exports.getOneAlbum = function(req,res) {
-    const id = req.params.id
-    const album = AlbumModel.findOne({id: id})
-    res.send(album)
+    const id = new ObjectID(`${req.params.id}`)
+    AlbumModel.findOne({"_id": id}).populate('images').then(resp => res.send(resp))
 }
