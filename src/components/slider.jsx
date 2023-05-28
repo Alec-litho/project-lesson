@@ -7,7 +7,7 @@ import Loader from "./Loader"
 import axios from 'axios'
 import '../styles/gallery_slider_style.css'
 
-
+ 
 export default function Slider(props) {
     let leftArrow = useRef(null), rightArrow = useRef(null);
     let sliderContainer = useRef(null)
@@ -25,7 +25,11 @@ export default function Slider(props) {
         let headers = {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${myData.token}`}}
         axios.get(`http://localhost:3001/images/${props.currPictureId}`,headers)//get info of selected image and thus find out its album
             .then(res => {
-                if(!res.data.album) axios.get(`http://localhost:3001/images/${res.data._id}`,headers).then(res => setPictures([res.data])) 
+                if(!res.data.album && !res.data.post) axios.get(`http://localhost:3001/images/${res.data._id}`,headers).then(res => setPictures([res.data])) 
+                else if(res.data.post) {
+                    console.log(props.currPictureId);
+                    axios.get(`http://localhost:3001/posts/images`,{imgId:props.currPictureId},headers).then(res => setPictures([res.data.images])) 
+                }
                 else {axios.get(`http://localhost:3001/albums/${res.data.album}`,headers).then(res => setPictures(res.data.images))}
             })
     }, [props.currPictureId])

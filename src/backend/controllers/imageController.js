@@ -7,17 +7,18 @@ module.exports.getAllImages = function(req,res) {
     res.send(images)
 }
 module.exports.uploadImage = async function(req,res) {
-    let albumId = req.body.album !== undefined? await AlbumModel.findOne({name:req.body.album}, '_id') : undefined
+    let albumId = req.body.album? await AlbumModel.findOne({name:req.body.album}, '_id') : undefined
     let test = req.body
 
-    let doc = new imageModel({
+    let doc = new imageModel({ 
         title: req.body.title,
         imageURL: req.body.imageURL,
         description: req.body.description,
         user: req.userId,
-        album: albumId != undefined? albumId : null
+        album: albumId? albumId : undefined,
+        post: req.body.post
     })
-    if(req.body.album!=undefined) {
+    if(req.body.album) {
         let album = await AlbumModel.findOne({name:req.body.album})
         doc.save()
         album.images.push(doc)

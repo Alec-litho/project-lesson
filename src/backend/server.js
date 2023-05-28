@@ -4,7 +4,7 @@ let {registerValidation, loginValidation, postCreateValidation, imageValidation}
 const cors = require("cors");
 const {checkAuth} = require('./utils/checkAuth')
 const {register, login, getMe} = require('./controllers/UserController')
-const {create, getAll, getOne, deletePost, update, getMyPosts} = require('./controllers/postController')
+const {create, getAll, getOne, deletePost, update, getMyPosts, getPostImages} = require('./controllers/postController')
 const {uploadImage, getOneImage, getAllImages, getOneAlbum, getAlbums, uploadAlbum, deleteImage, getMyAlbums} = require('./controllers/imageController')
 const multer = require('multer')
 
@@ -34,8 +34,9 @@ app.post('/auth/register', registerValidation, register)
 //post paths----------------------------------------
 app.get('/posts', getAll)
 app.get('/posts/:id', getOne)
+app.post('/posts/images', getPostImages)
 app.post('/posts/myposts', getMyPosts) 
-app.post('/posts', checkAuth, postCreateValidation, create)
+app.post('/posts', checkAuth, postCreateValidation, create) 
 app.delete('/posts/:id', checkAuth, deletePost)
 app.patch('/posts',checkAuth, update)//dont forget to finish it
 //images paths---------------------------------------

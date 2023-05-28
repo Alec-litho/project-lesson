@@ -1,5 +1,5 @@
 let {PostModel} = require('../models/post')
-let {AlbumModel} = require('../models/album')
+let {imageModel} = require('../models/image')
 let {ObjectID} = require('mongodb')
 let getAll = async(req,res) => {
     try {
@@ -12,8 +12,14 @@ let getAll = async(req,res) => {
     }
 }
 let getMyPosts = async function(req, res) {
-    let posts = await PostModel.find({user: req.body.id})
+    let posts = await PostModel.find({user: req.body.id}).populate("images")
     res.send(posts)
+}  
+let getPostImages = async function(req, res) {
+    let imgId = new ObjectID(`${req.body.imgId}`)  
+    console.log(req.body.imgId);
+    let postImages = await PostModel.find({"images": imgId}, {"images": 1}).populate("images")
+    res.send(postImages)
 }  
 let getOne = async(req,res) => {
     try {
@@ -61,11 +67,11 @@ let update = async(req,res) => {
 let create = async(req,res) => {
     try { 
         let imgs = req.body.imageUrl.map(img => {
-            AlbumModel.find({"_id":img})
+            return new ObjectID(`${img}`)  
         })
         const doc = new PostModel({
             text: req.body.text,
-            imageUrl: imgs,
+            images: imgs,
             tags: req.body.tags,
             user: req.body.id
         })
@@ -83,5 +89,6 @@ module.exports = {
     getOne,
     deletePost,
     update,
-    getMyPosts
+    getMyPosts,
+    getPostImages
 }

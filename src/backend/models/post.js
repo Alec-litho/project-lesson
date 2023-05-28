@@ -5,7 +5,6 @@ const PostSchema = new mongoose.Schema({
     text: {
         type: String,
         required: true,
-        unique: true
     },
     tags: {
         type: Array,
@@ -24,7 +23,7 @@ const PostSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
     }],
-    imageUrl: [{
+    images: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'
     }], 

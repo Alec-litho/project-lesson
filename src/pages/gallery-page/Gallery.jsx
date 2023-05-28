@@ -56,7 +56,7 @@ export default function Gallery(props) {
     })}
     function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
     function uploadPicture(e) {
-        postImage(e.target, currentAlbum).then(res => {
+        postImage(e.target, currentAlbum, false/*post*/ ).then(res => {
             dispatch(savePicture({picture:res, myData, setUpdate})).then(_ => {//save in db
                 setUpdate()
                 setPictures(currentPictures)

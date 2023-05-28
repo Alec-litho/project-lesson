@@ -23,6 +23,9 @@ const imageSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    post: {
+        type: Boolean,
+    },
     date: {
       type: Date,
       default: Date.now
