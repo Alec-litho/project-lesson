@@ -28,7 +28,7 @@ export const fetchAlbum = createAsyncThunk("albums/fetchAlbum", (data) => {
 export const fetchImg = createAsyncThunk("albums/fetchImg", (data) => {
     return axios.get(`http://localhost:3001/images/${data._id}`,{
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', 
             "Authorization": `Bearer ${data.token}`
         }
     })
