@@ -1,5 +1,6 @@
 let {PostModel} = require('../models/post')
-let {imageModel} = require('../models/image')
+let {ImageModel} = require('../models/image')
+let {CommentModel} = require('../models/comment')
 let {ObjectID} = require('mongodb')
 let getAll = async(req,res) => {
     try {
@@ -17,8 +18,7 @@ let getMyPosts = async function(req, res) {
 }  
 let getPostImages = async function(req, res) {
     let imgId = new ObjectID(`${req.body.imgId}`)  
-    console.log(req.body.imgId);
-    let postImages = await PostModel.find({"images": imgId}, {"images": 1}).populate("images")
+    let postImages = await PostModel.find({images: imgId}, {images: 1}).populate("images")
     res.send(postImages)
 }  
 let getOne = async(req,res) => {
@@ -81,6 +81,33 @@ let create = async(req,res) => {
         console.log(error);
         res.status(500).json({message:'Could not upload post'})
     }
+} 
+let getComments = function(req, res) {
+    const postId = new ObjectID(`${req.params.id}`)  
+    CommentModel.findOne({"_id": postId}).populate("replies").then(resp => res.send(resp))
+}
+let postComment = async(req, res) => {
+    const doc = new CommentModel({
+        text: req.body.text,
+        user: req.body.id,
+        autherPicture: req.body.autherPicture,
+        autherName: req.body.autherName,
+        post: req.body.post,
+        likes: 0,
+        replies: []
+    })
+    let resp = await doc.save()
+    res.send(resp)
+}
+let postReply = async(req, res) => {
+    const id = new ObjectID(`${req.params.id}`)  
+    const resp = await CommentModel.updateOne({"_id":id}, { $push: { replies: req.body.reply } })
+    res.send(resp)
+}
+let deleteComment = async(req, res) => {
+    const id = new ObjectID(`${req.params.id}`)  
+    const resp = await CommentModel.deleteOne({"_id":id})
+    res.send(resp)
 }
 
 module.exports = {
@@ -90,5 +117,9 @@ module.exports = {
     deletePost,
     update,
     getMyPosts,
-    getPostImages
+    getPostImages,
+    getComments,
+    postComment,
+    postReply,
+    deleteComment
 }

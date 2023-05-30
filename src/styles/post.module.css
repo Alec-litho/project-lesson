@@ -68,9 +68,42 @@
   filter:brightness(90%);
 }
 .tools {
+  box-sizing: border-box;
+  padding: 10px;
   border-top: 1px solid #c7c7c7;
   margin-top: 20px;
   height: 50px;
   width: 100%;
   background-color: white;
+  display: flex;
+  justify-content: space-between;
+}
+.tool {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  gap: 5px;
+}
+.icon {
+  fill: rgb(63, 63, 63);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.view {
+  width: 20px;
+  height: 20px;
+}
+.rightBlock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.comments {
+  width: 840px;
+}
+.commentsHide {
+  display: none;
 }

@@ -10,14 +10,29 @@ user: {
    type: mongoose.Schema.Types.ObjectId,
    ref: 'User'
 },
+autherPicture: {
+   type: String,
+   required: true
+},
+autherName: {
+   type: String,
+   required: true
+},
 date: {
-      type: Date,
-      default: Date.now
+   type: Date,
+   default: Date.now
    },
 post: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Post'
-   }
+   type: mongoose.Schema.Types.ObjectId,
+   ref: 'Post'
+   },
+likes: {
+   type: Number
+   },
+replies: [{
+   type: mongoose.Schema.Types.ObjectId,
+   ref: 'Comment'
+}]
  })
 
-module.exports = mongoose.model('Comment', commentSchema);
+module.exports.commentModel = mongoose.model('Comment', commentSchema);

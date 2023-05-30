@@ -6,9 +6,10 @@ import classes from './mainPage.module.css'
 import {fetchMyPosts, createPost,} from '../../features/postSlice'
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
 import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
+import axios from "axios";
+
 
 export default function PostBlock(props) {
-    // let [post, setPost] = useState([...props.posts])
     let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     let tools = useRef(null)
     let tags = useRef(null)
@@ -18,12 +19,17 @@ export default function PostBlock(props) {
     let [imagesToAppend, setImagesToAppend] = useState([])
     let [textLeng, setTextLeng] = useState(0)
     let dispatch = useDispatch()
+    let posts = reverseArr(props.posts)
+    console.log(posts);
+    function reverseArr(arr) {
+        let posts = []
+        for (let i = arr.length-1; i >= 0; i--) posts.push(arr[i])
+        return posts
+    }
 
-    useEffect(_ => {
-        textArea.current.style.height = 50 + (textLeng/4) + 'px'
-    }, [textLeng])
+    useEffect(_ => {textArea.current.style.height = 50 + (textLeng/4) + 'px'}, [textLeng])
     function appendImage(e) {
-        postImage(e.target, undefined/*album*/, true/*post*/).then(res => {
+        postImage(e.target, undefined/*album*/, false/*post*/).then(res => {
             dispatch(props.savePicture({picture:res, myData:props.auth}))
             .then(resp => {
                 console.log(resp);
@@ -40,19 +46,23 @@ export default function PostBlock(props) {
         }
         return result.filter(str => str.length > 0)
     }
-    function savePost(e) {
+    function loadImages() {
+        imagesToAppend.forEach((img, indx) => {
+            let id = img._id 
+            axios.post(`http://localhost:3001/images/update/${id}`)
+            if(indx === imagesToAppend.length-1) savePost() //when all images will be updated post will be saved
+        })
+    }
+    async function savePost() {
         let result = filterTags(tags.current.value)
         let imgs = imagesToAppend.map(img => img._id)
-        imagesToAppend.forEach(img => img)//UPDATE IMAGE'S FIELD POST = TRUE
         dispatch(createPost({text: textArea.current.value, id:props.auth._id, tags:result, imageUrl: imgs, token:props.auth.token, update:props.setUpdate}))
         textArea.current.value = ''
         textArea.current.style.height = 50 + 'px'
         setImagesToAppend([])
     }
     function showTools() { tools.current.style.display = "flex"}
-    function hideTools() {
-        if(focus==false && imagesToAppend.length === 0)setTimeout(_ => tools.current.style.display = "none",200)
-    }
+    function hideTools() {if(focus==false && imagesToAppend.length === 0)setTimeout(_ => tools.current.style.display = "none",200)}
 
     function addTags(e) {
         e.preventDefault()
@@ -76,7 +86,7 @@ export default function PostBlock(props) {
                     })}
                 </div>
                 <div className={classes.tools} ref={tools}>
-                   <button className={classes.publish} onClick={savePost}>Publish</button>
+                   <button className={classes.publish} onClick={loadImages/*first, images should be updated*/}>Publish</button>
                    <input className={classes.append} id="image-append" ref={append} type="file" onInput={e => appendImage(e)}></input>
                    <Append className={classes.appendIcon}/>
                    <a href='' className={classes.tag}> <Tags className={classes.tagsIcon} onClick={addTags}/></a>
@@ -86,13 +96,14 @@ export default function PostBlock(props) {
                 </div>
             </div>
             <div className={classes.postsList}>{
-                props.posts.map((post,id) => {
-                    let year = post.createdAt.slice(0,4)
+                posts.map((post,id) => {
+                    console.log(post);
+                    let year = post.createdAt.slice(0,4) 
                     let month = post.createdAt.slice(5,7)
                     month = month[0] === '0'?  +month[1] - 1 : +month - 1
                     let day = post.createdAt.slice(8,10)
                     let time = post.createdAt.slice(11,16)
-                    return <Post key={id} date={months[month] + ' ' + day} images={post.images==undefined?[]:post.images} time={time} year={year} text={post.text}/>
+                    return <Post key={id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={months[month] + ' ' + day} images={post.images==undefined?[]:post.images} time={time} year={year} text={post.text}/>
                 })
             }
             </div>

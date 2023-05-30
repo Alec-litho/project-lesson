@@ -15,7 +15,7 @@ export default function Slider(props) {
     let myData = useSelector(state => state.auth.data)
     let [pictures, setPictures] = useState([])
     let dispatch = useDispatch()
-    console.log(pictures);
+
     function deleteImage(id) {
         dispatch(deletePicture({token: myData.token, id, update:props.setUpdate}))
         props.setSliderTrue(!props.sliderTrue)
@@ -23,13 +23,15 @@ export default function Slider(props) {
     useEffect(_ => {
         if(!props.currPictureId) return
         let headers = {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${myData.token}`}}
-        axios.get(`http://localhost:3001/images/${props.currPictureId}`,headers)//get info of selected image and thus find out its album
+        axios.get(`http://localhost:3001/images/${props.currPictureId}`,headers)//get info of selected image and thus find out if it has album
             .then(res => {
+                //if image not stored in a post and album-----------------------------------------------------------------------------------------------------
                 if(!res.data.album && !res.data.post) axios.get(`http://localhost:3001/images/${res.data._id}`,headers).then(res => setPictures([res.data])) 
+                //if image stored in a post-------------------------------------------------------------------------------------------------------------------
                 else if(res.data.post) {
-                    console.log(props.currPictureId);
-                    axios.get(`http://localhost:3001/posts/images`,{imgId:props.currPictureId},headers).then(res => setPictures([res.data.images])) 
+                    axios.post(`http://localhost:3001/posts/images`,{imgId:props.currPictureId},headers).then(res => setPictures(res.data[0].images))
                 }
+                //if image stored in an album-----------------------------------------------------------------------------------------------------------------
                 else {axios.get(`http://localhost:3001/albums/${res.data.album}`,headers).then(res => setPictures(res.data.images))}
             })
     }, [props.currPictureId])
@@ -43,7 +45,6 @@ export default function Slider(props) {
         let images = [...sliderContainer.current.childNodes]
         let curr = ''
         images.map((div, id) => {
-            console.log(div);
             [...div.classList].forEach(elem => elem === 'show'? curr = id : null )
         })
         curr++
@@ -65,7 +66,7 @@ export default function Slider(props) {
         <div style={{"display": props.sliderTrue? "flex" : "none"}} ref={slider} className='slider'>
         <div className='imageContainer' ref={sliderContainer} onClick={e => hideSlider(e)}>
             {pictures.map((photo, id) => {
-                if(!photo.album ) {//if image doesnt have album then show only one image
+                if(!photo.album && !photo.post) {//if image doesnt have album then show only one image
                     return <div key={id} className='img-cont-slider show'>
                                 <div className='image-slider-header'><img className='img-slider' src={photo.imageURL}/></div>
                                 <div className='comments-slider'>
@@ -75,7 +76,6 @@ export default function Slider(props) {
                             </div>
                     }
                 else if(pictures.length<=0) {
-                    console.log('loa');
                     return  <div key={id} className='img-cont-slider show'>
                                 <Loader/>
                                 <div className='comments-slider'>
@@ -84,7 +84,7 @@ export default function Slider(props) {
                                 </div>
                             </div>
                 }
-                    return <div key={id} className={props.currPictureId === photo._id? 'img-cont-slider show' : 'img-cont-slider'} >
+                    return  <div key={id} className={props.currPictureId === photo._id? 'img-cont-slider show' : 'img-cont-slider'} >
                                  <div className='image-slider-header'>
                                     <Arrow ref={leftArrow} className='arrowLeft' onClick={sliderMoveBackwards}/>
                                     <img className='img-slider' src={photo.imageURL} onClick={sliderMoveForward}/>
@@ -96,7 +96,7 @@ export default function Slider(props) {
                                      </div>
                                      <p>{props.desc}</p>
                                  </div>
-                             </div>
+                            </div>
                 })
             }
         </div> 

@@ -131,60 +131,17 @@ input::placeholder {
 .myMessageText {
     background-color: rgb(183, 241, 241)
 }
-.keyboard {
-    position: relative;
-    padding: 10px;
-    width: 100%;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.keyboard input {
-    width: 400px;
-    height: 50px;
-    border: 1px solid white;
-    border-radius: 20px;
-    background-color: rgb(230, 238, 238);
-    outline: none;
-}
-.keyboard input::placeholder {
-    padding-left: 60px;
-}
-svg {
-    transition: .2s;
-    fill: rgb(52, 53, 58)
-}
+
+
 svg:hover {
     fill: rgb(34, 34, 37)
 }
 .svg {
+    transition: .2s;
+    fill: rgb(52, 53, 58);
     cursor: pointer;
     position: absolute;
     left: 530px;
-    width: 30px;
-    height: 30px;
-}
-.emoji {
-    cursor: pointer;
-    position: absolute;
-    left: 200px;
-    width: 30px;
-    height: 30px;
-}
-
-.send {
-    cursor: pointer;
-    margin-left: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-}
-
-.sendIcon {
     width: 30px;
     height: 30px;
 }

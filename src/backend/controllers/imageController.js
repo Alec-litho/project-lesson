@@ -30,6 +30,11 @@ module.exports.uploadImage = async function(req,res) {
     }
 
 }
+
+module.exports.updateImage = function(req,res) {
+    const id = new ObjectID(`${req.params.id}`)  
+    imageModel.updateOne({"_id":id}, {post: true}).then(resp => res.send(resp))
+}
 module.exports.getOneImage = function(req,res) {
     const id = new ObjectID(`${req.params.id}`)  
     imageModel.findOne({"_id": id}).then(resp => res.send(resp))
