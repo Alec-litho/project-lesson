@@ -4,8 +4,8 @@ let {registerValidation, loginValidation, postCreateValidation, imageValidation}
 const cors = require("cors");
 const {checkAuth} = require('./utils/checkAuth')
 const {register, login, getMe} = require('./controllers/UserController')
-const {create, getAll, getOne, deletePost, update, getMyPosts, getPostImages} = require('./controllers/postController')
-const {uploadImage, getOneImage, getAllImages, getOneAlbum, getAlbums, uploadAlbum, deleteImage, getMyAlbums} = require('./controllers/imageController')
+const {create, getAll, getOne, deletePost, update, getMyPosts, getPostImages, getComments, postComment, postReply, deleteComment} = require('./controllers/postController')
+const {uploadImage, getOneImage, getAllImages, getOneAlbum, getAlbums, uploadAlbum, deleteImage, getMyAlbums, updateImage} = require('./controllers/imageController')
 const multer = require('multer')
 
 mongoose
@@ -34,14 +34,19 @@ app.post('/auth/register', registerValidation, register)
 //post paths----------------------------------------
 app.get('/posts', getAll)
 app.get('/posts/:id', getOne)
+app.post('/posts', checkAuth, postCreateValidation, create) 
 app.post('/posts/images', getPostImages)
 app.post('/posts/myposts', getMyPosts) 
-app.post('/posts', checkAuth, postCreateValidation, create) 
 app.delete('/posts/:id', checkAuth, deletePost)
 app.patch('/posts',checkAuth, update)//dont forget to finish it
+// app.get('/posts/comments/:id', getComments)
+app.post('/posts/comments', postComment)
+app.post('/posts/comments/:id', postReply)
+app.delete('/posts/comments/:id', deleteComment)
 //images paths---------------------------------------
 app.get('/images',getAllImages)
 app.get('/images/:id', getOneImage)
+app.post('/images/update/:id', updateImage)
 app.delete('/images/:id', checkAuth, deleteImage)
 app.post('/images', checkAuth, imageValidation, uploadImage)
 app.post('/albums/myalbums', checkAuth, imageValidation, getMyAlbums)
