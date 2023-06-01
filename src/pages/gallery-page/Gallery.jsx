@@ -58,7 +58,7 @@ export default function Gallery(props) {
     function uploadPicture(e) {
         postImage(e.target, currentAlbum, false/*post*/ ).then(res => {
             dispatch(savePicture({picture:res, myData, setUpdate})).then(_ => {//save in db
-                setUpdate()
+                setUpdate(true)
                 setPictures(currentPictures)
             })
         })

@@ -19,14 +19,22 @@ const PostSchema = new mongoose.Schema({
         ref: 'User',                              //relation-ship
         required: true,
     }, 
-    comments: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
-    }],
     images: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Image'
     }], 
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+    }],
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    shares: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 }, {
     timestamps: true
 }) 

@@ -7,29 +7,19 @@ const initialState = {
     status: 'idle',
     error: null 
 }  
-export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async(userId) => {
-    const response = await axios.post("http://localhost:3001/posts/myposts", {id:userId})
+export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async(data) => {
+    const response = await axios.post("http://localhost:3001/posts/myposts", {id:data.id})
+    data.update(true)
     return response.data
 })
 
 export const createPost = createAsyncThunk('posts/createPost', async(data) => {
-  console.log(data.imageUrl);
   const response = await axios.post("http://localhost:3001/posts/",
     {text: data.text, tags: data.tags, id: data.id, imageUrl:data.imageUrl},
     {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${data.token}`}
   })
-  data.update(true)
+  data.update(false)
   return response.data
-})
-export const deletePost = createAsyncThunk('posts/fetchPosts', async(post) => {
-    let result;
-    // await axios.get(userDataBin, {headers: {"X-MASTER-KEY": userDBkey}}).then(data => {
-    //     let userData = data.filter(user => user.userId === currUserId)[0]
-    //     // userData.posts.filter
-    //     axios.put(userDataBin,{...userData, posts: [...initialState.posts, post]}, {
-    //         headers: {"X-MASTER-KEY": userDBkey}}).then( _ => result = userData.posts)
-    // })
-    return result
 })
 
 const postSlice = createSlice({
@@ -40,15 +30,11 @@ const postSlice = createSlice({
         builder
           .addCase(fetchMyPosts.fulfilled, (state, action) => {
             state.status = 'fulfilled'
-            console.log(action.payload);
             state.myPosts = action.payload
           })
           .addCase(fetchMyPosts.rejected, (state, action) => {
             state.status = 'error'
             state.error = 'erorr'
-          })
-          .addCase(deletePost.fulfilled, (state, action) => {
-            state.status = 'fulfilled'
           })
     }
 })

@@ -14,9 +14,52 @@
   .profileCircle:hover {
     border: 1px solid rgb(53, 121, 199);
   }
+.postTools {
+  position: relative;
+}
+.postMenu {
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+}
+.menuTools {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgb(166, 185, 247);
+  border-radius: 5px;
+  background-color: white;
+  position: absolute;
+  left: 10px;
+  top: -90px;
+}
+.menuToolsHide {
+  display: none;
+}
+.menuTools a {
+  padding-left: 10px;
+  transition: .2s;
+  cursor: pointer;
+  margin-bottom: 5px;
+
+  
+}
+.menuTools a:hover {
+  border-bottom: 1px solid rgb(144, 161, 218);
+  background-color: #ececec;
+}
+.views {
+  width: 20px;
+  height: 20px;
+  fill: rgb(128, 128, 128);
+}
 .icon {
-    width: 20px;
-    height: 20px;
+  fill: rgb(63, 63, 63);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
   }
 .post .postHeader {
     position: relative;
@@ -40,9 +83,7 @@
     left: 40px;
     margin-left: 20px;
   }
-.post .text {
-    padding: 10px;
-  }
+
 .images {
   box-sizing: border-box;
   padding: 20px 10px 0 10px;
@@ -84,16 +125,7 @@
   align-items: center; 
   gap: 5px;
 }
-.icon {
-  fill: rgb(63, 63, 63);
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
-.view {
-  width: 20px;
-  height: 20px;
-}
+
 .rightBlock {
   display: flex;
   align-items: center;
@@ -102,8 +134,64 @@
 }
 
 .comments {
+  box-sizing: border-box;
   width: 840px;
+  height: auto;
+  padding: 0 20px;
 }
-.commentsHide {
+.commentsShowOne {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  height: 70px;
+  overflow: hidden;
+}
+.commentsHideAll {
   display: none;
+}
+.comment {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: space-between;
+}
+.profilePicture {
+  width: 50px;
+  height: 50px;
+}
+.likesIcon {width: 20px; height: 20px; margin-bottom: 3px; cursor: pointer;}
+.postLeftside {
+  display: flex;
+  gap: 10px;
+}
+.postRightside {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+}
+.autherName {
+  margin: 0;
+}
+.text {
+  margin: 0;
+  width: auto;
+}
+.time {
+  user-select: none;
+  margin: 0;
+  font-size: 14px;
+  color: #727272;
+}
+.reply {
+  color: rgb(53, 94, 172);
+  text-decoration: none;
+}
+.commentInf {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.likesNum {
+  user-select: none;
+  margin: 0;
 }

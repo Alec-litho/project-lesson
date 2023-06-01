@@ -5,7 +5,7 @@ text: {
       type: String,
       trim: true,
       required: true
-   },
+   }, 
 user: {
    type: mongoose.Schema.Types.ObjectId,
    ref: 'User'
@@ -18,21 +18,20 @@ autherName: {
    type: String,
    required: true
 },
-date: {
-   type: Date,
-   default: Date.now
-   },
 post: {
    type: mongoose.Schema.Types.ObjectId,
    ref: 'Post'
    },
-likes: {
-   type: Number
-   },
+likes: [{
+   type: mongoose.Schema.Types.ObjectId,
+   ref: 'User'
+}],
 replies: [{
    type: mongoose.Schema.Types.ObjectId,
    ref: 'Comment'
 }]
- })
+},  {
+   timestamps: true
+})
 
-module.exports.commentModel = mongoose.model('Comment', commentSchema);
+module.exports.CommentModel = mongoose.model('Comment', commentSchema);

@@ -19,15 +19,14 @@ export default function Main() {
     let isAuth = useSelector(selectIsAuth)
     let userData = useSelector(state => state.main)
     let albums = useSelector(state => state.albums.albums)
-    let userPosts = useSelector(state => state.userPosts.myPosts)
     let [sliderTrue, setSliderTrue] = useState(false)
     let [currPictureId, setcurrPictureId] = useState(null)
     let [update, setUpdate] = useState(false)
 
+
     useEffect(() => {
         (function loadPhotos() {
             dispatch(fetchData(auth.token))
-            dispatch(fetchMyPosts(auth._id))
             dispatch(fetchMyAlbums({userid: auth._id, token: auth.token}))
             setFinish(true)
             setPhotos(albums)
@@ -37,8 +36,8 @@ export default function Main() {
         <div className={classes.mainpage}>
             <Profile fullName={userData.userInfo.name} age={userData.userInfo.age} friends={userData.userInfo.friends} profilePicture={userData.userInfo.profilePicture} location={userData.userInfo.location}/>
             <div className={classes.mainContent}>
-                <AboutMeBlock galleryPhotos={photos} isloadedState={isLoaded}/>
-                <PostBlock setcurrPictureId={setcurrPictureId} setSliderTrue={setSliderTrue} posts={userPosts} update={update} setUpdate={setUpdate} auth={auth} savePicture={savePicture}/>
+                <AboutMeBlock galleryPhotos={photos} setSliderTrue={setSliderTrue} isloadedState={isLoaded}/>
+                <PostBlock  setcurrPictureId={setcurrPictureId} setSliderTrue={setSliderTrue} update={update} setUpdate={setUpdate} auth={auth} savePicture={savePicture}/>
             </div>
             <Sidebar/>
             <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={currPictureId}></Slider>
@@ -87,9 +86,9 @@ function AboutMeBlock(props) {
             </div>
             <div className={classes.gallery}>
                 {props.galleryPhotos.map(album => {
-                    if(album.name === 'My photos') {
-                        return album.albumPhotos.slice(0,8).map((photoObj, id) => {
-                           return (<div className={classes.photoGallery} key={id}><img src={photoObj.displayURL}></img></div>)
+                    if(album.name === 'All') {
+                        return album.images.slice(0,8).map((photoObj, id) => {
+                           return (<div className={classes.photoGallery} onClick={_ => props.setSliderTrue(true)} key={id}><img src={photoObj.imageURL}></img></div>)
                         })
                     }
                 })}

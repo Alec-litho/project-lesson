@@ -1,5 +1,5 @@
 import { ReactComponent as Delete } from '../assets/icons/delete.svg'
-import { ReactComponent as Change } from '../assets/icons/change.svg'
+import { ReactComponent as Menu } from '../assets/icons/dots.svg'
 import { ReactComponent as Share } from '../assets/icons/share.svg'
 import { ReactComponent as Like } from '../assets/icons/like.svg'
 import { ReactComponent as Views } from '../assets/icons/views.svg'
@@ -10,26 +10,48 @@ import Slider from './Slider'
 import { useEffect, useState } from 'react'
 import MessageTool from './MessageTool'
 import axios from 'axios'
+import trimTime from '../helper_functions/trimTime'
+
+
 export default function Post(props) {
   let [sliderTrue, setSliderTrue] = useState(false)
   let [currPictureId, setCurrPictureId] = useState(false)
   let [commentsTrue, setCommentsTrue] = useState(false)
   let [comment, setComment] = useState(null)
+  let [showMenu, setShowMenu] = useState(false)
   useEffect(_ => {
     if(comment!==null) {
-      axios.post('http://localhost:3001/posts/comments')
+      axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
+      {text: comment, user:props.auth._id, autherName:props.auth.fullName, autherPicture:props.auth.avatarUrl, post:props.postId})
     }
   },[comment])
 
+  function deletePost() {
+    axios.delete(`http://localhost:3001/posts/${props.postId}`,
+    {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${props.auth.token}`}}).then(res => {
+      console.log(res);
+      props.update(false)
+    })
+  }
+  function smashLike() {
+    axios.post(`http://localhost:3001/posts/like`, {userId: props.auth._id, postId:props.postId}).then(res => {
+      console.log(res);
+      props.update(false)
+    })
+  }
 
     return (
         <div className={classes.post}>
         <div className={classes.postHeader}>
           <div><img className={classes.profileCircle} ></img></div>
-          <div className={classes.date}>published on {props.date} {props.year} at {props.time}</div>
+          <div className={classes.date}>{`published on ${props.date}`}</div>
           <div className={classes.postTools}>
-            <Delete className={classes.icon}/>
-            <Change className={classes.icon}/>
+            <Menu className={classes.postMenu} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}/>
+            <div className={showMenu? classes.menuTools : classes.menuToolsHide} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}>
+              <a onClick={deletePost}>Delete</a>
+              <a>Edit</a>
+              <a>Report</a>
+            </div>
           </div>
         </div>
         <div className={classes.text}>{props.text}</div>
@@ -45,16 +67,16 @@ export default function Post(props) {
           <div className={classes.tools}>
           <div className={classes.tool}>
                <p>{props.views}</p>
-               <Views className={classes.view}/>
+               <Views className={classes.views}/>
               </div>
             <div className={classes.rightBlock}>
               <div className={classes.tool}>
-                <p>{props.commentsNum}</p>
+                <p>{props.comments.length}</p>
                 <Comments className={classes.icon} onClick={_ => setCommentsTrue(prev => !prev)}/>
               </div>
               <div className={classes.tool}>
                 <p>{props.likes}</p>
-                <Like className={classes.icon}/>
+                <Like className={classes.icon} onClick={smashLike}/>
               </div>
               <div className={classes.tool}>
                 <p>{props.share}</p>
@@ -62,23 +84,25 @@ export default function Post(props) {
               </div>
             </div>
           </div>
-          <div className={commentsTrue? classes.comments : classes.commentsHide}>
-            {props.comments.length>0 & props.comments.map((comment, id) => {
+          <div className={commentsTrue? classes.comments : props.comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
+            {props.comments.map((comment, id) => {
+              console.log(comment);
               return ( 
-              <div key={id}>
-                <Comment autherPicture={comment.autherPicture} autherName={comment.autherName} likes={comment.likes} comment={comment.comment} time={comment.time}/>
-                <div>
+              <div key={id} className={classes.commentWrapper}>
+                <Comment autherPicture={comment.autherPicture} autherName={comment.autherName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment)}/>
+                { comment.replies.length>0 & ( <div className={classes.repliesWrapper}>
                   <a href="#">Show replies</a>
                   <div className={classes.replies}>
                     {comment.replies.map((reply,id) => {
-                      return <Comment key={id} autherPicture={reply.autherPicture} autherName={reply.autherName} likes={reply.likes} comment={reply.comment} time={reply.time}/>
+                      return <Comment key={id} autherPicture={reply.autherPicture} autherName={reply.autherName} likes={reply.likes} comment={reply.text} time={trimTime(reply)}/>
                     })}
                   </div>
-                </div>
+                </div>)}
               </div>)
             })}
-            <MessageTool uploadMessage={setComment}/>
+    
           </div>
+          <MessageTool uploadMessage={setComment}/>
           <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={currPictureId}/>
         </div>
     )
@@ -87,23 +111,22 @@ export default function Post(props) {
 function Comment(props) {
   return (
     <div className={classes.comment}>
-    <div className={classes.commentMain}>
-    <img className={classes.profilePicture} src={props.autherPicture}></img>
-     <div className={classes.commentBody}>
-       <h3>{props.autherName}</h3>
-       <p>{props.comment}</p>
-       <div className={classes.commentInf}>
-         <p className={classes.time}>{props.time}</p>
-         <a href='#'>Reply</a>
-       </div>
-     </div>
-     <div className={classes.likes}>
-      <Like/>
-      <p>{props.likes}</p>
-     </div>
+      <div className={classes.postLeftside}>
+        <img className={classes.profilePicture} src={props.autherPicture}></img>
+        <div className={classes.commentBody}>
+          <h5 className={classes.autherName}>{props.autherName}</h5>
+          <p className={classes.text}>{props.text}</p>
+          <div className={classes.commentInf}>
+            <p className={classes.time}>{props.time}</p>
+            <a href='#' className={classes.reply}>Reply</a>
+          </div>
+        </div>
+      </div>
+      <div className={classes.postRightside}>
+        <p className={classes.likesNum}>{props.likes}</p>
+        <Like className={classes.likesIcon}/>
+      </div>
     </div>
-
-  </div>
   )
 }
 

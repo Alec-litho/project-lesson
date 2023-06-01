@@ -13,7 +13,7 @@ let getAll = async(req,res) => {
     }
 }
 let getMyPosts = async function(req, res) {
-    let posts = await PostModel.find({user: req.body.id}).populate("images")
+    let posts = await PostModel.find({user: req.body.id}).populate("images").populate("comments")
     res.send(posts)
 }  
 let getPostImages = async function(req, res) {
@@ -37,16 +37,11 @@ let getOne = async(req,res) => {
         res.status(500).json({message:'Could not get posts'})
     }
 }
-let deletePost = async(req,res) => {
-    try {
-        const postId = req.params['id']
-        PostModel.findOneAndDelete({_id: postId})
-          .then(doc => {
-            res.json({message: "post was deleted"})
-          })
-    } catch (error) {
-        
-    }
+let deletePost = (req,res) => {
+        let postId = new ObjectID(`${req.params['id']}`) 
+        console.log(postId);
+        PostModel.findOneAndDelete({"_id": postId})
+          .then(doc => res.send(doc))
 }
 let update = async(req,res) => {
     try {
@@ -87,17 +82,33 @@ let getComments = function(req, res) {
     CommentModel.findOne({"_id": postId}).populate("replies").then(resp => res.send(resp))
 }
 let postComment = async(req, res) => {
+    const postId = new ObjectID(`${req.params.id}`)  
     const doc = new CommentModel({
         text: req.body.text,
         user: req.body.id,
         autherPicture: req.body.autherPicture,
         autherName: req.body.autherName,
-        post: req.body.post,
-        likes: 0,
+        post: postId,
+        likes: [],
         replies: []
     })
+    let response = await PostModel.findOneAndUpdate({"_id":postId}, {$push: {comments: doc}}, { upsert: true }).exec()
+    console.log(response);
     let resp = await doc.save()
     res.send(resp)
+}
+let postSmashLike = function(req,res) {
+    const userId = new ObjectID(`${req.body.userId}`)
+    const postId = new ObjectID(`${req.body.postId}`)
+    let doc = PostModel.find({"_id":'wddf'}).then(res => {
+        console.log(res);
+        // console.log(res[0].likes);
+        // let acces = true
+        // res[0].likes.forEach(user => {if(user === userId) acces = false})
+        // if(acces) res[0].likes.push(userId)
+        // res.save()
+    })
+    res.send('good')
 }
 let postReply = async(req, res) => {
     const id = new ObjectID(`${req.params.id}`)  
@@ -121,5 +132,6 @@ module.exports = {
     getComments,
     postComment,
     postReply,
-    deleteComment
+    deleteComment,
+    postSmashLike
 }
