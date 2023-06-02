@@ -97,18 +97,23 @@ let postComment = async(req, res) => {
     let resp = await doc.save()
     res.send(resp)
 }
-let postSmashLike = function(req,res) {
+let postSmashLike = async function(req,res) {
     const userId = new ObjectID(`${req.body.userId}`)
     const postId = new ObjectID(`${req.body.postId}`)
-    let doc = PostModel.find({"_id":'wddf'}).then(res => {
-        console.log(res);
-        // console.log(res[0].likes);
-        // let acces = true
-        // res[0].likes.forEach(user => {if(user === userId) acces = false})
-        // if(acces) res[0].likes.push(userId)
-        // res.save()
-    })
-    res.send('good')
+    let doc = await PostModel.findOne({"likes":[userId]})
+    if(doc === null) {
+        PostModel.findOneAndUpdate({"_id":[postId]}, {$push: {likes: userId}}, { upsert: true }).exec()
+    } else {
+        console.log('already smashed like');
+    }
+    res.send(doc)
+}
+
+let postRemoveLike = async function(req,res) {
+    const userId = new ObjectID(`${req.body.userId}`)
+    const postId = new ObjectID(`${req.body.postId}`)
+    let doc = await PostModel.findOneAndUpdate({"_id":[postId]}, {$pull: {likes: userId}}, { upsert: true }).exec()
+    res.send(doc)
 }
 let postReply = async(req, res) => {
     const id = new ObjectID(`${req.params.id}`)  
@@ -133,5 +138,6 @@ module.exports = {
     postComment,
     postReply,
     deleteComment,
-    postSmashLike
+    postSmashLike,
+    postRemoveLike
 }

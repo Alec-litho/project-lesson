@@ -19,6 +19,10 @@ export default function Post(props) {
   let [commentsTrue, setCommentsTrue] = useState(false)
   let [comment, setComment] = useState(null)
   let [showMenu, setShowMenu] = useState(false)
+  let alreadySmashedLike;
+  alreadySmashedLike = props.likes? props.likes.filter(user => user === props.auth._id)[0] : []
+
+  console.log(alreadySmashedLike);
   useEffect(_ => {
     if(comment!==null) {
       axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
@@ -35,6 +39,12 @@ export default function Post(props) {
   }
   function smashLike() {
     axios.post(`http://localhost:3001/posts/like`, {userId: props.auth._id, postId:props.postId}).then(res => {
+      console.log(res);
+      props.update(false)
+    })
+  }
+  function removeLike() {
+    axios.post(`http://localhost:3001/posts/removeLike`, {userId: props.auth._id, postId:props.postId}).then(res => {
       console.log(res);
       props.update(false)
     })
@@ -75,8 +85,8 @@ export default function Post(props) {
                 <Comments className={classes.icon} onClick={_ => setCommentsTrue(prev => !prev)}/>
               </div>
               <div className={classes.tool}>
-                <p>{props.likes}</p>
-                <Like className={classes.icon} onClick={smashLike}/>
+                <p>{alreadySmashedLike==undefined? 0 : [alreadySmashedLike].length}</p>
+                <Like className={alreadySmashedLike? classes.iconBlue : classes.icon} onClick={alreadySmashedLike? removeLike : smashLike}/>
               </div>
               <div className={classes.tool}>
                 <p>{props.share}</p>

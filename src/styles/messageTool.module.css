@@ -39,10 +39,6 @@
 .keyboardInput::placeholder {
     padding-left: 0;
 }
-svg:hover {
-    fill: rgb(34, 34, 37)
-}
-
 
 .send {
     fill: rgb(52, 53, 58);

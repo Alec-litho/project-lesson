@@ -1,10 +1,9 @@
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect} from 'react'
 import {useDispatch, useSelector } from 'react-redux';
 import {Link} from 'react-router-dom';
 import Gallery from '../gallery-page/Gallery.jsx'
 import Dialog from '../dialog-page/DialogPage.jsx'
-import {fetchData, updatePosts} from '../../features/userSlice'
-import {fetchMyPosts} from '../../features/postSlice'
+import {fetchData} from '../../features/userSlice'
 import {fetchMyAlbums, savePicture} from '../../features/albumSlice'
 import {selectIsAuth} from '../../features/authSlice.js'
 import Slider from '../../components/Slider.jsx';
@@ -22,16 +21,16 @@ export default function Main() {
     let [sliderTrue, setSliderTrue] = useState(false)
     let [currPictureId, setcurrPictureId] = useState(null)
     let [update, setUpdate] = useState(false)
-
+    console.log(update);
 
     useEffect(() => {
         (function loadPhotos() {
             dispatch(fetchData(auth.token))
-            dispatch(fetchMyAlbums({userid: auth._id, token: auth.token}))
+            dispatch(fetchMyAlbums({userid: auth._id, token: auth.token, update:setUpdate}))
             setFinish(true)
             setPhotos(albums)
         })()
-    },[isAuth])
+    },[])
     return (
         <div className={classes.mainpage}>
             <Profile fullName={userData.userInfo.name} age={userData.userInfo.age} friends={userData.userInfo.friends} profilePicture={userData.userInfo.profilePicture} location={userData.userInfo.location}/>

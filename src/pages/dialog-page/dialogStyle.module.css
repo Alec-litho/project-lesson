@@ -133,19 +133,6 @@ input::placeholder {
 }
 
 
-svg:hover {
-    fill: rgb(34, 34, 37)
-}
-.svg {
-    transition: .2s;
-    fill: rgb(52, 53, 58);
-    cursor: pointer;
-    position: absolute;
-    left: 530px;
-    width: 30px;
-    height: 30px;
-}
-
 .friendsMessage {
     display: flex;
     gap: 10px;
