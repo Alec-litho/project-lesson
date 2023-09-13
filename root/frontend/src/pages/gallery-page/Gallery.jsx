@@ -119,7 +119,7 @@ export default function Gallery(props) {
             </div>
             <CreateModal closeModal={closeModal} setModal={setModal} userId={userInfo._id} update={setUpdate} token={token}/>
             <Slider setUpdate={setUpdate} 
-               token={token} 
+               token={token}   
                currentPictures={currentPictures} 
                sliderTrue={sliderTrue} 
                setSliderTrue={setSliderTrue} 
