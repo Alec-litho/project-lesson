@@ -1,0 +1,62 @@
+.emoji {
+    fill: rgb(152, 154, 161);
+    cursor: pointer;
+    position: absolute;
+    left: 730px;
+    top: 15px;
+    width: 30px;
+    height: 30px;
+}
+.append {
+    fill: rgb(90, 91, 99);
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+}
+.keyboard {
+    width: 100%;
+    padding: 0 20px; 
+    position: relative;
+    display: flex;
+    align-items: center;
+    
+}
+.keyboardInput {
+    padding-left: 25px;
+    -webkit-box-sizing: border-box; 
+    margin: 10px 10px 5px 10px;
+    width: 710px;
+    height: 40px;
+    border: 2px solid rgb(172, 172, 172);
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+    outline: none;
+    font-size: 18px;
+}
+.keyboardInput:focus {
+    border: 2px solid rgb(76, 113, 192);
+}
+.keyboardInput::placeholder {
+    padding-left: 0;
+}
+
+.send {
+    fill: rgb(52, 53, 58);
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+}
+
+.sendIcon {
+    width: 30px;
+    height: 30px;
+}
+.sendIconHide{
+    cursor: auto;
+    fill: rgb(169, 172, 185);
+    width: 30px;
+    height: 30px;
+}
+.sendIconHide:hover {
+    fill: rgb(169, 172, 185);
+}

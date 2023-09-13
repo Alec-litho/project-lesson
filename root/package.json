@@ -1,0 +1,15 @@
+{
+  "name": "root",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.jsx",
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run start\" "
+  },
+  "devDependencies": {
+    "concurrently": "8.2.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
