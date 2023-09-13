@@ -81,7 +81,7 @@ module.exports.login = async(req,res) => {
 
 module.exports.getMe = async(req,res) => {
     try {
-        console.log(req)
+        console.log(req);
         const user = await UserModel.findById(req.body.userId);
         if(!user) {
             res.status(404).json({
@@ -93,5 +93,5 @@ module.exports.getMe = async(req,res) => {
         res.json(userData);
     } catch (error) {
         res.status(404).json({message: "not working", value:error});
-    }
+    };
 };
