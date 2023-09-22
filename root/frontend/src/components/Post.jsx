@@ -11,23 +11,23 @@ import { useEffect, useState } from 'react'
 import MessageTool from './MessageTool'
 import axios from 'axios'
 import trimTime from '../helper_functions/trimTime'
-
+import { postComment } from '../features/postSlice'
 
 export default function Post(props) {
   let [sliderTrue, setSliderTrue] = useState(false)
   let [currPictureId, setCurrPictureId] = useState(false)
   let [commentsTrue, setCommentsTrue] = useState(false)
-  let [comment, setComment] = useState(null)
+  // let [comment, setComment] = useState(null)
   let [showMenu, setShowMenu] = useState(false)
   let alreadySmashedLike;
   alreadySmashedLike = props.likes? props.likes.filter(user => user === props.auth._id)[0] : []
 
-  useEffect(_ => {
-    if(comment!==null) {
-      axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
-      {text: comment, user:props.auth._id, autherName:props.auth.fullName, autherPicture:props.auth.avatarUrl, post:props.postId})
-    }
-  },[comment])
+  // useEffect(_ => {
+  //   if(comment!==null) {
+  //     axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
+  //     {text: comment, user:props.auth._id, autherName:props.auth.fullName, autherPicture:props.auth.avatarUrl, post:props.postId})
+  //   }
+  // },[comment])
 
   function deletePost() {
     axios.delete(`http://localhost:3001/posts/${props.postId}`,
@@ -92,7 +92,6 @@ export default function Post(props) {
           </div>
           <div className={commentsTrue? classes.comments : props.comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
             {props.comments.map((comment, id) => {
-              console.log(comment);
               return ( 
               <div key={id} className={classes.commentWrapper}>
                 <Comment autherPicture={comment.autherPicture} autherName={comment.autherName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment)}/>
@@ -108,7 +107,7 @@ export default function Post(props) {
             })}
     
           </div>
-          <MessageTool uploadMessage={setComment}/>
+          <MessageTool type={'comment'} postId={props.postId}/>
           <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={currPictureId}/>
         </div>
     )

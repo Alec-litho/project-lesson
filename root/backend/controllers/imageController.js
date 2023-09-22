@@ -1,50 +1,56 @@
 const {imageModel} = require("../models/image");
 const {AlbumModel} = require("../models/album");
-const {ObjectID} = require("mongodb");
+const {ObjectId} = require("mongodb");
 const { isRouteErrorResponse } = require("react-router-dom");
 module.exports.getAllImages = function(req,res) {
     const images = imageModel.find();
     res.send(images);
 };
 module.exports.uploadImage = async function(req,res) {
-    const albumId = req.body.album? await AlbumModel.findOne({name:req.body.album}, "_id") : undefined;
-    const test = req.body;
+    try {
+        console.log('req.body --> ',req.body);
+        const albumId = req.body.hasAlbum? await AlbumModel.findOne({name:req.body.album}, "_id") : undefined;
+    
+        const doc = new imageModel({ 
+            title: req.body.title,
+            imageURL: req.body.imageURL,
+            description: req.body.description,
+            user: req.userId,
+            album: req.body.hasAlbum? albumId : undefined,
+            post: req.body.post
+        });
 
-    const doc = new imageModel({ 
-        title: req.body.title,
-        imageURL: req.body.imageURL,
-        description: req.body.description,
-        user: req.userId,
-        album: albumId? albumId : undefined,
-        post: req.body.post
-    });
-    if(req.body.album) {
-        const album = await AlbumModel.findOne({name:req.body.album});
-        doc.save();
-        album.images.push(doc);
-        album.save();
-        res.json(album);
-    } else {
-        doc.save();
-        res.json(doc);
+        if(req.body.hasAlbum === true) {
+            console.log('album exissts');
+            const album = await AlbumModel.findOne({name:req.body.album});
+            doc.save();
+            album.images.push(doc);
+            album.save();
+            console.log('after saved in album');
+            res.json(album);
+        } else {
+            doc.save();
+            console.log('after saved ',doc);
+            res.json(doc);
+        } 
+    } catch(err) {
+        console.log(err);
     }
+   
 
 };
 
 module.exports.updateImage = function(req,res) {
-    const id = new ObjectID(`${req.params.id}`);  
-    imageModel.updateOne({"_id":id}, {post: true}).then(resp => res.send(resp));
+    const id = new ObjectId(`${req.params.id}`);  
+    imageModel.findByIdAndDelete(req.params.id, {post: true}).then(resp => res.send(resp));
 };
 module.exports.getOneImage = function(req,res) {
-    const id = new ObjectID(`${req.params.id}`);  
-    imageModel.findOne({"_id": id}).then(resp => res.send(resp));
+    imageModel.findById(req.params.id).then(resp => res.send(resp));
 };
 module.exports.deleteImage = (req,res) => {
-    const id = req.params.id;
-    imageModel.deleteOne({"_id": id}).then(resp => res.send(resp));
+    imageModel.findByIdAndDelete(req.params.id).then(resp => res.send(resp));
 };
 module.exports.uploadAlbum = function(req,res) {
-    console.log( req.body, req.userId);
     const doc = new AlbumModel({
         name: req.body.name, 
         user: req.userId,
@@ -61,11 +67,9 @@ module.exports.getAlbums = async function(req,res) {
 
 module.exports.getMyAlbums = async function(req,res) {
     const albums = await AlbumModel.find({user:req.body.id}).populate("images");
-    console.log("getmyalbums --> ",req.body.id, albums);
     if(albums) res.send(albums);
     else res.send({value:null, message:"no album was found"});
 };
 module.exports.getOneAlbum = function(req,res) {
-    const id = new ObjectID(`${req.params.id}`);
-    AlbumModel.findOne({"_id": id}).populate("images").then(resp => res.send(resp));
+    AlbumModel.findById(req.params.id).populate("images").then(resp => res.send(resp));
 };

@@ -25,14 +25,18 @@ export default function Gallery(props) {
     let [currPictureId, setcurrPictureId] = useState(null)
     let [updatePictures, setUpdate] = useState(false)
     useEffect(()=> { 
-        console.log(token);
-        if(userInfo._id && token) {
+        if((userInfo._id && token)) {
+            if(albums.length===0) {
             dispatch(fetchMyAlbums({userid: userInfo._id, token, update: setUpdate}))
               .then((res) => {
                 console.log([...res.payload]);
                 finishLoading(true)
                 setPictures([...res.payload])
               })
+            } else {
+                setPictures([...albums])
+                finishLoading(true)
+            }
         }
     },[/*updatePictures,*/userInfo])
     
@@ -124,6 +128,7 @@ export default function Gallery(props) {
                sliderTrue={sliderTrue} 
                setSliderTrue={setSliderTrue} 
                currPictureId={currPictureId}
+               setcurrPictureId={setcurrPictureId}
             ></Slider>
         </div>
         </div>

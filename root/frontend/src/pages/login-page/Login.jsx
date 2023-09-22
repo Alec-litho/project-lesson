@@ -2,12 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./login.css";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser, fetchData } from "../../features/authSlice";
 import Register from "../register-page/Register";
 
 export default function Login() {
   const dispatch = useDispatch();
+  const status = useSelector(state => state.auth.status);
   const {
     register,
     handleSubmit,
@@ -17,8 +18,8 @@ export default function Login() {
   const onSubmit = (values) => {
     dispatch(loginUser(values))
       .then(res => {
-        console.log(res);
-        dispatch(fetchData(res.payload))
+        console.log(status);
+        if(status !== 'error') dispatch(fetchData(res.payload))
       })
   };
   return (
@@ -30,7 +31,7 @@ export default function Login() {
             <div className="field input-field">
 
               <Controller name="email" control={control} rules={{
-                required:{value:true, message:"email field is required"},
+                required:{value:true, message:"email is required, please fill this field"},
                 minLength:{value:5, message:"email filed length is too short"},
                 maxLength:{value:30, message:"email filed length is too long"}
               }}

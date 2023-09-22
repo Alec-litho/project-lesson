@@ -42,15 +42,22 @@ export const fetchImg = createAsyncThunk('albums/fetchImg', (data) => axios.get(
     Authorization: `Bearer ${data.token}`
   }
 }))
-export const savePicture = createAsyncThunk('albums/savePicture', (data) => axios.post('http://localhost:3001/images', JSON.stringify(data.picture), {
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${data.myData.token}`
-  }
-}).then((res) => {
+export const savePicture = createAsyncThunk('albums/savePicture', async (data) => {
+  try {
+    const response = await axios.post('http://localhost:3001/images', JSON.stringify(data.imgData), {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${data.userData.token}`
+    }
+  })
+  console.log(response);
   if (data.update)data.setUpdate()
-  return res.data
-}))
+  return response.data
+
+  } catch(err) {
+    console.log(err);
+  }
+})
 export const deletePicture = createAsyncThunk('albums/deletePicture', (data) => {
   axios.delete(`http://localhost:3001/images/${data.id}`, {
     headers: {

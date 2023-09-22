@@ -10,11 +10,11 @@ user: {
    type: mongoose.Schema.Types.ObjectId,
    ref: "User"
 },
-autherPicture: {
+authorPicture: {
    type: String,
    required: true
 },
-autherName: {
+authorName: {
    type: String,
    required: true
 },

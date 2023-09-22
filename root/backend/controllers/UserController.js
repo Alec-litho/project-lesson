@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const {validationResult} = require("express-validator");
 const {UserModel} = require("../models/user");
 const {AlbumModel} = require("../models/album");
-
+const {getAge} = require("../helper_functions/getUserAge");
 
 module.exports.register = async(req, res) => {
     try {
@@ -13,6 +13,7 @@ module.exports.register = async(req, res) => {
         }
         const password = req.body.password;
         const salt = await bcrypt.genSalt(10);
+        const userAge = getAge(req.body.birth);
         // await bcrypt.hash(password, salt) error
         const doc = new UserModel({
             email: req.body.email,
@@ -21,7 +22,7 @@ module.exports.register = async(req, res) => {
             avatarUrl: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp",
             friends: 0,
             location: "not mentioned",
-            age: "not mentioned"
+            age: userAge
         });
         const user = await doc.save();
         const token = jwt.sign({
@@ -29,16 +30,15 @@ module.exports.register = async(req, res) => {
         }, "secret", {
             expiresIn: "30d"
         });
-        const {passwordHash, ...userData} = user._doc;
+        const {passwordHash} = user._doc;
         const album = new AlbumModel({
             name: "All", 
             user: user._id
         });
         album.save();
-        res.json({
-            userData,
-            token
-        });
+        res.cookie("token", token);
+        res.cookie("id", user._id.toString());
+        res.json({token, _id:user._id});
     } catch (error) {
         res.status(500).json({
             message: error
@@ -81,17 +81,17 @@ module.exports.login = async(req,res) => {
 
 module.exports.getMe = async(req,res) => {
     try {
-        console.log(req);
         const user = await UserModel.findById(req.body.userId);
         if(!user) {
             res.status(404).json({
                 message: "user wasn't found"
             });
         }
-        console.log("getme --> ",req.body, user)
         const {passwordHash, ...userData} = user._doc;
         res.json(userData);
     } catch (error) {
         res.status(404).json({message: "not working", value:error});
     };
 };
+
+

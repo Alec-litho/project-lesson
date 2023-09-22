@@ -16,9 +16,10 @@ const initialState = {
   },
   status: 'undefined'
 }
+//---------------------------ERROR----------------------------------------
 export const fetchData = createAsyncThunk('auth/fetchData', async ({token,_id}) => {
-  console.log(token,_id);
   try {
+    console.log(token,_id);
     const response = await axios.post('http://localhost:3001/auth/me', {userId:_id},{
       headers: {
         'Content-Type': 'application/json',
@@ -29,12 +30,23 @@ export const fetchData = createAsyncThunk('auth/fetchData', async ({token,_id}) 
     return response.data
   } catch (err) {
     console.log(err);
+    return false
   }
 })
+//---------------------------ERROR----------------------------------------
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (params) => {
   const { data } = await axios.post('/auth/login', params)
-  console.log(data);
+  return data
+})
+export const registerUser = createAsyncThunk("auth/registerUser", async(params) => {
+  const {data} = await axios.post("/auth/register", {
+    email:params.email,
+    password:params.password,
+    fullName: params.fullName,
+    gender: params.gender,
+    birth: params.birth
+  });
   return data
 })
 export const getCookie = createAsyncThunk("auth/getCookie", async() => {
@@ -77,14 +89,19 @@ const authSlice = createSlice({
         state.status = 'error';
       })
       .addCase(fetchData.fulfilled, (state,action) => {
-        console.log(action.payload);
-        state.userInfo._id = action.payload._id
-        state.userInfo.fullName = action.payload.fullName;
-        state.userInfo.age = action.payload.age;
-        state.userInfo.avatarUrl = action.payload.avatarUrl;
-        state.userInfo.email = action.payload.email;
-        state.userInfo.friends = action.payload.friends;
-        state.userInfo.location = action.payload.location;
+        console.log( action.payload);
+        if(action.payload) {
+          state.userInfo._id = action.payload._id
+          state.userInfo.fullName = action.payload.fullName;
+          state.userInfo.age = action.payload.age;
+          state.userInfo.avatarUrl = action.payload.avatarUrl;
+          state.userInfo.email = action.payload.email;
+          state.userInfo.password = action.payload.password;
+          state.userInfo.friends = action.payload.friends;
+          state.userInfo.location = action.payload.location;
+        } else {
+          state.status = 'error'
+        }
       })
       .addCase(getCookie.fulfilled, (state, action) => {
         console.log(action.payload);
@@ -93,6 +110,10 @@ const authSlice = createSlice({
           state.userInfo._id = action.payload._id;
           state.token = action.payload.token;
         }
+      })
+      .addCase(registerUser.fulfilled, (state,action) => {
+        state.isAuth = true
+        state.token = action.payload.token
       })
   }
 });

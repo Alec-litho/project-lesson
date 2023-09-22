@@ -1,12 +1,13 @@
 import {useState, useEffect} from 'react';
 import {useDispatch, useSelector } from 'react-redux';
-import {Link} from 'react-router-dom';
-import Gallery from '../gallery-page/Gallery.jsx';
-import Dialog from '../dialog-page/DialogPage.jsx';
-import {fetchMyAlbums, savePicture} from '../../features/albumSlice';
+import {fetchMyAlbums} from '../../features/albumSlice';
 import Slider from '../../components/Slider.jsx';
 import classes from './mainPage.module.css';
-import PostBlock from './PostBlock.jsx';
+import PostBlock from './PostBlock.jsx';;
+import Loader from '../../components/Loader.jsx';
+import Profile from './PofileComponent.jsx';
+import AboutMeBlock from './AboutMeBlock.jsx';
+
 
 export default function Main() {
     const [isLoaded, setFinish] = useState(false);
@@ -20,76 +21,33 @@ export default function Main() {
     const [update, setUpdate] = useState(false);
 
     useEffect(() => {
-        (function loadPhotos() {
-            // dispatch(fetchData(auth.token))
-            dispatch(fetchMyAlbums({userid: auth._id, token: auth.token, update:setUpdate}))
-            setFinish(true)
-            setPhotos(albums)
-        })()
-    },[])
+        //                                         ERROR INFINITE LOOP
+         //------------------------------------------------------------------------------------------------
+        if(photos.length===0){
+            if(albums.length!==0) setPhotos([...albums])
+            else {
+                dispatch(fetchMyAlbums({userid: userInfo._id, token: auth.token, update:setUpdate})).then((res) => {
+                    setPhotos(res.payload);
+                })
+            }
+        };
+        if(userInfo._id) setFinish(true);
+        //------------------------------------------------------------------------------------------------
+    },[/*userInfo*/])
+
+    if(isLoaded === false) return <Loader/>
     return (
         <div className={classes.mainpage}>
             <Profile fullName={userInfo.fullName} age={userInfo.age} friends={userInfo.friends} avatarUrl={userInfo.avatarUrl} location={userInfo.location}/>
             <div className={classes.mainContent}>
                 <AboutMeBlock galleryPhotos={photos} setSliderTrue={setSliderTrue} isLoadedState={isLoaded}/>
-                <PostBlock  setcurrPictureId={setcurrPictureId} setSliderTrue={setSliderTrue} update={update} setUpdate={setUpdate} auth={auth} savePicture={savePicture}/>
+                <PostBlock  setcurrPictureId={setcurrPictureId} setSliderTrue={setSliderTrue} update={update} setUpdate={setUpdate} auth={auth}/>
             </div>
-            <Sidebar/>
-            <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={currPictureId}></Slider>
+            {/*sidebar??*/}
+            <Slider sliderTrue={sliderTrue} token={auth.token/*token is undefined !!!!!!*/ } setSliderTrue={setSliderTrue} currPictureId={currPictureId/*current img id to show in slider*/} setcurrPictureId={setcurrPictureId}></Slider>
         </div>
     );
 }
-function Sidebar() {
-    return (
-        <div className={classes.sidebar}>
-          
-        </div>
-    )
-}
-function Profile({avatarUrl, fullName, location, friends, age}) {
-    // let profPicture = props.profilePicture? props.profilePicture : null
-    return (
-        <div className={classes.profileContainer}>
-            <img src={avatarUrl} className={classes.pofilePicture}></img>
-            <div className={classes.infoBlock}>
-            <h1>{fullName}</h1>
-            <div className={classes.defaultInfo}>
-                <div className={classes.leftInfoBlock}>
-                    <p>Location:</p>
-                    <p>Friends:</p>
-                    <p>Age:</p>
-                </div>
-                <div className={classes.rightInfoBlock}>
-                    <a href="#">{location}</a>
-                    <a href="#">{friends}</a>
-                    <a href="#">{age}</a>
-                </div>
-            </div>
-            <button className={classes.book}> <Link to="/dialogs" element={<Dialog/>}>Message</Link></button>
-            <button className={classes.subscribe}>Subscribe</button>
-           </div>
-        </div>
-    )
-}
-function AboutMeBlock(props) {
-    if(!props.isLoadedState) return null
-    return (
-        <div className={classes.aboutMeBlock}>
-            <div className={classes.aboutMeHeader}>
-                <span>20 views</span>
-                <Link to="/gallery" element={<Gallery/>}>See all</Link>
-            </div>
-            <div className={classes.gallery}>
-                {props.galleryPhotos.map(album => {
-                    if(album.name === 'All') {
-                        return album.images.slice(0,8).map((photoObj, id) => {
-                           return (<div className={classes.photoGallery} onClick={_ => props.setSliderTrue(true)} key={id}><img src={photoObj.imageURL}></img></div>)
-                        })
-                    }
-                })}
-            </div>
-        </div>
-    )
-}
+
 
 

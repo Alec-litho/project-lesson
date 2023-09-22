@@ -3,14 +3,32 @@ import axios from 'axios'
 
 const initialState = {
   posts: [],
-  myPosts: [{ createdAt: '2023-04-27T13:32:31.145+00:00', comments: [] }],
+  myPosts: [{ createdAt: '2023-04-27T13:32:31.145+00:00', comments: [], images: [] }],
   status: 'idle',
   error: null
 }
+export const postComment = createAsyncThunk('posts/postComment', async(data) => {
+  console.log(data);
+  try{
+    const response = await axios.post(`http://localhost:3001/posts/comments/${data.postId}`,
+      JSON.stringify(data),
+      { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.token}` }}
+      )
+      return response.data
+  } catch(err) {
+    console.log(err);
+  }
+  
+})
 export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async (data) => {
-  const response = await axios.post('http://localhost:3001/posts/myposts', { id: data.id })
-  data.update(true)
-  return response.data
+  try {
+    const response = await axios.post('http://localhost:3001/posts/myposts', { id: data.id })
+    data.update(true)
+    console.log(response);
+    return response.data
+  } catch(error) {
+    console.log(error);
+  }
 })
 
 export const createPost = createAsyncThunk('posts/createPost', async (data) => {

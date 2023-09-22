@@ -1,0 +1,25 @@
+.gender {
+    display: flex;
+    padding-top: 30px;
+    width: 50%;
+    margin: 0 auto;
+    gap: 20px;
+}
+.gender-option {
+    display: flex;
+    gap: 10px;
+}
+.gender-option input {
+    width: 20px;
+}
+.form .email{
+    margin-top: 10px;
+}
+.label {
+    font-size: 14px;
+
+}
+.label-error {
+    color: red;
+    font-size: 14px;
+}

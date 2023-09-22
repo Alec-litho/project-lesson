@@ -15,17 +15,16 @@ import { useEffect } from "react";
 
 export default function App() {
   const dispatch = useDispatch();
-  const {isAuth, token} = useSelector((state) => state.auth);
+  const {isAuth, token, status} = useSelector((state) => state.auth);
   useEffect(() => {
     if(!isAuth) {
-      console.log("isAuth");
       dispatch(getCookie())
       .then(res => {
-        if(res.payload.result) dispatch(fetchData({...res.payload}));
+        if(res.payload.result && status !== 'error') dispatch(fetchData({...res.payload}));
       });
     };
   },[])
-
+  if(status==='error') return <div>Error</div>
   return (
     <div>
       <div className="headerBackground">
