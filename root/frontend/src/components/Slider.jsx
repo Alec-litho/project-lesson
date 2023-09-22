@@ -12,7 +12,6 @@ export default function Slider(props) {
     let leftArrow = useRef(null), rightArrow = useRef(null);
     let sliderContainer = useRef(null)
     let slider = useRef(null)
-    let myData = useSelector(state => state.auth.data)
     let [pictures, setPictures] = useState([])
     let dispatch = useDispatch()
 
