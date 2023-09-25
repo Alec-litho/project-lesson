@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const initialState = {
   posts: [],
-  myPosts: [{ createdAt: '2023-04-27T13:32:31.145+00:00', comments: [], images: [] }],
+  myPosts: undefined,
   status: 'idle',
   error: null
 }

@@ -6,23 +6,27 @@ module.exports.getAllImages = function(req,res) {
     const images = imageModel.find();
     res.send(images);
 };
+//-----------------------------I need to fix this fucntion------------------------------//
+//a lot of weird useless stuff to get rid of
 module.exports.uploadImage = async function(req,res) {
     try {
         console.log('req.body --> ',req.body);
-        const albumId = req.body.hasAlbum? await AlbumModel.findOne({name:req.body.album}, "_id") : undefined;
-    
+        // const albumId = await AlbumModel.findById(req.body.albumId) 
+        const album = req.body.hasAlbum? await AlbumModel.findById(req.body.albumId) : undefined;
+        const albumName = album? album.name.toString() : undefined
+        console.log(album,albumName);
         const doc = new imageModel({ 
             title: req.body.title,
             imageURL: req.body.imageURL,
             description: req.body.description,
             user: req.userId,
-            album: req.body.hasAlbum? albumId : undefined,
+            album: albumName,
             post: req.body.post
         });
 
-        if(req.body.hasAlbum === true) {
-            console.log('album exissts');
-            const album = await AlbumModel.findOne({name:req.body.album});
+        if(album) {
+            console.log('album exists');
+            // const album = await AlbumModel.findOne({name:req.body.albumId});
             doc.save();
             album.images.push(doc);
             album.save();
@@ -39,10 +43,10 @@ module.exports.uploadImage = async function(req,res) {
    
 
 };
+//-----------------------------I need to fix this fucntion------------------------------//
 
 module.exports.updateImage = function(req,res) {
-    const id = new ObjectId(`${req.params.id}`);  
-    imageModel.findByIdAndDelete(req.params.id, {post: true}).then(resp => res.send(resp));
+    imageModel.findByIdAndUpdate(req.params.id, {post: true}).then(resp => res.send(resp));
 };
 module.exports.getOneImage = function(req,res) {
     imageModel.findById(req.params.id).then(resp => res.send(resp));

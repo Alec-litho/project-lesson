@@ -4,6 +4,7 @@ import classes from './mainPage.module.css';
 
 export default function AboutMeBlock(props) {
     if(!props.isLoadedState) return null
+    console.log(props.galleryPhotos);
     return (
         <div className={classes.aboutMeBlock}>
             <div className={classes.aboutMeHeader}>

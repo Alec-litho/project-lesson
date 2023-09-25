@@ -13,7 +13,7 @@ const getAll = async(req,res) => {
     }
 };
 const getMyPosts = async function(req, res) { 
-    const posts = await PostModel.find({user: req.body.id}).populate("comments");
+    const posts = await PostModel.find({user: req.body.id}).populate("images").populate("comments");
     console.log(posts);
     res.send(posts);
 };  
@@ -39,15 +39,13 @@ const getOne = async(req,res) => {
     }
 };
 const deletePost = (req,res) => {
-        const postId = new ObjectId(`${req.params["id"]}`); 
-        console.log(postId);
-        PostModel.findOneAndDelete({"_id": postId})
+        console.log(req.params["id"]);
+        PostModel.findOneAndDelete({"_id": req.params["id"]})
           .then(doc => res.send(doc));
 };
 const update = async(req,res) => {
     try {
-        const postId = req.params["id"];
-        await PostModel.updateOne({_id: postId},
+        await PostModel.updateOne({_id: req.params["id"]},
             {   
                 text: req.body.text,
                 imageUrl: req.body.imageUrl,

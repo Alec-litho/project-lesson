@@ -6,14 +6,6 @@ const initialState = {
   status: 'idle',
   updatingPictures: false
 }
-// export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', (data) => { 
-//   console.log(data);
-//   axios.post('http://localhost:3001/albums/myalbums', { id: data.userid }, {
-//   headers: {
-//     'Content-Type': 'application/json',
-//     Authorization: `Bearer ${data.token}`
-//   }
-// })
 
 export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', async (data) => {
   let result = await axios.post('http://localhost:3001/albums/myalbums', {id:data.userid}, {
@@ -43,11 +35,12 @@ export const fetchImg = createAsyncThunk('albums/fetchImg', (data) => axios.get(
   }
 }))
 export const savePicture = createAsyncThunk('albums/savePicture', async (data) => {
+  console.log(data);
   try {
     const response = await axios.post('http://localhost:3001/images', JSON.stringify(data.imgData), {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${data.userData.token}`
+      Authorization: `Bearer ${data.token}`
     }
   })
   console.log(response);

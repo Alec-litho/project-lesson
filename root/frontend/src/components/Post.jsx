@@ -15,19 +15,19 @@ import { postComment } from '../features/postSlice'
 
 export default function Post(props) {
   let [sliderTrue, setSliderTrue] = useState(false)
-  let [currPictureId, setCurrPictureId] = useState(false)
+  // let [currPictureId, setCurrPictureId] = useState(false)
   let [commentsTrue, setCommentsTrue] = useState(false)
-  // let [comment, setComment] = useState(null)
+  let [comment, setComment] = useState(null)
   let [showMenu, setShowMenu] = useState(false)
   let alreadySmashedLike;
   alreadySmashedLike = props.likes? props.likes.filter(user => user === props.auth._id)[0] : []
 
-  // useEffect(_ => {
-  //   if(comment!==null) {
-  //     axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
-  //     {text: comment, user:props.auth._id, autherName:props.auth.fullName, autherPicture:props.auth.avatarUrl, post:props.postId})
-  //   }
-  // },[comment])
+  useEffect(_ => {
+    if(comment!==null) {
+      axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
+      {text: comment, user:props.auth._id, authorName:props.auth.fullName, authorPicture:props.auth.avatarUrl, post:props.postId})
+    }
+  },[comment])
 
   function deletePost() {
     axios.delete(`http://localhost:3001/posts/${props.postId}`,
@@ -62,9 +62,9 @@ export default function Post(props) {
         </div>
         <div className={classes.text}>{props.text}</div>
           <div className={classes.images}>
-            {props.images.map(img => {
-              return <div className={classes.imgWrapper}><img data-id={img._id} className={classes.image} onClick={e => {
-                setCurrPictureId(e.target.dataset.id)
+            {props.images.map((img, id) => {
+              return <div key={id} className={classes.imgWrapper}><img data-id={img._id} className={classes.image} onClick={e => {
+                props.setCurrPictureId(e.target.dataset.id)
                 setSliderTrue(true)
               }} src={img.imageURL}></img></div>
             })
@@ -108,7 +108,7 @@ export default function Post(props) {
     
           </div>
           <MessageTool type={'comment'} postId={props.postId}/>
-          <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={currPictureId}/>
+          <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={props.currPictureId} setCurrPictureId={props.setCurrPictureId}/>
         </div>
     )
 }

@@ -8,7 +8,7 @@ import axios from 'axios'
 import '../styles/gallery_slider_style.css'
 
  
-export default function Slider({setSliderTrue, setUpdate, currPictureId, sliderTrue,setcurrPictureId, desc}) {
+export default function Slider({setSliderTrue, setUpdate, currPictureId, sliderTrue,setCurrPictureId, desc}) {
     let leftArrow = useRef(null), rightArrow = useRef(null);
     let sliderContainer = useRef(null)
     let slider = useRef(null)
@@ -42,7 +42,7 @@ export default function Slider({setSliderTrue, setUpdate, currPictureId, sliderT
         if(e.target.className === 'imageContainer') {
             setPictures([]);
             setSliderTrue(prev => prev = false);
-            setcurrPictureId(null);
+            setCurrPictureId(null);
         }
     }
     function sliderMoveForward(e) {

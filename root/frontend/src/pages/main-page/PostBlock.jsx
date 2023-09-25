@@ -26,14 +26,15 @@ export default function PostBlock(props) {
 
     // useEffect(_ => {textArea.current.style.height = 50 + (textLeng/4) + 'px'}, [textLeng]) too much updates
     useEffect(() => {
-        if(posts.length === 0) {
+        if(userPosts === undefined) {
             dispatch(fetchMyPosts({id:props.auth.userInfo._id, update:setUpdate}))
             .then(res => {
                 let reversedArr = [...res.payload].reverse();
                 setPosts(reversedArr)
             })
         }
-    }, [posts])
+        console.log(userPosts);
+    }, [userPosts])
 
     function appendImage(e) {
         postImage(e.target, false/*hasAlbum*/,undefined/*album*/, false/*post*/).then(res => {//saves image to 'imgbb.com' server
@@ -54,11 +55,14 @@ export default function PostBlock(props) {
     }
     function loadImages() {
         if(imagesToAppend.length===0) savePost()
-        imagesToAppend.forEach((img, indx) => {
-            let id = img._id 
-            axios.post(`http://localhost:3001/images/update/${id}`)
-            if(indx === imagesToAppend.length-1) savePost() //when all images will be updated post will be saved
-        })
+        else {
+            imagesToAppend.forEach((img, indx) => {
+                let id = img._id 
+                console.log(img);
+                axios.post(`http://localhost:3001/images/update/${id}`)
+            })
+            savePost()
+        }
     }
     async function savePost() {
         let result = filterTags(tags.current.value)
@@ -106,7 +110,7 @@ export default function PostBlock(props) {
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
                     console.log(post)
-                    return <Post key={id} auth={props.auth} postId={post._id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={trimTime(post.createdAt)} images={post.images} text={post.text} update={setUpdate}/>
+                    return <Post key={id} setCurrPictureId={props.setCurrPictureId} currPictureId={props.currPictureId} auth={props.auth} postId={post._id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={trimTime(post.createdAt)} images={post.images} text={post.text} update={setUpdate}/>
                 })
             }
             </div>

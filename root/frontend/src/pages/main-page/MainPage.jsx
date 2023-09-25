@@ -17,13 +17,11 @@ export default function Main() {
     const userInfo = useSelector(state => state.auth.userInfo);
     const albums = useSelector(state => state.albums.albums);
     const [sliderTrue, setSliderTrue] = useState(false);
-    const [currPictureId, setcurrPictureId] = useState(null);
+    const [currPictureId, setCurrPictureId] = useState(null);
     const [update, setUpdate] = useState(false);
 
     useEffect(() => {
-        //                                         ERROR INFINITE LOOP
-         //------------------------------------------------------------------------------------------------
-        if(photos.length===0){
+        if(photos.length===0 && userInfo._id){
             if(albums.length!==0) setPhotos([...albums])
             else {
                 dispatch(fetchMyAlbums({userid: userInfo._id, token: auth.token, update:setUpdate})).then((res) => {
@@ -32,8 +30,7 @@ export default function Main() {
             }
         };
         if(userInfo._id) setFinish(true);
-        //------------------------------------------------------------------------------------------------
-    },[/*userInfo*/])
+    },[userInfo,albums])
 
     if(isLoaded === false) return <Loader/>
     return (
@@ -41,10 +38,10 @@ export default function Main() {
             <Profile fullName={userInfo.fullName} age={userInfo.age} friends={userInfo.friends} avatarUrl={userInfo.avatarUrl} location={userInfo.location}/>
             <div className={classes.mainContent}>
                 <AboutMeBlock galleryPhotos={photos} setSliderTrue={setSliderTrue} isLoadedState={isLoaded}/>
-                <PostBlock  setcurrPictureId={setcurrPictureId} setSliderTrue={setSliderTrue} update={update} setUpdate={setUpdate} auth={auth}/>
+                <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue} update={update} setUpdate={setUpdate} auth={auth}/>
             </div>
             {/*sidebar??*/}
-            <Slider sliderTrue={sliderTrue} token={auth.token/*token is undefined !!!!!!*/ } setSliderTrue={setSliderTrue} currPictureId={currPictureId/*current img id to show in slider*/} setcurrPictureId={setcurrPictureId}></Slider>
+            <Slider sliderTrue={sliderTrue} token={auth.token/*token is undefined !!!!!!*/ } setSliderTrue={setSliderTrue} currPictureId={currPictureId/*current img id to show in slider*/} setCurrPictureId={setCurrPictureId}></Slider>
         </div>
     );
 }

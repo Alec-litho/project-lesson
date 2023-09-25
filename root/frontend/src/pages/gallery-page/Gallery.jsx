@@ -22,7 +22,8 @@ export default function Gallery(props) {
     let [currentPictures, setPictures] = useState([])
     let [isLoaded, finishLoading] = useState(false)
     let [currentAlbum, setAlbum] = useState('All')
-    let [currPictureId, setcurrPictureId] = useState(null)
+    let [currentAlbumId, setAlbumId] = useState(null)
+    let [currPictureId, setCurrPictureId] = useState(null)
     let [updatePictures, setUpdate] = useState(false)
     useEffect(()=> { 
         if((userInfo._id && token)) {
@@ -38,10 +39,11 @@ export default function Gallery(props) {
                 finishLoading(true)
             }
         }
-    },[/*updatePictures,*/userInfo])
+    },[updatePictures,userInfo])
     
     function showAlbum(e) {
         setAlbum(e.target.innerText)
+        setAlbumId(e.target.dataset)
         if(e.target.parentNode.childNodes[0].innerText !== currentAlbum) {
             console.log(currentAlbum);
             [...e.target.parentNode.parentNode.childNodes].map(album => {
@@ -60,15 +62,16 @@ export default function Gallery(props) {
     }
     function showSlider(e) {
         setSliderTrue(!sliderTrue)
-        setcurrPictureId(e.target.dataset.id)
+        setCurrPictureId(e.target.dataset.id)
     }
     function doAnimation(e) {e.target.childNodes.forEach(child => {
         underlines.current.forEach(item => item.id === child.id?  item.style.width = 200 + 'px' : null)
     })}
     function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
     function uploadPicture(e) {
-        postImage(e.target, currentAlbum, false/*post*/ ).then(res => {
-            dispatch(savePicture({picture:res, userInfo, setUpdate})).then(_ => {//save in db
+        console.log(currentAlbumId.albumid);
+        postImage(e.target, true/*hasAlbum*/, currentAlbumId.albumid, false/*is appended to post?*/ ).then(res => {
+            dispatch(savePicture({imgData:{...res, "album":currentAlbum}, setUpdate,token})).then(_ => {//save in db
                 setUpdate(true)
                 setPictures(currentPictures)
             })
@@ -84,8 +87,8 @@ export default function Gallery(props) {
                <h1>Albums</h1>
                {currentPictures.map((album, id) => {
                 return (
-                    <div id="albums" key={id} onClick={showAlbum} className={classes.album} onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}>
-                    <p>{album.name}</p>
+                    <div id="albums" data-albumId={album._id} key={id} onClick={showAlbum} className={classes.album} onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}>
+                    <p data-albumId={album._id}>{album.name}</p>
                     <div ref={el => underlines.current[id] = el}  id={id} className={classes.underline}><p></p></div>
                     </div>
                 )
@@ -128,7 +131,7 @@ export default function Gallery(props) {
                sliderTrue={sliderTrue} 
                setSliderTrue={setSliderTrue} 
                currPictureId={currPictureId}
-               setcurrPictureId={setcurrPictureId}
+               setCurrPictureId={setCurrPictureId}
             ></Slider>
         </div>
         </div>

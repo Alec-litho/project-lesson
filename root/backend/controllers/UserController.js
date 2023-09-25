@@ -19,7 +19,7 @@ module.exports.register = async(req, res) => {
             email: req.body.email,
             fullName: req.body.fullName,
             password: req.body.password,
-            avatarUrl: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp",
+            avatarUrl: "https://i.ibb.co/Bqm8N2r/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg",
             friends: 0,
             location: "not mentioned",
             age: userAge
