@@ -60,7 +60,7 @@ module.exports.uploadAlbum = function(req,res) {
         user: req.userId,
         images: [],
         description: req.body.description
-    });
+    }); 
     doc.save();
     res.json(doc);
 };
