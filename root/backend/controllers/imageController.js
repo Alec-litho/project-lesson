@@ -6,35 +6,26 @@ module.exports.getAllImages = function(req,res) {
     const images = imageModel.find();
     res.send(images);
 };
-//-----------------------------I need to fix this fucntion------------------------------//
-//a lot of weird useless stuff to get rid of
+
 module.exports.uploadImage = async function(req,res) {
     try {
-        console.log('req.body --> ',req.body);
-        // const albumId = await AlbumModel.findById(req.body.albumId) 
-        const album = req.body.hasAlbum? await AlbumModel.findById(req.body.albumId) : undefined;
-        const albumName = album? album.name.toString() : undefined
-        console.log(album,albumName);
+        const album = req.body.album !== undefined? await AlbumModel.findById(req.body.albumId) : undefined;
         const doc = new imageModel({ 
             title: req.body.title,
             imageURL: req.body.imageURL,
             description: req.body.description,
             user: req.userId,
-            album: albumName,
+            album: req.body.albumId,
             post: req.body.post
         });
 
         if(album) {
-            console.log('album exists');
-            // const album = await AlbumModel.findOne({name:req.body.albumId});
-            doc.save();
+            await doc.save();
             album.images.push(doc);
-            album.save();
-            console.log('after saved in album');
+            await album.save();
             res.json(album);
         } else {
             doc.save();
-            console.log('after saved ',doc);
             res.json(doc);
         } 
     } catch(err) {
@@ -43,7 +34,6 @@ module.exports.uploadImage = async function(req,res) {
    
 
 };
-//-----------------------------I need to fix this fucntion------------------------------//
 
 module.exports.updateImage = function(req,res) {
     imageModel.findByIdAndUpdate(req.params.id, {post: true}).then(resp => res.send(resp));

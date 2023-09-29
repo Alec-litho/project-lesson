@@ -69,8 +69,8 @@ export default function Gallery(props) {
     })}
     function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
     function uploadPicture(e) {
-        console.log(currentAlbumId.albumid);
-        postImage(e.target, true/*hasAlbum*/, currentAlbumId.albumid, false/*is appended to post?*/ ).then(res => {
+        let albumid = currentAlbumId.albumid? currentAlbumId.albumid : 'All'
+        postImage(e.target, true/*hasAlbum*/, albumid, false/*is appended to post?*/ ).then(res => {
             dispatch(savePicture({imgData:{...res, "album":currentAlbum}, setUpdate,token})).then(_ => {//save in db
                 setUpdate(true)
                 setPictures(currentPictures)

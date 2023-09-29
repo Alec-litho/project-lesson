@@ -45,11 +45,11 @@ export default function Post(props) {
       props.update(false)
     })
   }
-
+  console.log(props.avatarUrl);
     return (
         <div className={classes.post}>
         <div className={classes.postHeader}>
-          <div><img className={classes.profileCircle} ></img></div>
+          <img src={props.avatarUrl} className={classes.profileCircle} ></img>
           <div className={classes.date}>{`published on ${props.date}`}</div>
           <div className={classes.postTools}>
             <Menu className={classes.postMenu} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}/>

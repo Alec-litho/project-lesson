@@ -38,7 +38,7 @@ export default function PostBlock(props) {
 
     function appendImage(e) {
         postImage(e.target, false/*hasAlbum*/,undefined/*album*/, false/*post*/).then(res => {//saves image to 'imgbb.com' server
-            dispatch(savePicture({imgData:res, userData:props.auth}))//saves information about image to mongodb 
+            dispatch(savePicture({imgData:res, token:props.auth.token}))//saves information about image to mongodb 
             .then(resp => {
                 setImagesToAppend(prev => [...prev, resp.payload])
             })
@@ -91,7 +91,7 @@ export default function PostBlock(props) {
                                    <div className={classes.background}></div>
                                    <div className={classes.imageWrapper}><img data-id={image._id} src={image.imageURL} className={classes.imageToAppend} onClick={e => {
                                        props.setSliderTrue(true)
-                                       props.setcurrPictureId(e.target.dataset.id)
+                                       props.setCurrPictureId(e.target.dataset.id)
                                     }}/>
                                     </div>
                                </div>
@@ -110,7 +110,7 @@ export default function PostBlock(props) {
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
                     console.log(post)
-                    return <Post key={id} setCurrPictureId={props.setCurrPictureId} currPictureId={props.currPictureId} auth={props.auth} postId={post._id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={trimTime(post.createdAt)} images={post.images} text={post.text} update={setUpdate}/>
+                    return <Post key={id} setCurrPictureId={props.setCurrPictureId} currPictureId={props.currPictureId} avatarUrl={props.auth.userInfo.avatarUrl} postId={post._id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={trimTime(post.createdAt)} images={post.images} text={post.text} update={setUpdate}/>
                 })
             }
             </div>

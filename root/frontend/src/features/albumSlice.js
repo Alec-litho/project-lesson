@@ -39,7 +39,7 @@ export const savePicture = createAsyncThunk('albums/savePicture', async (data) =
   try {
     const response = await axios.post('http://localhost:3001/images', JSON.stringify(data.imgData), {
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json', 
       Authorization: `Bearer ${data.token}`
     }
   })
