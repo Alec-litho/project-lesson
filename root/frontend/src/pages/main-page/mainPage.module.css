@@ -19,7 +19,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 60%;
+    width: 50%;
     height: auto;
   }
   .profileContainer {

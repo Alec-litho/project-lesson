@@ -19,15 +19,14 @@ export default function Post(props) {
   let [commentsTrue, setCommentsTrue] = useState(false)
   let [comment, setComment] = useState(null)
   let [showMenu, setShowMenu] = useState(false)
-  let alreadySmashedLike;
-  alreadySmashedLike = props.likes? props.likes.filter(user => user === props.auth._id)[0] : []
-
+  let [alreadySmashedLike, setAlreadySmashedLike] = useState(props.likes.filter(user => user === props.auth._id))
+  console.log(props.likes, alreadySmashedLike);
   useEffect(_ => {
     if(comment!==null) {
       axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
       {text: comment, user:props.auth._id, authorName:props.auth.fullName, authorPicture:props.auth.avatarUrl, post:props.postId})
     }
-  },[comment])
+  },[comment,alreadySmashedLike])
 
   function deletePost() {
     axios.delete(`http://localhost:3001/posts/${props.postId}`,
@@ -36,16 +35,18 @@ export default function Post(props) {
     })
   }
   function smashLike() {
+    setAlreadySmashedLike([props.auth._id])
     axios.post(`http://localhost:3001/posts/like`, {userId: props.auth._id, postId:props.postId}).then(res => {
       props.update(false)
     })
   }
   function removeLike() {
+    setAlreadySmashedLike([])
     axios.post(`http://localhost:3001/posts/removeLike`, {userId: props.auth._id, postId:props.postId}).then(res => {
       props.update(false)
     })
   }
-  console.log(props.avatarUrl);
+  console.log(alreadySmashedLike);
     return (
         <div className={classes.post}>
         <div className={classes.postHeader}>
@@ -81,8 +82,8 @@ export default function Post(props) {
                 <Comments className={classes.icon} onClick={_ => setCommentsTrue(prev => !prev)}/>
               </div>
               <div className={classes.tool}>
-                <p>{alreadySmashedLike==undefined? 0 : [alreadySmashedLike].length}</p>
-                <Like className={alreadySmashedLike? classes.iconBlue : classes.icon} onClick={alreadySmashedLike? removeLike : smashLike}/>
+                <p>{alreadySmashedLike.length>0? [alreadySmashedLike].length : 0}</p>
+                <Like className={alreadySmashedLike.length>0? classes.iconBlue : classes.icon} onClick={alreadySmashedLike.length>0? removeLike : smashLike}/>
               </div>
               <div className={classes.tool}>
                 <p>{props.share}</p>
@@ -94,12 +95,12 @@ export default function Post(props) {
             {props.comments.map((comment, id) => {
               return ( 
               <div key={id} className={classes.commentWrapper}>
-                <Comment autherPicture={comment.autherPicture} autherName={comment.autherName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment)}/>
-                { comment.replies.length>0 & ( <div className={classes.repliesWrapper}>
+                <Comment authorPicture={comment.authorPicture} authorName={comment.authorName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment.createdAt)}/>
+                { comment.replies.length>0 && ( <div className={classes.repliesWrapper}>
                   <a href="#">Show replies</a>
                   <div className={classes.replies}>
                     {comment.replies.map((reply,id) => {
-                      return <Comment key={id} autherPicture={reply.autherPicture} autherName={reply.autherName} likes={reply.likes} comment={reply.text} time={trimTime(reply)}/>
+                      return <Comment key={id} authorPicture={reply.authorPicture} authorName={reply.authorName} likes={reply.likes} comment={reply.text} time={trimTime(reply)}/>
                     })}
                   </div>
                 </div>)}
@@ -117,9 +118,9 @@ function Comment(props) {
   return (
     <div className={classes.comment}>
       <div className={classes.postLeftside}>
-        <img className={classes.profilePicture} src={props.autherPicture}></img>
+        <img className={classes.profilePicture} src={props.authorPicture}></img>
         <div className={classes.commentBody}>
-          <h5 className={classes.autherName}>{props.autherName}</h5>
+          <h5 className={classes.autherName}>{props.authorName}</h5>
           <p className={classes.text}>{props.text}</p>
           <div className={classes.commentInf}>
             <p className={classes.time}>{props.time}</p>
@@ -129,7 +130,7 @@ function Comment(props) {
       </div>
       <div className={classes.postRightside}>
         <p className={classes.likesNum}>{props.likes}</p>
-        <Like className={classes.likesIcon}/>
+        <Like className={classes.commentLike}/>
       </div>
     </div>
   )

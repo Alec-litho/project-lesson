@@ -103,29 +103,29 @@ const postComment = async(req, res) => {
 const postSmashLike = async function(req,res) {
     const userId = new ObjectId(`${req.body.userId}`);
     const postId = new ObjectId(`${req.body.postId}`);
-    const doc = await PostModel.findOne({"likes":[userId]});
-    if(doc === null) {
-        PostModel.findOneAndUpdate({"_id":[postId]}, {$push: {likes: userId}}, { upsert: true }).exec();
-    } else {
-        console.log("already smashed like");
-    }
+    // const doc = await PostModel.findOne({"likes":[userId]});
+    let doc = await PostModel.findByIdAndUpdate(req.body.postId, {$push: {likes: req.body.userId}}, { upsert: true }).exec();
+    console.log(doc);
     res.send(doc);
 };
 
 const postRemoveLike = async function(req,res) {
-    const userId = new ObjectId(`${req.body.userId}`);
-    const postId = new ObjectId(`${req.body.postId}`);
-    const doc = await PostModel.findOneAndUpdate({"_id":[postId]}, {$pull: {likes: userId}}, { upsert: true }).exec();
+    // const userId = new ObjectId(`${req.body.userId}`);
+    // const postId = new ObjectId(`${req.body.postId}`);
+    
+    let userId = req.body.userId
+    const doc = await PostModel.findByIdAndUpdate(req.body.postId, {$pull: {likes: userId}}, { upsert: true }).exec();
+    console.log(doc);
     res.send(doc);
 };
 const postReply = async(req, res) => {
-    const id = new ObjectId(`${req.params.id}`);  
-    const resp = await CommentModel.updateOne({"_id":id}, { $push: { replies: req.body.reply } });
+    // const id = new ObjectId(`${req.params.id}`);  
+    const resp = await CommentModel.findByIdAndUpdate(req.params.id, { $push: { replies: req.body.reply } });
     res.send(resp);
 };
 const deleteComment = async(req, res) => {
-    const id = new ObjectId(`${req.params.id}`);  
-    const resp = await CommentModel.deleteOne({"_id":id});
+    // const id = new ObjectId(`${req.params.id}`);  
+    const resp = await CommentModel.findByIdAndDelete(req.params.id);
     res.send(resp);
 };
 

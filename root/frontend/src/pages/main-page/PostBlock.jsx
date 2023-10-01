@@ -33,7 +33,7 @@ export default function PostBlock(props) {
                 setPosts(reversedArr)
             })
         }
-        console.log(userPosts);
+        else setPosts([...userPosts]);
     }, [userPosts])
 
     function appendImage(e) {
@@ -110,7 +110,7 @@ export default function PostBlock(props) {
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
                     console.log(post)
-                    return <Post key={id} setCurrPictureId={props.setCurrPictureId} currPictureId={props.currPictureId} avatarUrl={props.auth.userInfo.avatarUrl} postId={post._id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={trimTime(post.createdAt)} images={post.images} text={post.text} update={setUpdate}/>
+                    return <Post key={id} auth={props.auth.userInfo} setCurrPictureId={props.setCurrPictureId} currPictureId={props.currPictureId} avatarUrl={props.auth.userInfo.avatarUrl} postId={post._id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={trimTime(post.createdAt)} images={post.images} text={post.text} update={setUpdate}/>
                 })
             }
             </div>

@@ -41,7 +41,7 @@ export default function Main() {
                 <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue} update={update} setUpdate={setUpdate} auth={auth}/>
             </div>
             {/*sidebar??*/}
-            <Slider sliderTrue={sliderTrue} token={auth.token/*token is undefined !!!!!!*/ } setSliderTrue={setSliderTrue} currPictureId={currPictureId/*current img id to show in slider*/} setCurrPictureId={setCurrPictureId}></Slider>
+            <Slider sliderTrue={sliderTrue} token={auth.token} setSliderTrue={setSliderTrue} currPictureId={currPictureId/*current img id to show in slider*/} setCurrPictureId={setCurrPictureId}></Slider>
         </div>
     );
 }
