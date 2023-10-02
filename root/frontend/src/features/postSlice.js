@@ -57,6 +57,13 @@ const postSlice = createSlice({
         state.status = 'error'
         state.error = 'erorr'
       })
+      .addCase(postComment.fulfilled, (state,action) => {
+        state.myPosts = [...state.myPosts].map(post => {
+          console.log(action.payload);
+          if(post._id === action.payload._id) return action.payload   
+          else return post
+        })
+      })
   }
 })
 

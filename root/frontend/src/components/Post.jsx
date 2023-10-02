@@ -17,16 +17,16 @@ export default function Post(props) {
   let [sliderTrue, setSliderTrue] = useState(false)
   // let [currPictureId, setCurrPictureId] = useState(false)
   let [commentsTrue, setCommentsTrue] = useState(false)
-  let [comment, setComment] = useState(null)
+  // let [comment, setComment] = useState(null)
   let [showMenu, setShowMenu] = useState(false)
   let [alreadySmashedLike, setAlreadySmashedLike] = useState(props.likes.filter(user => user === props.auth._id))
-  console.log(props.likes, alreadySmashedLike);
+
   useEffect(_ => {
-    if(comment!==null) {
-      axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
-      {text: comment, user:props.auth._id, authorName:props.auth.fullName, authorPicture:props.auth.avatarUrl, post:props.postId})
-    }
-  },[comment,alreadySmashedLike])
+    // if(comment!==null) {
+      // axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
+      // {text: comment, user:props.auth._id, authorName:props.auth.fullName, authorPicture:props.auth.avatarUrl, post:props.postId})
+    // }
+  },[alreadySmashedLike])
 
   function deletePost() {
     axios.delete(`http://localhost:3001/posts/${props.postId}`,

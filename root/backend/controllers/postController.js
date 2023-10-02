@@ -87,14 +87,15 @@ const postComment = async(req, res) => {
         user: req.body.user,
         authorPicture: req.body.authorPicture,
         authorName: req.body.authorName,
-        post: req.params.postId,
+        post: req.params.id,
         likes: [],
         replies: []
     });
-    const resp = await doc.save();
+    await doc.save();
+    console.log(req.params.id);
     const response = await PostModel.findOneAndUpdate({"_id":req.params.id}, {$push: {comments: doc}}, { upsert: true }).exec();
-    console.log('response --> ',response);
-    res.send(resp);
+    const post = await PostModel.findById(req.params.id).populate('comments');
+    res.send(post);
     } catch(err) {
         console.log(err);
     }
