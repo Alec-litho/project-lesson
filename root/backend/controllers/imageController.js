@@ -16,7 +16,7 @@ module.exports.uploadImage = async function(req,res) {
             description: req.body.description,
             user: req.userId,
             album: req.body.albumId,
-            post: req.body.post
+            postId: req.body.postId
         });
 
         if(album) {
@@ -36,7 +36,7 @@ module.exports.uploadImage = async function(req,res) {
 };
 
 module.exports.updateImage = function(req,res) {
-    imageModel.findByIdAndUpdate(req.params.id, {post: true}).then(resp => res.send(resp));
+    // imageModel.findByIdAndUpdate(req.params.id, {post: true}).then(resp => res.send(resp));
 };
 module.exports.getOneImage = function(req,res) {
     imageModel.findById(req.params.id).then(resp => res.send(resp));

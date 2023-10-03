@@ -23,8 +23,8 @@ const imageSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    post: {
-        type: Boolean,
+    postId: {
+        type: String,
     },
     date: {
       type: Date,

@@ -29,7 +29,7 @@ export default function PostBlock(props) {
         if(userPosts === undefined) {
             dispatch(fetchMyPosts({id:props.auth.userInfo._id, update:setUpdate}))
             .then(res => {
-                let reversedArr = [...res.payload].reverse();
+                let reversedArr = [...res.payload];
                 setPosts(reversedArr)
             })
         }
@@ -37,7 +37,7 @@ export default function PostBlock(props) {
     }, [userPosts])
 
     function appendImage(e) {
-        postImage(e.target, false/*hasAlbum*/,undefined/*album*/, false/*post*/).then(res => {//saves image to 'imgbb.com' server
+        postImage(e.target, false/*hasAlbum*/,undefined/*album*/, 'undefined'/*postId*/).then(res => {//saves image to 'imgbb.com' server
             dispatch(savePicture({imgData:res, token:props.auth.token}))//saves information about image to mongodb 
             .then(resp => {
                 setImagesToAppend(prev => [...prev, resp.payload])
@@ -110,7 +110,7 @@ export default function PostBlock(props) {
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
                     console.log(post)
-                    return <Post key={id} auth={props.auth.userInfo} setCurrPictureId={props.setCurrPictureId} currPictureId={props.currPictureId} avatarUrl={props.auth.userInfo.avatarUrl} postId={post._id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={trimTime(post.createdAt)} images={post.images} text={post.text} update={setUpdate}/>
+                    return <Post key={id} auth={props.auth.userInfo} token={props.auth.token} setCurrPictureId={props.setCurrPictureId} currPictureId={props.currPictureId} avatarUrl={props.auth.userInfo.avatarUrl} postId={post._id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={trimTime(post.createdAt)} images={post.images} text={post.text} update={setUpdate}/>
                 })
             }
             </div>

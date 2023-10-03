@@ -1,5 +1,5 @@
 const {PostModel} = require("../models/post");
-const {ImageModel} = require("../models/image");
+const {imageModel} = require("../models/image");
 const {CommentModel} = require("../models/comment");
 const {ObjectId} = require("mongodb");
 const getAll = async(req,res) => {
@@ -38,10 +38,16 @@ const getOne = async(req,res) => {
         res.status(500).json({message:"Could not get posts"});
     }
 };
-const deletePost = (req,res) => {
-        console.log(req.params["id"]);
-        PostModel.findOneAndDelete({"_id": req.params["id"]})
-          .then(doc => res.send(doc));
+const deletePost = async(req,res) => {
+        console.log(req.params["id"], '--> deleted');
+        PostModel.findById(req.params["id"]).then(doc => {
+            doc.images.forEach(image => {
+                console.log(image);
+                imageModel.findOneAndDelete({_id:image._id})
+            })
+        })
+        let result = await PostModel.findOneAndDelete({"_id": req.params["id"]})
+        res.json(result)
 };
 const update = async(req,res) => {
     try {
@@ -60,17 +66,22 @@ const update = async(req,res) => {
 
 const create = async(req,res) => {
     try { 
-        // const imgs = req.body.imageUrl.map(img => {
-        //     return new ObjectId(`${img}`);  
-        // });
         const doc = new PostModel({
             text: req.body.text? req.body.text : '',
             images: req.body.imageUrl,
             tags: req.body.tags,
             user: req.body.id
         });
-        const post = await doc.save();
-        res.json(post);
+        const savedPost = await doc.save();
+        let post = await PostModel.findById(doc._id)
+        PostModel.findById(post._id)
+          .then((doc) => {
+            doc.images.forEach(image => {
+                res = imageModel.findByIdAndUpdate(image._id, {$set:{postId: doc._id.toString()}},{new:true})
+            })
+        })
+        res.json(savedPost);
+
     } catch (error) {
         console.log(error);
         res.status(500).json({message:"Could not upload post"});

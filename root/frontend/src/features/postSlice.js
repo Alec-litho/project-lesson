@@ -25,7 +25,7 @@ export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async (data) 
     const response = await axios.post('http://localhost:3001/posts/myposts', { id: data.id })
     data.update(true)
     console.log(response);
-    return response.data
+    return [...response.data].reverse();
   } catch(error) {
     console.log(error);
   }
@@ -40,6 +40,14 @@ export const createPost = createAsyncThunk('posts/createPost', async (data) => {
     { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.token}` } }
   )
   data.update(false)
+  return response.data
+})
+
+export const deletePost = createAsyncThunk('posts/deletePost', async(data) => {
+  let response = await axios.delete(`http://localhost:3001/posts/${data.postId}`,
+  {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${data.token}`}}
+  )
+  
   return response.data
 })
 
@@ -63,6 +71,14 @@ const postSlice = createSlice({
           if(post._id === action.payload._id) return action.payload   
           else return post
         })
+      })
+      .addCase(createPost.fulfilled, (state, action) => {
+        let reversedArr = [...state.myPosts].reverse();
+        state.myPosts = [...reversedArr, action.payload].reverse();
+      })
+      .addCase(deletePost.fulfilled, (state,action) => {
+        console.log(action.payload);
+        state.myPosts = [...state.myPosts].filter(post => post._id !== action.payload._id)
       })
   }
 })

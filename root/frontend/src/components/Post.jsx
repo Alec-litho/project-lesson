@@ -12,8 +12,11 @@ import MessageTool from './MessageTool'
 import axios from 'axios'
 import trimTime from '../helper_functions/trimTime'
 import { postComment } from '../features/postSlice'
+import { useDispatch } from 'react-redux'
+import { deletePost } from '../features/postSlice'
 
 export default function Post(props) {
+  let dispatch = useDispatch();
   let [sliderTrue, setSliderTrue] = useState(false)
   // let [currPictureId, setCurrPictureId] = useState(false)
   let [commentsTrue, setCommentsTrue] = useState(false)
@@ -28,12 +31,6 @@ export default function Post(props) {
     // }
   },[alreadySmashedLike])
 
-  function deletePost() {
-    axios.delete(`http://localhost:3001/posts/${props.postId}`,
-    {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${props.auth.token}`}}).then(res => {
-      props.update(false)
-    })
-  }
   function smashLike() {
     setAlreadySmashedLike([props.auth._id])
     axios.post(`http://localhost:3001/posts/like`, {userId: props.auth._id, postId:props.postId}).then(res => {
@@ -55,7 +52,7 @@ export default function Post(props) {
           <div className={classes.postTools}>
             <Menu className={classes.postMenu} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}/>
             <div className={showMenu? classes.menuTools : classes.menuToolsHide} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}>
-              <a onClick={deletePost}>Delete</a>
+              <a onClick={() => dispatch(deletePost({postId:props.postId, token:props.token}))}>Delete</a>
               <a>Edit</a>
               <a>Report</a>
             </div>
