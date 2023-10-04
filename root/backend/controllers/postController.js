@@ -39,12 +39,9 @@ const getOne = async(req,res) => {
     }
 };
 const deletePost = async(req,res) => {
-        console.log(req.params["id"], '--> deleted');
-        PostModel.findById(req.params["id"]).then(doc => {
-            doc.images.forEach(image => {
-                console.log(image);
-                imageModel.findOneAndDelete({_id:image._id})
-            })
+        let doc = await PostModel.findById(req.params["id"])
+        doc.images.forEach(async(image) => {
+            await imageModel.findByIdAndDelete(image);
         })
         let result = await PostModel.findOneAndDelete({"_id": req.params["id"]})
         res.json(result)
@@ -72,15 +69,14 @@ const create = async(req,res) => {
             tags: req.body.tags,
             user: req.body.id
         });
-        const savedPost = await doc.save();
-        let post = await PostModel.findById(doc._id)
-        PostModel.findById(post._id)
-          .then((doc) => {
-            doc.images.forEach(image => {
-                res = imageModel.findByIdAndUpdate(image._id, {$set:{postId: doc._id.toString()}},{new:true})
-            })
+        await doc.save();
+        let post = await PostModel.findById(doc._id).populate('images')
+        let updateImgs = await PostModel.findById(doc._id).populate('images')
+        updateImgs.images.forEach(async(image) => {
+            const res = await imageModel.findOneAndUpdate({_id:image._id}, {$set:{postId: doc._id.toString()}},{new:true});
+            res.save();
         })
-        res.json(savedPost);
+        res.json(post);
 
     } catch (error) {
         console.log(error);
@@ -104,8 +100,8 @@ const postComment = async(req, res) => {
     });
     await doc.save();
     console.log(req.params.id);
-    const response = await PostModel.findOneAndUpdate({"_id":req.params.id}, {$push: {comments: doc}}, { upsert: true }).exec();
-    const post = await PostModel.findById(req.params.id).populate('comments');
+    await PostModel.findOneAndUpdate({"_id":req.params.id}, {$push: {comments: doc}}, { upsert: true }).exec();
+    const post = await PostModel.findById(req.params.id).populate('comments').populate('images');
     res.send(post);
     } catch(err) {
         console.log(err);

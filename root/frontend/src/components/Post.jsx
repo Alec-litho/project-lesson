@@ -7,7 +7,7 @@ import { ReactComponent as Comments } from '../assets/icons/comments.svg'
 
 import classes from '../styles/post.module.css'
 import Slider from './Slider'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import MessageTool from './MessageTool'
 import axios from 'axios'
 import trimTime from '../helper_functions/trimTime'
@@ -23,12 +23,15 @@ export default function Post(props) {
   // let [comment, setComment] = useState(null)
   let [showMenu, setShowMenu] = useState(false)
   let [alreadySmashedLike, setAlreadySmashedLike] = useState(props.likes.filter(user => user === props.auth._id))
+  let postY = useRef(null)
 
   useEffect(_ => {
     // if(comment!==null) {
       // axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
       // {text: comment, user:props.auth._id, authorName:props.auth.fullName, authorPicture:props.auth.avatarUrl, post:props.postId})
     // }
+    console.log(postY);
+    props.setCurrPosts((prevState) => [...prevState, {postId:props.postId, watched:false, positionY:postY.current.getBoundingClientRect().top}])
   },[alreadySmashedLike])
 
   function smashLike() {
@@ -45,7 +48,7 @@ export default function Post(props) {
   }
   console.log(alreadySmashedLike);
     return (
-        <div className={classes.post}>
+        <div className={classes.post} ref={postY}>
         <div className={classes.postHeader}>
           <img src={props.avatarUrl} className={classes.profileCircle} ></img>
           <div className={classes.date}>{`published on ${props.date}`}</div>

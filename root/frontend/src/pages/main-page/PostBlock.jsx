@@ -18,7 +18,10 @@ export default function PostBlock(props) {
     let textArea = useRef(<textarea>nothing</textarea>)
     let userPosts = useSelector(state => state.userPosts.myPosts)
     let [posts, setPosts] = useState([])
-    let [update, setUpdate] = useState(false)
+    let [currPosts, setCurrPosts] = useState([])
+    //---------------------------------------
+    let [update, setUpdate] = useState(false) // useless, need to get rid of this
+    //---------------------------------------
     let [focus, setFocus] = useState(false)
     let [imagesToAppend, setImagesToAppend] = useState([])
     let [textLeng, setTextLeng] = useState(0)
@@ -26,8 +29,12 @@ export default function PostBlock(props) {
 
     // useEffect(_ => {textArea.current.style.height = 50 + (textLeng/4) + 'px'}, [textLeng]) too much updates
     useEffect(() => {
+        // window.onscroll = e => console.log(window.scrollY);
+        console.log(currPosts);
+    },[currPosts])
+    useEffect(() => {
         if(userPosts === undefined) {
-            dispatch(fetchMyPosts({id:props.auth.userInfo._id, update:setUpdate}))
+            dispatch(fetchMyPosts({id:props.auth.userInfo._id, update:setUpdate, postLength:currPosts.length}))
             .then(res => {
                 let reversedArr = [...res.payload];
                 setPosts(reversedArr)
@@ -110,7 +117,22 @@ export default function PostBlock(props) {
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
                     console.log(post)
-                    return <Post key={id} auth={props.auth.userInfo} token={props.auth.token} setCurrPictureId={props.setCurrPictureId} currPictureId={props.currPictureId} avatarUrl={props.auth.userInfo.avatarUrl} postId={post._id} views={post.viewsCount} share={post.share} likes={post.likes} comments={post.comments} commentsNum={post.commentsNum} date={trimTime(post.createdAt)} images={post.images} text={post.text} update={setUpdate}/>
+
+                    return <Post key={post._id} auth={props.auth.userInfo} 
+                    setCurrPosts={setCurrPosts}
+                    token={props.auth.token} 
+                    setCurrPictureId={props.setCurrPictureId} 
+                    currPictureId={props.currPictureId} 
+                    avatarUrl={props.auth.userInfo.avatarUrl} 
+                    postId={post._id} 
+                    views={post.viewsCount} 
+                    share={post.share} 
+                    likes={post.likes} 
+                    comments={post.comments} 
+                    commentsNum={post.commentsNum} 
+                    date={trimTime(post.createdAt)} 
+                    images={post.images} 
+                    text={post.text}/>
                 })
             }
             </div>
