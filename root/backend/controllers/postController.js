@@ -136,6 +136,11 @@ const deleteComment = async(req, res) => {
     const resp = await CommentModel.findByIdAndDelete(req.params.id);
     res.send(resp);
 };
+const postWatched = async(req, res) => {
+    let updatedPost = await PostModel.findByIdAndUpdate(req.body.postId, {$inc: {viewsCount:1}})
+    updatedPost.save(req.body.postId, updatedPost)
+}
+
 
 module.exports = {
     create,
@@ -150,5 +155,6 @@ module.exports = {
     postReply,
     deleteComment,
     postSmashLike,
-    postRemoveLike
+    postRemoveLike,
+    postWatched
 };

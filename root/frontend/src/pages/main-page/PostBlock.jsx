@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import postImage from '../../helper_functions/postImage.js'
 import Post from '../../components/Post.jsx';
 import classes from './mainPage.module.css'
-import {fetchMyPosts, createPost,} from '../../features/postSlice'
+import {fetchMyPosts, createPost, watched} from '../../features/postSlice'
 import {savePicture} from '../../features/albumSlice';
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
 import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
@@ -18,7 +18,8 @@ export default function PostBlock(props) {
     let textArea = useRef(<textarea>nothing</textarea>)
     let userPosts = useSelector(state => state.userPosts.myPosts)
     let [posts, setPosts] = useState([])
-    let [currPosts, setCurrPosts] = useState([])
+    let [currPosts, setCurrPosts] = useState([...userPosts])
+    let postToDetect = 0;
     //---------------------------------------
     let [update, setUpdate] = useState(false) // useless, need to get rid of this
     //---------------------------------------
@@ -26,23 +27,32 @@ export default function PostBlock(props) {
     let [imagesToAppend, setImagesToAppend] = useState([])
     let [textLeng, setTextLeng] = useState(0)
     let dispatch = useDispatch()
-
+    window.onscroll = () => detectReached(window);//to detect if user reached specific post to increase view count of the post
     // useEffect(_ => {textArea.current.style.height = 50 + (textLeng/4) + 'px'}, [textLeng]) too much updates
     useEffect(() => {
-        // window.onscroll = e => console.log(window.scrollY);
-        console.log(currPosts);
+        console.log(currPosts)
+
     },[currPosts])
     useEffect(() => {
-        if(userPosts === undefined) {
+        if(userPosts.length === 0) {
             dispatch(fetchMyPosts({id:props.auth.userInfo._id, update:setUpdate, postLength:currPosts.length}))
             .then(res => {
-                let reversedArr = [...res.payload];
-                setPosts(reversedArr)
+
             })
         }
         else setPosts([...userPosts]);
+        
     }, [userPosts])
-
+    function detectReached(window) {
+        if(currPosts.length===0) return
+        let post = currPosts[postToDetect]
+        if(window.scrollY >= post.positionY && !post.watched && currPosts[postToDetect]) {
+            console.log(post.postId, 'is watched', postToDetect);
+            postToDetect += 1;
+            post.watched = true
+            dispatch(watched(post.postId))
+        }
+    }
     function appendImage(e) {
         postImage(e.target, false/*hasAlbum*/,undefined/*album*/, 'undefined'/*postId*/).then(res => {//saves image to 'imgbb.com' server
             dispatch(savePicture({imgData:res, token:props.auth.token}))//saves information about image to mongodb 
@@ -116,7 +126,6 @@ export default function PostBlock(props) {
             </div>
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
-                    console.log(post)
 
                     return <Post key={post._id} auth={props.auth.userInfo} 
                     setCurrPosts={setCurrPosts}

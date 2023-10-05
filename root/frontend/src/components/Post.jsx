@@ -46,7 +46,6 @@ export default function Post(props) {
       props.update(false)
     })
   }
-  console.log(alreadySmashedLike);
     return (
         <div className={classes.post} ref={postY}>
         <div className={classes.postHeader}>

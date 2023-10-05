@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const initialState = {
   posts: [],
-  myPosts: undefined,
+  myPosts: [],
   status: 'idle',
   error: null
 }
@@ -24,8 +24,7 @@ export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async (data) 
   try {
     const response = await axios.post('http://localhost:3001/posts/myposts', { id: data.id })
     data.update(true)
-    console.log(response);
-    return {posts:[...response.data].reverse(), postsLength:data.postsLength};
+    return {posts:[...response.data].reverse(), postLength:data.postLength};
   } catch(error) {
     console.log(error);
   }
@@ -50,6 +49,9 @@ export const deletePost = createAsyncThunk('posts/deletePost', async(data) => {
   
   return response.data
 })
+export const watched = createAsyncThunk('posts/watched', async(postId) => {
+  await axios.post('http://localhost:3001/posts/watched', {postId},{headers: {'Content-Type': 'application/json'}})
+})
 
 const postSlice = createSlice({
   name: 'posts',
@@ -60,10 +62,11 @@ const postSlice = createSlice({
       .addCase(fetchMyPosts.fulfilled, (state, action) => {
         state.status = 'fulfilled'
         let posts = [...action.payload.posts]
-        let postLength = action.payload.postsLength===0? action.payload.postsLength : action.payload.postsLength+1
-        let postLengthEnd = action.payload.postsLength===0? action.payload.postsLength+1 : action.payload.postsLength
-        posts.slice(postLength, postLengthEnd+10)
-        state.myPosts = [...state.myPosts, posts]
+        let postLength = action.payload.postLength===0? action.payload.postLength : action.payload.postLength+1
+        // let postLengthEnd = action.payload.postLength===0? action.payload.postLength+1 : action.payload.postLength
+        let slicedPosts = posts.slice(postLength, postLength+10)
+        console.log(slicedPosts);
+        state.myPosts = [...state.myPosts, ...slicedPosts]
       })
       .addCase(fetchMyPosts.rejected, (state, action) => {
         state.status = 'error'
