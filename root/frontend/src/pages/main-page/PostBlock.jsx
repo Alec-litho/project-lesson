@@ -36,22 +36,23 @@ export default function PostBlock(props) {
     useEffect(() => {
         if(userPosts.length === 0) {
             dispatch(fetchMyPosts({id:props.auth.userInfo._id, update:setUpdate, postLength:currPosts.length}))
-            .then(res => {
-
-            })
         }
         else setPosts([...userPosts]);
-        
+        console.log('w');
     }, [userPosts])
     function detectReached(window) {
-        if(currPosts.length===0) return
+        if(currPosts.length===0 || !currPosts[postToDetect]) return
         let post = currPosts[postToDetect]
-        if(window.scrollY >= post.positionY && !post.watched && currPosts[postToDetect]) {
-            console.log(post.postId, 'is watched', postToDetect);
+        if(window.scrollY >= post.positionY && !currPosts[postToDetect].watched) {
+            console.log(post.postId, 'is watched', postToDetect, currPosts[postToDetect]);
+            currPosts[postToDetect].watched = true
             postToDetect += 1;
-            post.watched = true
             dispatch(watched(post.postId))
         }
+        // if(currPosts.length-1 === postToDetect) {//if last post of current posts list is watched 
+        //     postToDetect -= 1;
+        //     dispatch(fetchMyPosts({postsLength: currPosts.length,id:props.auth.userInfo._id}))//load another 10 posts
+        // }
     }
     function appendImage(e) {
         postImage(e.target, false/*hasAlbum*/,undefined/*album*/, 'undefined'/*postId*/).then(res => {//saves image to 'imgbb.com' server

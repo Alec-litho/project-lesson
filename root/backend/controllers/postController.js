@@ -14,7 +14,7 @@ const getAll = async(req,res) => {
 };
 const getMyPosts = async function(req, res) { 
     const posts = await PostModel.find({user: req.body.id}).populate("images").populate("comments");
-    console.log(posts);
+    console.log(posts, 'w');
     res.send(posts);
 };  
 const getPostImages = async function(req, res) {
