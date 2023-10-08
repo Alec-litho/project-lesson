@@ -18,6 +18,7 @@ import { deletePost } from '../features/postSlice'
 export default function Post(props) {
   let dispatch = useDispatch();
   let [sliderTrue, setSliderTrue] = useState(false)
+  let [editPost, setEditPost] = useState(false)
   // let [currPictureId, setCurrPictureId] = useState(false)
   let [commentsTrue, setCommentsTrue] = useState(false)
   // let [comment, setComment] = useState(null)
@@ -37,13 +38,11 @@ export default function Post(props) {
   function smashLike() {
     setAlreadySmashedLike([props.auth._id])
     axios.post(`http://localhost:3001/posts/like`, {userId: props.auth._id, postId:props.postId}).then(res => {
-      props.update(false)
     })
   }
   function removeLike() {
     setAlreadySmashedLike([])
     axios.post(`http://localhost:3001/posts/removeLike`, {userId: props.auth._id, postId:props.postId}).then(res => {
-      props.update(false)
     })
   }
     return (
@@ -55,26 +54,19 @@ export default function Post(props) {
             <Menu className={classes.postMenu} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}/>
             <div className={showMenu? classes.menuTools : classes.menuToolsHide} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}>
               <a onClick={() => dispatch(deletePost({postId:props.postId, token:props.token}))}>Delete</a>
-              <a>Edit</a>
+              <a onClick={() => setEditPost(true)}>Edit</a>
               <a>Report</a>
             </div>
           </div>
         </div>
-        <div className={classes.text}>{props.text}</div>
-          <div className={classes.images}>
-            {props.images.map((img, id) => {
-              return <div key={id} className={classes.imgWrapper}><img data-id={img._id} className={classes.image} onClick={e => {
-                props.setCurrPictureId(e.target.dataset.id)
-                setSliderTrue(true)
-              }} src={img.imageURL}></img></div>
-            })
-          }
-          </div>
+        {editPost? <PostBodyEdit images={props.images} text={props.text} setCurrPictureId={props.setCurrPictureId} setEditPost={setEditPost} setSliderTrue={setSliderTrue}/> :
+                   <PostBody images={props.images} text={props.text} setCurrPictureId={props.setCurrPictureId} setSliderTrue={setSliderTrue}/>
+        }
           <div className={classes.tools}>
           <div className={classes.tool}>
                <p>{props.views}</p>
                <Views className={classes.views}/>
-              </div>
+          </div>
             <div className={classes.rightBlock}>
               <div className={classes.tool}>
                 <p>{props.comments.length}</p>
@@ -123,7 +115,7 @@ function Comment(props) {
           <p className={classes.text}>{props.text}</p>
           <div className={classes.commentInf}>
             <p className={classes.time}>{props.time}</p>
-            <a href='#' className={classes.reply}>Reply</a>
+            <a href='#' className={classes.reply} >Reply</a>
           </div>
         </div>
       </div>
@@ -135,3 +127,43 @@ function Comment(props) {
   )
 }
 
+function PostBody({images, text, setCurrPictureId, setSliderTrue}) {
+  return (
+    <div>
+    <div className={classes.text}>{text}</div>
+    <div className={classes.images}>
+      {images.map((img, id) => {
+          return <div key={id} className={classes.imgWrapper}><img data-id={img._id} className={classes.image} onClick={e => {
+            setCurrPictureId(e.target.dataset.id)
+            setSliderTrue(true)
+          }} src={img.imageURL}></img></div>
+        })
+      }
+    </div>
+    </div>
+  )
+}
+function PostBodyEdit({images, text, setCurrPictureId, setEditPost, setSliderTrue}) {
+  let textToChange = ''
+
+  return <div className={classes.postEdit}>
+    <textarea defaultValue={text} onChange={(e) => textToChange = e.target.value}></textarea>
+    <div className={classes.images}>
+      {images.map((img, id) => {
+          return <div key={id} className={classes.imgWrapper}>
+            <svg className={classes.discardAppend} src={'../../assets/icons/cross.svg'}/>
+            <img data-id={img._id} className={classes.image} onClick={e => {
+            setCurrPictureId(e.target.dataset.id)
+            setSliderTrue(true)
+          }} src={img.imageURL}></img>
+          </div>
+        })
+      }
+    </div>
+    <div className={classes.editPostMenu}>
+      <button className={classes.editDiscard} onClick={() => setEditPost(false)}>Discard</button>
+      <button className={classes.editFinish} onClick={() => {console.log('sent to DB', textToChange); setEditPost(false)}}>Finish</button>
+    </div>
+    </div>
+  
+}

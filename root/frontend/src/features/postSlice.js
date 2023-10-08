@@ -22,8 +22,9 @@ export const postComment = createAsyncThunk('posts/postComment', async(data) => 
 })
 export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async (data) => {
   try {
-    console.log(data);
-    const response = await axios.post('http://localhost:3001/posts/myposts', { id: data.id })
+    console.log('in slice', data, data.id);
+    const response = await axios.post('http://localhost:3001/posts/myposts', { id: data.id });
+    console.log('w');
     return {posts:[...response.data].reverse(), postLength:data.postLength};
   } catch(error) {
     console.log(error);
@@ -60,6 +61,7 @@ const postSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMyPosts.fulfilled, (state, action) => {
+        console.log('w');
         state.status = 'fulfilled'
         let posts = [...action.payload.posts]
         let postLength = action.payload.postLength 

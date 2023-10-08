@@ -200,3 +200,52 @@
   user-select: none;
   margin: 0;
 }
+.postEdit {
+  border: 2px solid rgb(87, 149, 230);
+}
+.postEdit textarea {
+  resize: none;
+  
+}
+.editPostMenu {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+}
+.editDiscard {
+
+}
+.discardAppend {
+  position: absolute;
+  fill: white;
+}
+.editDiscard, .editFinish {
+  cursor: pointer;
+  transition: .2s;
+  width: 100px;
+  height: 45px;
+  border-radius: 5px;
+}
+.editDiscard {
+  border: 2px solid rgb(87, 149, 230);
+  background-color: white;
+}
+.editDiscard:hover {
+  border: 2px solid rgb(255, 255, 255);
+  background-color: rgb(87, 149, 230);
+  color: white;
+}
+.editFinish {
+  border: 2px solid rgb(87, 149, 230);
+  background-color: rgb(87, 149, 230);
+  color: white;
+}
+.editFinish:hover {
+  font-weight: 500;
+  border: 2px solid rgb(87, 149, 230);
+  background-color: white;
+  color: rgb(87, 149, 230);
+}

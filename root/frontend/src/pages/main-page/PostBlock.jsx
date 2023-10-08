@@ -40,6 +40,7 @@ export default function PostBlock(props) {
         else setPosts([...userPosts]);
         console.log('w');
     }, [userPosts])
+
     function detectReached(window) {
         if(currPosts.length===0 || !currPosts[postToDetect]) return
         let post = currPosts[postToDetect]
@@ -49,10 +50,11 @@ export default function PostBlock(props) {
             postToDetect += 1;
             dispatch(watched(post.postId))
         }
-        // if(currPosts.length-1 === postToDetect) {//if last post of current posts list is watched 
-        //     postToDetect -= 1;
-        //     dispatch(fetchMyPosts({postsLength: currPosts.length,id:props.auth.userInfo._id}))//load another 10 posts
-        // }
+        if(currPosts.length === postToDetect) {//if last post of current posts list is watched 
+            console.log('10 posts watched');
+            postToDetect -= 1;
+            dispatch(fetchMyPosts({postLength: currPosts.length,id:props.auth.userInfo._id}))//load another 10 posts
+        }
     }
     function appendImage(e) {
         postImage(e.target, false/*hasAlbum*/,undefined/*album*/, 'undefined'/*postId*/).then(res => {//saves image to 'imgbb.com' server
