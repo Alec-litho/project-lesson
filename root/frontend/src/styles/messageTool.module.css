@@ -1,3 +1,19 @@
+
+.keyboard {
+    display: flex;
+    flex-direction: column;
+}
+.keyboardReply {
+    display: flex;
+    align-items: center;
+}
+.cross {
+    margin-left: 10px;
+    fill: rgb(152, 154, 161);
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
 .emoji {
     fill: rgb(152, 154, 161);
     cursor: pointer;
@@ -9,11 +25,11 @@
 }
 .append {
     fill: rgb(90, 91, 99);
-    cursor: pointer;
+    cursor: pointer; 
     width: 30px;
     height: 30px;
 }
-.keyboard {
+.keyboardBody {
     width: 100%;
     padding: 0 20px; 
     position: relative;

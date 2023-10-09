@@ -42,8 +42,8 @@ app.delete("/posts/:id", checkAuth, deletePost);
 app.patch("/posts",checkAuth, update);//dont forget to finish it
 // app.get('/posts/comments/:id', getComments)
 app.post("/posts/comments/:id", checkAuth, postComment);
-// app.post("/posts/comments/:id", postReply);
 app.delete("/posts/comments/:id", checkAuth, deleteComment);
+app.post("/posts/reply/:id", postReply);
 app.post("/posts/like", postSmashLike);
 app.post("/posts/removeLike", postRemoveLike);
 app.post("/posts/watched", postWatched)

@@ -127,8 +127,17 @@ const postRemoveLike = async function(req,res) {
     res.send(doc);
 };
 const postReply = async(req, res) => {
-    // const id = new ObjectId(`${req.params.id}`);  
-    const resp = await CommentModel.findByIdAndUpdate(req.params.id, { $push: { replies: req.body.reply } });
+    const reply = new CommentModel({
+        text: req.body.text,
+        user: req.body.user,
+        authorPicture: req.body.authorPicture,
+        authorName: req.body.authorName,
+        post: req.params.id,
+        likes: [],
+        replies: []
+    })
+    const resp = await CommentModel.findByIdAndUpdate(req.params.id, { $push: { replies: reply } });
+    resp.save();
     res.send(resp);
 };
 const deleteComment = async(req, res) => {

@@ -26,6 +26,7 @@
 }
 .image-slider-header {
     position: relative;
+    background-color: rgba(63, 63, 63, 0.5);
 }
 .img-cont-slider {
     display: none;

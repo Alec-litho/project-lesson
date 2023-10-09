@@ -1,30 +1,35 @@
-import { ReactComponent as Delete } from '../assets/icons/delete.svg'
-import { ReactComponent as Menu } from '../assets/icons/dots.svg'
-import { ReactComponent as Share } from '../assets/icons/share.svg'
-import { ReactComponent as Like } from '../assets/icons/like.svg'
-import { ReactComponent as Views } from '../assets/icons/views.svg'
-import { ReactComponent as Comments } from '../assets/icons/comments.svg'
+import { ReactComponent as Delete } from '../assets/icons/delete.svg';
+import { ReactComponent as Menu } from '../assets/icons/dots.svg';
+import { ReactComponent as Share } from '../assets/icons/share.svg';
+import { ReactComponent as Like } from '../assets/icons/like.svg';
+import { ReactComponent as Views } from '../assets/icons/views.svg';
+import { ReactComponent as Comments } from '../assets/icons/comments.svg';
+import {ReactComponent as Cross} from '../assets/icons/cross.svg';
+import { ReactComponent as Append } from '../assets/icons/append.svg';
 
-import classes from '../styles/post.module.css'
-import Slider from './Slider'
-import { useEffect, useRef, useState } from 'react'
-import MessageTool from './MessageTool'
-import axios from 'axios'
-import trimTime from '../helper_functions/trimTime'
-import { postComment } from '../features/postSlice'
-import { useDispatch } from 'react-redux'
-import { deletePost } from '../features/postSlice'
+import classes from '../styles/post.module.css';
+import Slider from './Slider';
+import { useEffect, useRef, useState } from 'react';
+import MessageTool from './MessageTool';
+import axios from 'axios';
+import trimTime from '../helper_functions/trimTime';
+import { useDispatch } from 'react-redux';
+import { deletePost } from '../features/postSlice';
 
 export default function Post(props) {
   let dispatch = useDispatch();
-  let [sliderTrue, setSliderTrue] = useState(false)
-  let [editPost, setEditPost] = useState(false)
-  // let [currPictureId, setCurrPictureId] = useState(false)
-  let [commentsTrue, setCommentsTrue] = useState(false)
-  // let [comment, setComment] = useState(null)
-  let [showMenu, setShowMenu] = useState(false)
-  let [alreadySmashedLike, setAlreadySmashedLike] = useState(props.likes.filter(user => user === props.auth._id))
-  let postY = useRef(null)
+  let [sliderTrue, setSliderTrue] = useState(false);
+  let [editPost, setEditPost] = useState(false);
+  let [replyToComment, setReplyToComment] = useState(false);
+  let [showCross, setShowCross] = useState(false);
+  let [textArea, setTextArea] = useState(props.text);
+  // let [currPictureId, setCurrPictureId] = useState(false);
+  let [commentsTrue, setCommentsTrue] = useState(false);
+  // let [comment, setComment] = useState(null);
+  let [showMenu, setShowMenu] = useState(false);
+  let [alreadySmashedLike, setAlreadySmashedLike] = useState(props.likes.filter(user => user === props.auth._id));
+  let postY = useRef(null);
+  let [userName, setUserName] = useState('');/*person another user wants to reply to*/
 
   useEffect(_ => {
     // if(comment!==null) {
@@ -45,6 +50,16 @@ export default function Post(props) {
     axios.post(`http://localhost:3001/posts/removeLike`, {userId: props.auth._id, postId:props.postId}).then(res => {
     })
   }
+  function reply(data) {
+    data.e.preventDefault();
+    [...data.e.target.parentNode.parentNode.childNodes].forEach(node => {
+      console.log(node.nodeName);
+      if(node.nodeName == 'H5') setUserName(node.innerText);
+    });
+    // userName = data.e.target.child
+    setReplyToComment(replyToComment = true)
+    // dispatch(postReply({}))
+  }
     return (
         <div className={classes.post} ref={postY}>
         <div className={classes.postHeader}>
@@ -59,7 +74,7 @@ export default function Post(props) {
             </div>
           </div>
         </div>
-        {editPost? <PostBodyEdit images={props.images} text={props.text} setCurrPictureId={props.setCurrPictureId} setEditPost={setEditPost} setSliderTrue={setSliderTrue}/> :
+        {editPost? <PostBodyEdit images={props.images} textArea={textArea} setTextArea={setTextArea} setCurrPictureId={props.setCurrPictureId} setEditPost={setEditPost} setSliderTrue={setSliderTrue} setShowCross={setShowCross} showCross={showCross}/> :
                    <PostBody images={props.images} text={props.text} setCurrPictureId={props.setCurrPictureId} setSliderTrue={setSliderTrue}/>
         }
           <div className={classes.tools}>
@@ -86,9 +101,9 @@ export default function Post(props) {
             {props.comments.map((comment, id) => {
               return ( 
               <div key={id} className={classes.commentWrapper}>
-                <Comment authorPicture={comment.authorPicture} authorName={comment.authorName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment.createdAt)}/>
+                <Comment reply={reply} authorPicture={comment.authorPicture} authorName={comment.authorName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment.createdAt)}/>
                 { comment.replies.length>0 && ( <div className={classes.repliesWrapper}>
-                  <a href="#">Show replies</a>
+                  <a >Show replies</a>
                   <div className={classes.replies}>
                     {comment.replies.map((reply,id) => {
                       return <Comment key={id} authorPicture={reply.authorPicture} authorName={reply.authorName} likes={reply.likes} comment={reply.text} time={trimTime(reply)}/>
@@ -99,7 +114,7 @@ export default function Post(props) {
             })}
     
           </div>
-          <MessageTool type={'comment'} postId={props.postId}/>
+          <MessageTool type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userName={userName}/*in case user replying*/ postId={props.postId}/>
           <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={props.currPictureId} setCurrPictureId={props.setCurrPictureId}/>
         </div>
     )
@@ -115,7 +130,7 @@ function Comment(props) {
           <p className={classes.text}>{props.text}</p>
           <div className={classes.commentInf}>
             <p className={classes.time}>{props.time}</p>
-            <a href='#' className={classes.reply} >Reply</a>
+            <a href='#' className={classes.reply} onClick={(e) => props.reply({e})}>Reply</a>
           </div>
         </div>
       </div>
@@ -129,7 +144,7 @@ function Comment(props) {
 
 function PostBody({images, text, setCurrPictureId, setSliderTrue}) {
   return (
-    <div>
+    <div className={classes.postBody}>
     <div className={classes.text}>{text}</div>
     <div className={classes.images}>
       {images.map((img, id) => {
@@ -143,15 +158,15 @@ function PostBody({images, text, setCurrPictureId, setSliderTrue}) {
     </div>
   )
 }
-function PostBodyEdit({images, text, setCurrPictureId, setEditPost, setSliderTrue}) {
-  let textToChange = ''
-
+function PostBodyEdit({images, textArea, setTextArea, setCurrPictureId, setEditPost, setSliderTrue, setShowCross, showCross}) {
+  let textToChange = '';
+  console.log(showCross);
   return <div className={classes.postEdit}>
-    <textarea defaultValue={text} onChange={(e) => textToChange = e.target.value}></textarea>
+    <textarea defaultValue={textArea? textArea:'enter text'} onChange={(e) => textToChange = e.target.value}></textarea>
     <div className={classes.images}>
       {images.map((img, id) => {
-          return <div key={id} className={classes.imgWrapper}>
-            <svg className={classes.discardAppend} src={'../../assets/icons/cross.svg'}/>
+          return <div key={id} className={classes.imgWrapper} onMouseEnter={()=>setShowCross(true)} onMouseLeave={()=>setShowCross(false)}>
+            <Cross className={showCross? classes.discardAppend : classes.discardAppendHide} onClick={() => console.log('delete image request')}/>
             <img data-id={img._id} className={classes.image} onClick={e => {
             setCurrPictureId(e.target.dataset.id)
             setSliderTrue(true)
@@ -161,6 +176,7 @@ function PostBodyEdit({images, text, setCurrPictureId, setEditPost, setSliderTru
       }
     </div>
     <div className={classes.editPostMenu}>
+      <Append className={classes.icon}/>
       <button className={classes.editDiscard} onClick={() => setEditPost(false)}>Discard</button>
       <button className={classes.editFinish} onClick={() => {console.log('sent to DB', textToChange); setEditPost(false)}}>Finish</button>
     </div>

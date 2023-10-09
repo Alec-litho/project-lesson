@@ -20,6 +20,18 @@ export const postComment = createAsyncThunk('posts/postComment', async(data) => 
   }
   
 })
+
+export const postReply = createAsyncThunk('posts/postReply', async(data) => {
+  try {
+    const response = await axios.post(`http://localhost:3001/posts/${data.commentId}`,
+    {text: data.text, user: data.user, authorPicture: data.authorPicture, authorName: data.authorName, post: data.post},
+    { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.token}` } }
+    )
+  } catch (error) {
+    
+  }
+})
+
 export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async (data) => {
   try {
     console.log('in slice', data, data.id);
