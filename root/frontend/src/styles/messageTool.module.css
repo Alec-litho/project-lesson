@@ -76,3 +76,10 @@
 .sendIconHide:hover {
     fill: rgb(169, 172, 185);
 }
+.userName {
+
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    color: rgb(76, 113, 192);
+}

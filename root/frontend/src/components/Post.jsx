@@ -29,7 +29,9 @@ export default function Post(props) {
   let [showMenu, setShowMenu] = useState(false);
   let [alreadySmashedLike, setAlreadySmashedLike] = useState(props.likes.filter(user => user === props.auth._id));
   let postY = useRef(null);
-  let [userName, setUserName] = useState('');/*person another user wants to reply to*/
+  let [userInfo, setUserInfo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
+  let messageToolCordY = useRef()
+
 
   useEffect(_ => {
     // if(comment!==null) {
@@ -52,11 +54,15 @@ export default function Post(props) {
   }
   function reply(data) {
     data.e.preventDefault();
+    const repliedTo = data.e.target.parentNode.parentNode.parentNode.parentNode.dataset.id;
+    console.log(repliedTo);
     [...data.e.target.parentNode.parentNode.childNodes].forEach(node => {
-      console.log(node.nodeName);
-      if(node.nodeName == 'H5') setUserName(node.innerText);
+      
+      if(node.nodeName == 'H5') {//find h5 tag and use its inner text to reply, later this name will be checked on the server
+        setUserInfo({commentId: repliedTo,name:node.innerText, cordY:node.offsetTop});
+      }
     });
-    // userName = data.e.target.child
+    window.scrollTo({top:messageToolCordY.current.offsetTop-650, behavior:'smooth'})
     setReplyToComment(replyToComment = true)
     // dispatch(postReply({}))
   }
@@ -101,12 +107,13 @@ export default function Post(props) {
             {props.comments.map((comment, id) => {
               return ( 
               <div key={id} className={classes.commentWrapper}>
-                <Comment reply={reply} authorPicture={comment.authorPicture} authorName={comment.authorName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment.createdAt)}/>
-                { comment.replies.length>0 && ( <div className={classes.repliesWrapper}>
+                <Comment reply={reply} dataset={comment._id} authorPicture={comment.authorPicture} authorName={comment.authorName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment.createdAt)}/>
+                { comment.replies.length>0 && ( 
+                <div className={classes.repliesWrapper}>
                   <a >Show replies</a>
                   <div className={classes.replies}>
                     {comment.replies.map((reply,id) => {
-                      return <Comment key={id} authorPicture={reply.authorPicture} authorName={reply.authorName} likes={reply.likes} comment={reply.text} time={trimTime(reply)}/>
+                      return <Comment key={id} authorPicture={reply.authorPicture} authorName={reply.authorName} likes={reply.likes} comment={reply.text} time={trimTime(reply)} text={comment.text}/>
                     })}
                   </div>
                 </div>)}
@@ -114,7 +121,7 @@ export default function Post(props) {
             })}
     
           </div>
-          <MessageTool type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userName={userName}/*in case user replying*/ postId={props.postId}/>
+          <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userInfo={userInfo}/*in case user replying*/ postId={props.postId}/>
           <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={props.currPictureId} setCurrPictureId={props.setCurrPictureId}/>
         </div>
     )
@@ -122,7 +129,7 @@ export default function Post(props) {
 
 function Comment(props) {
   return (
-    <div className={classes.comment}>
+    <div data-id={props.dataset} className={classes.comment}>
       <div className={classes.postLeftside}>
         <img className={classes.profilePicture} src={props.authorPicture}></img>
         <div className={classes.commentBody}>

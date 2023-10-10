@@ -13,8 +13,13 @@ const getAll = async(req,res) => {
     }
 };
 const getMyPosts = async function(req, res) { 
-    const posts = await PostModel.find({user: req.body.id}).populate("images").populate("comments");
+    const posts = await PostModel.find({user: req.body.id}).populate("images").populate({
+        path: 'comments',
+        populate: {path:"replies"}
+    });
     console.log(posts, 'w');
+    // [...posts.comments].map((comment) => comment.populate())
+
     res.send(posts);
 };  
 const getPostImages = async function(req, res) {
@@ -95,6 +100,8 @@ const postComment = async(req, res) => {
         authorPicture: req.body.authorPicture,
         authorName: req.body.authorName,
         post: req.params.id,
+        repliedCommentId:'false',
+        replyTo: 'false',
         likes: [],
         replies: []
     });
@@ -127,18 +134,25 @@ const postRemoveLike = async function(req,res) {
     res.send(doc);
 };
 const postReply = async(req, res) => {
-    const reply = new CommentModel({
-        text: req.body.text,
-        user: req.body.user,
-        authorPicture: req.body.authorPicture,
-        authorName: req.body.authorName,
-        post: req.params.id,
-        likes: [],
-        replies: []
-    })
-    const resp = await CommentModel.findByIdAndUpdate(req.params.id, { $push: { replies: reply } });
-    resp.save();
-    res.send(resp);
+    try {
+        const reply = new CommentModel({
+            text: req.body.text,
+            user: req.body.user,
+            authorPicture: req.body.authorPicture,
+            authorName: req.body.authorName,
+            post: req.params.id,
+            repliedCommentId:req.params.commentId,
+            replyTo: req.body.replyTo,
+            likes: [],
+            replies: []
+        })
+        reply.save()
+        const resp = await CommentModel.findByIdAndUpdate(req.params.id, { $push: { replies: reply } });
+        resp.save();
+        res.send(resp);
+    } catch (error) {
+        console.log(error);
+    }
 };
 const deleteComment = async(req, res) => {
     // const id = new ObjectId(`${req.params.id}`);  

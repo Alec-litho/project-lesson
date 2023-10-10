@@ -8,19 +8,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { postComment, postReply } from '../features/postSlice';
 
 
-export default function MessageTool(props) {
+export default function MessageTool({userInfo,type,setReplyToComment,postId,messageToolCordY}) {
     let message = useRef(null);
     let [inputNum, setInputNum] = useState(0);
     const token = useSelector(state => state.auth.token);
-    const userInfo = useSelector(state => state.auth.userInfo);
+    const user = useSelector(state => state.auth.userInfo);
     const dispatch = useDispatch();
-    console.log(props.userName);
+    console.log(userInfo);
 
-    return <div className={classes.keyboard}>
-        {props.type === 'reply' && 
+    return <div ref={messageToolCordY} className={classes.keyboard}>
+        {type === 'reply' && 
         <div className={classes.keyboardReply}>
-            <h5>You're replying to <span>{props.userName}</span></h5>
-            <Cross className={classes.cross} onClick={() => props.setReplyToComment(false)}/>
+            <h5>You're replying to <span className={classes.userName} onClick={()=>window.scrollTo({top:userInfo.cordY-350, behavior:'smooth'})}>{userInfo.name}</span></h5>
+            <Cross className={classes.cross} onClick={() => setReplyToComment(false)}/>
         </div>}
         <div className={classes.keyboardBody}>
         <Clip className={classes.append}/>
@@ -29,13 +29,14 @@ export default function MessageTool(props) {
         <div className={classes.send}>
             <Send className={inputNum>0? classes.sendIcon : classes.sendIconHide} onClick={_ => {
                 if(inputNum>0) {
-                    if(props.type === 'comment')  {
-                        dispatch(postComment({text:message.current.value, user:userInfo._id, authorName:userInfo.fullName,authorPicture:userInfo.avatarUrl, postId:props.postId, token}));
+                    if(type === 'comment')  {
+                        dispatch(postComment({text:message.current.value, user:user._id, authorName:user.fullName,authorPicture:user.avatarUrl, postId, replyTo:false, token}));
                     }
-                    if(props.type === 'reply') {
-                        dispatch(postReply({text:message.current.value, user:userInfo._id, authorName:userInfo.fullName,authorPicture:userInfo.avatarUrl, postId:props.postId, token}))
+                    if(type === 'reply') {
+                        console.log(userInfo.commentId);
+                        dispatch(postReply({text:message.current.value, user:user._id, authorName:user.fullName,authorPicture:user.avatarUrl, commentId:userInfo.commentId, replyTo: userInfo.name, token}))
                     }
-                    else if(props.type === 'message') {
+                    else if(type === 'message') {
                         console.log('message')/*dispatch(message)*/
                     }
                 }

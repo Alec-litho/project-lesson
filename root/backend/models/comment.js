@@ -22,6 +22,8 @@ post: {
    type: mongoose.Schema.Types.ObjectId,
    ref: "Post"
    },
+repliedCommentId: String,
+replyTo: String,
 likes: [{
    type: mongoose.Schema.Types.ObjectId,
    ref: "User"
