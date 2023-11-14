@@ -11,7 +11,7 @@ import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
 import axios from "axios";
 import trimTime from "../../helper_functions/trimTime.js";
 
-export default function PostBlock(props) {
+export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictureId}=props) {
     let tools = useRef(null)
     let tags = useRef(null)
     let append = useRef(null)
@@ -35,7 +35,7 @@ export default function PostBlock(props) {
     },[currPosts])
     useEffect(() => {
         if(userPosts.length === 0) {
-            dispatch(fetchMyPosts({id:props.auth.userInfo._id, update:setUpdate, postLength:currPosts.length}))
+            dispatch(fetchMyPosts({id:auth.userInfo._id, update:setUpdate, postLength:currPosts.length}))
         }
         else setPosts([...userPosts]);
         console.log('w');
@@ -53,12 +53,12 @@ export default function PostBlock(props) {
         if(currPosts.length === postToDetect) {//if last post of current posts list is watched 
             console.log('10 posts watched');
             postToDetect -= 1;
-            dispatch(fetchMyPosts({postLength: currPosts.length,id:props.auth.userInfo._id}))//load another 10 posts
+            dispatch(fetchMyPosts({postLength: currPosts.length,id:auth.userInfo._id}))//load another 10 posts
         }
     }
     function appendImage(e) {
         postImage(e.target, false/*hasAlbum*/,undefined/*album*/, 'undefined'/*postId*/).then(res => {//saves image to 'imgbb.com' server
-            dispatch(savePicture({imgData:res, token:props.auth.token}))//saves information about image to mongodb 
+            dispatch(savePicture({imgData:res, token:auth.token}))//saves information about image to mongodb 
             .then(resp => {
                 setImagesToAppend(prev => [...prev, resp.payload])
             })
@@ -87,7 +87,7 @@ export default function PostBlock(props) {
     async function savePost() {
         let result = filterTags(tags.current.value)
         let imgs = imagesToAppend.map(img => img._id)
-        dispatch(createPost({text: textArea.current.value, id:props.auth.userInfo._id, tags:result, imageUrl: imgs, token:props.auth.token, update:setUpdate}))
+        dispatch(createPost({text: textArea.current.value, id:auth.userInfo._id, tags:result, imageUrl: imgs, token:auth.token, update:setUpdate}))
         textArea.current.value = ''
         tags.current.value = ''
         textArea.current.style.height = 50 + 'px'
@@ -110,8 +110,8 @@ export default function PostBlock(props) {
                         return <div key={id} className={classes.imgToAppendWrapper}>
                                    <div className={classes.background}></div>
                                    <div className={classes.imageWrapper}><img data-id={image._id} src={image.imageURL} className={classes.imageToAppend} onClick={e => {
-                                       props.setSliderTrue(true)
-                                       props.setCurrPictureId(e.target.dataset.id)
+                                       setSliderTrue(true)
+                                       setCurrPictureId(e.target.dataset.id)
                                     }}/>
                                     </div>
                                </div>
@@ -130,12 +130,13 @@ export default function PostBlock(props) {
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
 
-                    return <Post key={post._id} auth={props.auth.userInfo} 
+                    return <Post key={post._id} auth={auth.userInfo} 
                     setCurrPosts={setCurrPosts}
-                    token={props.auth.token} 
-                    setCurrPictureId={props.setCurrPictureId} 
-                    currPictureId={props.currPictureId} 
-                    avatarUrl={props.auth.userInfo.avatarUrl} 
+                    setSliderTrue={setSliderTrue}
+                    token={auth.token} 
+                    setCurrPictureId={setCurrPictureId} 
+                    currPictureId={currPictureId} 
+                    avatarUrl={auth.userInfo.avatarUrl} 
                     postId={post._id} 
                     views={post.viewsCount} 
                     share={post.share} 

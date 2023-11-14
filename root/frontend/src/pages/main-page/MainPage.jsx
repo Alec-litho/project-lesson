@@ -17,7 +17,7 @@ export default function Main() {
     const userInfo = useSelector(state => state.auth.userInfo);
     const albums = useSelector(state => state.albums.albums);
     const [sliderTrue, setSliderTrue] = useState(false);
-    const [currPictureId, setCurrPictureId] = useState(null);
+    const [currPictureId, setCurrPictureId] = useState(null);8//current img id to show in slider
     const [update, setUpdate] = useState(false);
 
     useEffect(() => {
@@ -32,7 +32,7 @@ export default function Main() {
         if(userInfo._id) setFinish(true);
     },[userInfo,albums])
 
-    if(isLoaded === false) return <Loader/>
+    if(isLoaded === false) return <Loader/> 
     return (
         <div className={classes.mainpage}>
             <Profile fullName={userInfo.fullName} age={userInfo.age} friends={userInfo.friends} avatarUrl={userInfo.avatarUrl} location={userInfo.location}/>
@@ -41,7 +41,7 @@ export default function Main() {
                 <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue} update={update} setUpdate={setUpdate} auth={auth}/>
             </div>
             {/*sidebar??*/}
-            <Slider sliderTrue={sliderTrue} token={auth.token} setSliderTrue={setSliderTrue} currPictureId={currPictureId/*current img id to show in slider*/} setCurrPictureId={setCurrPictureId}></Slider>
+            <Slider sliderTrue={sliderTrue} token={auth.token} setSliderTrue={setSliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}></Slider>
         </div>
     );
 }

@@ -16,18 +16,18 @@ import trimTime from '../helper_functions/trimTime';
 import { useDispatch } from 'react-redux';
 import { deletePost } from '../features/postSlice';
 
-export default function Post(props) {
+export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSliderTrue,setCurrPosts,text,token,likes,postId,images,views,comments}=props) {
   let dispatch = useDispatch();
-  let [sliderTrue, setSliderTrue] = useState(false);
+  // let [sliderTrue, setSliderTrue] = useState(false);
   let [editPost, setEditPost] = useState(false);
   let [replyToComment, setReplyToComment] = useState(false);
   let [showCross, setShowCross] = useState(false);
-  let [textArea, setTextArea] = useState(props.text);
+  let [textArea, setTextArea] = useState(text);
   // let [currPictureId, setCurrPictureId] = useState(false);
   let [commentsTrue, setCommentsTrue] = useState(false);
   // let [comment, setComment] = useState(null);
   let [showMenu, setShowMenu] = useState(false);
-  let [alreadySmashedLike, setAlreadySmashedLike] = useState(props.likes.filter(user => user === props.auth._id));
+  let [alreadySmashedLike, setAlreadySmashedLike] = useState(likes.filter(user => user === auth._id));
   let postY = useRef(null);
   let [userInfo, setUserInfo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
   let messageToolCordY = useRef()
@@ -39,17 +39,17 @@ export default function Post(props) {
       // {text: comment, user:props.auth._id, authorName:props.auth.fullName, authorPicture:props.auth.avatarUrl, post:props.postId})
     // }
     console.log(postY);
-    props.setCurrPosts((prevState) => [...prevState, {postId:props.postId, watched:false, positionY:postY.current.getBoundingClientRect().top}])
+    setCurrPosts((prevState) => [...prevState, {postId, watched:false, positionY:postY.current.getBoundingClientRect().top}])
   },[alreadySmashedLike])
 
   function smashLike() {
-    setAlreadySmashedLike([props.auth._id])
-    axios.post(`http://localhost:3001/posts/like`, {userId: props.auth._id, postId:props.postId}).then(res => {
+    setAlreadySmashedLike([auth._id])
+    axios.post(`http://localhost:3001/posts/like`, {userId: auth._id, postId}).then(res => {
     })
   }
   function removeLike() {
     setAlreadySmashedLike([])
-    axios.post(`http://localhost:3001/posts/removeLike`, {userId: props.auth._id, postId:props.postId}).then(res => {
+    axios.post(`http://localhost:3001/posts/removeLike`, {userId: auth._id, postId}).then(res => {
     })
   }
   function reply(data) {
@@ -69,28 +69,28 @@ export default function Post(props) {
     return (
         <div className={classes.post} ref={postY}>
         <div className={classes.postHeader}>
-          <img src={props.avatarUrl} className={classes.profileCircle} ></img>
-          <div className={classes.date}>{`published on ${props.date}`}</div>
+          <img src={avatarUrl} className={classes.profileCircle} ></img>
+          <div className={classes.date}>{`published on ${date}`}</div>
           <div className={classes.postTools}>
             <Menu className={classes.postMenu} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}/>
             <div className={showMenu? classes.menuTools : classes.menuToolsHide} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}>
-              <a onClick={() => dispatch(deletePost({postId:props.postId, token:props.token}))}>Delete</a>
+              <a onClick={() => dispatch(deletePost({postId, token}))}>Delete</a>
               <a onClick={() => setEditPost(true)}>Edit</a>
               <a>Report</a>
             </div>
           </div>
         </div>
-        {editPost? <PostBodyEdit images={props.images} textArea={textArea} setTextArea={setTextArea} setCurrPictureId={props.setCurrPictureId} setEditPost={setEditPost} setSliderTrue={setSliderTrue} setShowCross={setShowCross} showCross={showCross}/> :
-                   <PostBody images={props.images} text={props.text} setCurrPictureId={props.setCurrPictureId} setSliderTrue={setSliderTrue}/>
+        {editPost? <PostBodyEdit images={images} textArea={textArea} setTextArea={setTextArea} setCurrPictureId={setCurrPictureId} setEditPost={setEditPost} setSliderTrue={setSliderTrue} setShowCross={setShowCross} showCross={showCross}/> :
+                   <PostBody images={images} text={text} setCurrPictureId={setCurrPictureId} setSliderTrue={setSliderTrue}/>
         }
           <div className={classes.tools}>
           <div className={classes.tool}>
-               <p>{props.views}</p>
+               <p>{views}</p>
                <Views className={classes.views}/>
           </div>
             <div className={classes.rightBlock}>
               <div className={classes.tool}>
-                <p>{props.comments.length}</p>
+                <p>{comments.length}</p>
                 <Comments className={classes.icon} onClick={_ => setCommentsTrue(prev => !prev)}/>
               </div>
               <div className={classes.tool}>
@@ -98,13 +98,13 @@ export default function Post(props) {
                 <Like className={alreadySmashedLike.length>0? classes.iconBlue : classes.icon} onClick={alreadySmashedLike.length>0? removeLike : smashLike}/>
               </div>
               <div className={classes.tool}>
-                <p>{props.share}</p>
+                <p>{share}</p>
                 <Share className={classes.icon}/>
               </div>
             </div>
           </div>
-          <div className={commentsTrue? classes.comments : props.comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
-            {props.comments.map((comment, id) => {
+          <div className={commentsTrue? classes.comments : comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
+            {comments.map((comment, id) => {
               return ( 
               <div key={id} className={classes.commentWrapper}>
                 <Comment reply={reply} dataset={comment._id} authorPicture={comment.authorPicture} authorName={comment.authorName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment.createdAt)}/>
@@ -121,8 +121,8 @@ export default function Post(props) {
             })}
     
           </div>
-          <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userInfo={userInfo}/*in case user replying*/ postId={props.postId}/>
-          <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={props.currPictureId} setCurrPictureId={props.setCurrPictureId}/>
+          <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userInfo={userInfo}/*in case user replying*/ postId={postId}/>
+          {/* <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={props.currPictureId} setCurrPictureId={props.setCurrPictureId}/> */}
         </div>
     )
 }

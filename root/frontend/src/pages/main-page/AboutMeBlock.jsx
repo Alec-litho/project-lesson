@@ -7,7 +7,7 @@ export default function AboutMeBlock(props) {
     console.log(props.galleryPhotos);
     return (
         <div className={classes.aboutMeBlock}>
-            <div className={classes.aboutMeHeader}>
+            <div className={classes.aboutMeHeader}> 
                 <span>20 views</span>
                 <Link to="/gallery" element={<Gallery/>}>See all</Link>
             </div>
