@@ -57,7 +57,6 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
     const repliedTo = data.e.target.parentNode.parentNode.parentNode.parentNode.dataset.id;
     console.log(repliedTo);
     [...data.e.target.parentNode.parentNode.childNodes].forEach(node => {
-      
       if(node.nodeName == 'H5') {//find h5 tag and use its inner text to reply, later this name will be checked on the server
         setUserInfo({commentId: repliedTo,name:node.innerText, cordY:node.offsetTop});
       }
@@ -122,7 +121,6 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
     
           </div>
           <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userInfo={userInfo}/*in case user replying*/ postId={postId}/>
-          {/* <Slider sliderTrue={sliderTrue} setSliderTrue={setSliderTrue} currPictureId={props.currPictureId} setCurrPictureId={props.setCurrPictureId}/> */}
         </div>
     )
 }

@@ -162,7 +162,8 @@ const deleteComment = async(req, res) => {
 const postWatched = async(req, res) => {
     try {
         let updatedPost = await PostModel.findByIdAndUpdate(req.body.postId, {$inc: {viewsCount:1}})
-        updatedPost.save(req.body.postId, updatedPost)
+        console.log(updatedPost);
+        if(updatedPost) updatedPost.save(req.body.postId, updatedPost)
     } catch (error) {
         console.log(error);
     }

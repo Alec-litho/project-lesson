@@ -10,6 +10,7 @@ import AboutMeBlock from './AboutMeBlock.jsx';
 
 
 export default function Main() {
+    window.onbeforeunload = () => window.scrollTo(0, 0);
     const [isLoaded, setFinish] = useState(false);
     const [photos, setPhotos] = useState([]);
     const dispatch = useDispatch();

@@ -12,7 +12,7 @@
   }
   .mainpage {
     display: flex;
-    width: 100%;
+    width: 2000px;
     gap: 40px;
   }
   .mainContent {

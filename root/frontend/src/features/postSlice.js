@@ -56,6 +56,7 @@ export const createPost = createAsyncThunk('posts/createPost', async (data) => {
 })
 
 export const deletePost = createAsyncThunk('posts/deletePost', async(data) => {
+  console.log(data);
   let response = await axios.delete(`http://localhost:3001/posts/${data.postId}`,
   {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${data.token}`}}
   )

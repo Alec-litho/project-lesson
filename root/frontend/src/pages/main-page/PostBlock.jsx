@@ -3,11 +3,12 @@ import { useState, useRef, useEffect } from "react";
 import postImage from '../../helper_functions/postImage.js'
 import Post from '../../components/Post.jsx';
 import classes from './mainPage.module.css'
-import {fetchMyPosts, createPost, watched} from '../../features/postSlice'
+import {fetchMyPosts, createPost} from '../../features/postSlice'
 import {savePicture} from '../../features/albumSlice';
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
 import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
 
+import viewCount from '../../helper_functions/viewCount.js'
 import axios from "axios";
 import trimTime from "../../helper_functions/trimTime.js";
 
@@ -27,12 +28,11 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
     let [imagesToAppend, setImagesToAppend] = useState([])
     let [textLeng, setTextLeng] = useState(0)
     let dispatch = useDispatch()
-    window.onscroll = () => detectReached(window);//to detect if user reached specific post to increase view count of the post
-    // useEffect(_ => {textArea.current.style.height = 50 + (textLeng/4) + 'px'}, [textLeng]) too much updates
-    useEffect(() => {
-        console.log(currPosts)
+    window.onscroll = () => postToDetect = viewCount(auth, dispatch, currPosts, postToDetect);
+    // useEffect(() => {
+    //     console.log(currPosts)
 
-    },[currPosts])
+    // },[currPosts])
     useEffect(() => {
         if(userPosts.length === 0) {
             dispatch(fetchMyPosts({id:auth.userInfo._id, update:setUpdate, postLength:currPosts.length}))
@@ -41,21 +41,7 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
         console.log('w');
     }, [userPosts])
 
-    function detectReached(window) {
-        if(currPosts.length===0 || !currPosts[postToDetect]) return
-        let post = currPosts[postToDetect]
-        if(window.scrollY >= post.positionY && !currPosts[postToDetect].watched) {
-            console.log(post.postId, 'is watched', postToDetect, currPosts[postToDetect]);
-            currPosts[postToDetect].watched = true
-            postToDetect += 1;
-            dispatch(watched(post.postId))
-        }
-        if(currPosts.length === postToDetect) {//if last post of current posts list is watched 
-            console.log('10 posts watched');
-            postToDetect -= 1;
-            dispatch(fetchMyPosts({postLength: currPosts.length,id:auth.userInfo._id}))//load another 10 posts
-        }
-    }
+    
     function appendImage(e) {
         postImage(e.target, false/*hasAlbum*/,undefined/*album*/, 'undefined'/*postId*/).then(res => {//saves image to 'imgbb.com' server
             dispatch(savePicture({imgData:res, token:auth.token}))//saves information about image to mongodb 
@@ -129,7 +115,6 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
             </div>
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
-
                     return <Post key={post._id} auth={auth.userInfo} 
                     setCurrPosts={setCurrPosts}
                     setSliderTrue={setSliderTrue}

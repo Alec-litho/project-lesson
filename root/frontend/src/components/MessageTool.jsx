@@ -35,6 +35,7 @@ export default function MessageTool({userInfo,type,setReplyToComment,postId,mess
                     if(type === 'reply') {
                         console.log(userInfo.commentId);
                         dispatch(postReply({text:message.current.value, user:user._id, authorName:user.fullName,authorPicture:user.avatarUrl, commentId:userInfo.commentId, replyTo: userInfo.name, token}))
+                        setReplyToComment(false)
                     }
                     else if(type === 'message') {
                         console.log('message')/*dispatch(message)*/
