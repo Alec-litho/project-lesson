@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const AlbumSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        required: true, 
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,

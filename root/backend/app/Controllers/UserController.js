@@ -4,7 +4,7 @@ const {validationResult} = require("express-validator");
 const {UserModel} = require("../models/user");
 const {AlbumModel} = require("../models/album");
 const {getAge} = require("../helper_functions/getUserAge");
-
+ 
 module.exports.register = async(req, res) => {
     try {
         const errors = validationResult(req);
