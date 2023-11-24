@@ -5,7 +5,7 @@ const { isRouteErrorResponse } = require("react-router-dom");
 module.exports.getAllImages = function(req,res) {
     const images = imageModel.find();
     res.send(images);
-};
+}; 
 
 module.exports.uploadImage = async function(req,res) {
     try {
@@ -36,7 +36,7 @@ module.exports.uploadImage = async function(req,res) {
 };
 
 module.exports.updateImage = function(req,res) {
-    // imageModel.findByIdAndUpdate(req.params.id, {post: true}).then(resp => res.send(resp));
+    imageModel.findByIdAndUpdate(req.params.id, {post: true}).then(resp => res.send(resp));
 };
 module.exports.getOneImage = function(req,res) {
     imageModel.findById(req.params.id).then(resp => res.send(resp));
