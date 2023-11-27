@@ -7,7 +7,7 @@ const getAll = async(req,res) => {
         const posts = await PostModel.find().populate("user").exec();
 
         res.json(posts);
-    } catch (error) { 
+    } catch (error) {  
         console.log(error); 
         res.status(500).json({message:"Could not get posts"});
     }
