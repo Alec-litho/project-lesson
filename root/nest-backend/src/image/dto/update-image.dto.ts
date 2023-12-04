@@ -2,7 +2,7 @@ import { IsNotEmpty } from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
 
 
-
+ 
 export class UpdateImageDto {
     @ApiProperty({example:"Name", description:"Name of the image"})
     @IsNotEmpty()
@@ -16,10 +16,6 @@ export class UpdateImageDto {
     @IsNotEmpty()
     @ApiProperty({example:"https://i.ibb.co/Bqm8N2r/default-avatar-trendal-me", description:"url of the image"})
     imageURL: string
-    @ApiProperty({example:"771125073b435y39bd5f7024 || false", description:"id to the post if user uploaded image specifically for this post"})
-    @IsNotEmpty()
-    postId: any
-    @ApiProperty({example:"651125073b4359d9bd5f7b74", description:"user id"})
-    @IsNotEmpty()
-    user: any
+    @ApiProperty({example:"6563912b95db05b60c92022a | false", description:"old image id for updating post images"})
+    oldImgId: string | boolean
 }

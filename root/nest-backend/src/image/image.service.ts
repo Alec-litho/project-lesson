@@ -5,6 +5,7 @@ import { Image, ImageDocument } from './entities/image.entity';
 import mongoose, { Model } from 'mongoose';
 import { Album, AlbumDocument } from 'src/album/entities/album.entity';
 import { UpdateResult } from 'mongodb';
+import { UpdateImageDto } from './dto/update-image.dto';
 
 @Injectable()
 export class ImageService {
@@ -65,7 +66,7 @@ export class ImageService {
     throw new InternalServerErrorException();
   }
 };
-  async updateImage(id:string, image:CreateImageDto):Promise<Image> {
+  async updateImage(id:string, image:UpdateImageDto):Promise<Image> {
     const updatedImage = await this.imageModel.findByIdAndUpdate(id, {
       ...image
     });

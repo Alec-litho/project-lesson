@@ -7,6 +7,8 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ImageService } from 'src/image/image.service';
 import { CreateImageDto } from 'src/image/dto/create-image.dto';
+import { UpdateImageDto } from 'src/image/dto/update-image.dto';
+import { DeleteImageDto } from 'src/image/dto/delete-image.dto';
 
 @Injectable()
 export class PostService {
@@ -69,12 +71,9 @@ export class PostService {
     async deletePost(id:string) {
         try {
             const isDeleted = await this.postModel.findByIdAndDelete(id).populate("images");
-            console.log(isDeleted, id);
             if(isDeleted.images.length!==0) {
-                isDeleted.images.forEach((img:ImageDocument) => {
-                    console.log(img._id);
-                    
-                    this.postModel.findByIdAndDelete(img._id)
+                isDeleted.images.forEach(async(img:ImageDocument) => {
+                    await this.imageModel.findByIdAndDelete(img._id)
                 })
             }
             if(!isDeleted) throw new NotFoundException({message:"Post wasn't deleted successfully, probably provided id is invalid"});
@@ -88,9 +87,21 @@ export class PostService {
         try {
             let images: mongoose.Types.ObjectId[];
         if(dto.images.length!==0) {
-            const imageIds = await Promise.all(dto.images.map(async(img:CreateImageDto):Promise<mongoose.Types.ObjectId> => {
-                const image:ImageDocument = await this.imageService.uploadImage(img)
-                return image._id
+            const imageIds = await Promise.all(dto.images.map(async(img):Promise<mongoose.Types.ObjectId> => {
+                if(img instanceof UpdateImageDto ) {
+                    const updatedImg = await this.imageModel.findByIdAndUpdate(img.oldImgId, img);
+                    console.log("updated");
+                    return updatedImg._id;
+                } else if(img instanceof CreateImageDto ) {
+                    const image:ImageDocument = await this.imageService.uploadImage(img);
+                    console.log("created");
+                    return image._id;
+                } else {
+                    const deletedImg:ImageDocument = await this.imageModel.findByIdAndDelete(img.id);
+                    console.log("updated");
+                    return deletedImg._id;
+                }
+
             }));
             images = imageIds;
         }

@@ -1,13 +1,14 @@
 import { Controller, Get, Body, Post, Res, Param, Delete, Patch} from '@nestjs/common';
 import { PostService } from './post.service';
 import {CreatePostDto} from './dto/create-post.dto'
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { Response } from 'express';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PostModel } from './entities/post-entity';
 import mongoose from 'mongoose';
 import { UpdatePostDto } from './dto/update-post.dto';
+// import { CreateImageDto } from 'src/image/dto/create-image.dto';
+// import { DeleteImageDto } from 'src/image/dto/delete-image.dto';
+// import { UpdateImageDto } from 'src/image/dto/update-image.dto';
 
 @Controller('post')
 export class PostController {
@@ -57,3 +58,11 @@ export class PostController {
   }
 }
  
+function compObjAndClass(obj, classType) {
+  const objKeys = Object.keys(obj);
+  const classKeys = Object.keys(classType);
+  objKeys.forEach((objKey, indx) => {
+    if(classKeys.indexOf(objKey) === -1) return false
+  })
+  return true
+}
