@@ -85,28 +85,29 @@ export class PostService {
     }
     async updatePost(id:string, dto:UpdatePostDto) {
         try {
-            let images: mongoose.Types.ObjectId[];
-        if(dto.images.length!==0) {
-            const imageIds = await Promise.all(dto.images.map(async(img):Promise<mongoose.Types.ObjectId> => {
-                if(img instanceof UpdateImageDto ) {
-                    const updatedImg = await this.imageModel.findByIdAndUpdate(img.oldImgId, img);
-                    console.log("updated");
-                    return updatedImg._id;
-                } else if(img instanceof CreateImageDto ) {
-                    const image:ImageDocument = await this.imageService.uploadImage(img);
-                    console.log("created");
-                    return image._id;
-                } else {
-                    const deletedImg:ImageDocument = await this.imageModel.findByIdAndDelete(img.id);
-                    console.log("updated");
-                    return deletedImg._id;
-                }
+            const postId = new mongoose.Types.ObjectId(id);
+            const post = await this.postModel.findById(postId);
+            console.log(post,dto);
+            
+            if(!post) throw new NotFoundException({message:"Post wasn't updated successfully, probably provided id is invalid"});
 
-            }));
-            images = imageIds;
-        }
-        const post = await this.postModel.findByIdAndUpdate(id, {...dto, images});
-        if(!post) throw new NotFoundException({message:"Post wasn't updated successfully, probably provided id is invalid"});
+            if(dto.images.length!==0) {
+            const oldPostImgs = await this.imageModel.find({postId});
+            console.log(oldPostImgs);
+            const images = dto.images.map(postImg => new mongoose.Types.ObjectId(postImg._id))
+            oldPostImgs.forEach(async(img) => {//remove old images from db and from post itself
+
+                let strImages = images.map(img => img.toString())
+                console.log("foreach",strImages, img._id.toString(), images.indexOf(img._id));
+                if(strImages.indexOf(img._id.toString()) === -1) {
+                    const delImg = await this.imageModel.findByIdAndDelete(img._id);
+                    console.log("del",delImg);
+                    
+                }
+            })
+            return await this.postModel.findByIdAndUpdate(postId, {...dto,images});
+           }
+           return await this.postModel.findByIdAndUpdate(postId, dto);
         } catch (error) {
             throw new InternalServerErrorException({message:error});
         }

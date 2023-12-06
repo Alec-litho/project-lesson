@@ -58,11 +58,3 @@ export class PostController {
   }
 }
  
-function compObjAndClass(obj, classType) {
-  const objKeys = Object.keys(obj);
-  const classKeys = Object.keys(classType);
-  objKeys.forEach((objKey, indx) => {
-    if(classKeys.indexOf(objKey) === -1) return false
-  })
-  return true
-}
