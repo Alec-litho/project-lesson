@@ -4,6 +4,8 @@ import { Response } from 'express';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Comment } from './entities/comment';
+import { LikeComment } from './dto/like-comment.dto';
 
 @Controller('comment')
 export class CommentController {
@@ -26,8 +28,8 @@ export class CommentController {
   @ApiOperation({summary:"Like the comment"})
   @ApiResponse({status:200, type: Boolean})
   @Post("like/:id")
-  async likeComment(@Param(":id") commentId: string, @Body() authorId:string, @Res() res:Response) {
-    const response = await this.commentService.likeComment(commentId, authorId);
+  async likeComment(@Param(":id") commentId: string, @Body() dto: LikeComment, @Res() res:Response) {
+    const response = await this.commentService.likeComment(commentId, dto);
     res.json(response);
   }
   @ApiOperation({summary:"Remove like from comment"})

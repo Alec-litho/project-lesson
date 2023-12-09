@@ -1,14 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString,IsNotEmpty,IsArray } from "class-validator";
-import mongoose from 'mongoose';
 import { CreateImageDto } from 'src/image/dto/create-image.dto';
-import { DeleteImageDto } from 'src/image/dto/delete-image.dto';
-import { UpdateImageDto } from 'src/image/dto/update-image.dto';
-import { ImageDocument } from 'src/image/entities/image.entity';
 
 
 
-export class UpdatePostDto {
+export class UpdatePostDto implements IUpdatePostDto {
     @ApiProperty({example: "Random text of this very long post...", description:"Post's text"})
     @IsString()
     @IsNotEmpty()
@@ -19,5 +15,5 @@ export class UpdatePostDto {
     tags: string[]
     @IsArray()
     @ApiProperty({example: "[CreateImageDto]",description:"post's images"})
-    images: ImageDocument[]
+    images: CreateImageDto[]
 }

@@ -16,11 +16,11 @@ export class ImageService {
   async uploadImage(createImageDto: CreateImageDto):Promise<ImageDocument> {
     try {
       const album:AlbumDocument = createImageDto.album !== undefined? await this.albumModel.findById(createImageDto.album) : undefined;
-      createImageDto.album = new mongoose.Types.ObjectId(createImageDto.album);
-      createImageDto.user = new mongoose.Types.ObjectId(createImageDto.user);
+      const albumId = new mongoose.Types.ObjectId(createImageDto.album);
+      const userId = new mongoose.Types.ObjectId(createImageDto.user);
       console.log(createImageDto);
       
-      const doc:ImageDocument = new this.imageModel(createImageDto);
+      const doc:ImageDocument = new this.imageModel({...createImageDto,albumId,userId});
       await doc.save();
       if(album) { 
           album.images.push(doc._id);

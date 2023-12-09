@@ -5,7 +5,7 @@ import mongoose, {HydratedDocument} from 'mongoose';
   export type ImageDocument = HydratedDocument<Image>;
 
 @Schema()
-export class Image {
+export class Image implements Iimage {
   @ApiProperty({example:"Name", description:"Name of the image", type: String})
     @Prop({required:true})
     title: string; 
@@ -24,9 +24,6 @@ export class Image {
     @ApiProperty({example:"771125073b435y39bd5f7024 || false", description:"id to the post if user uploaded image specifically for this post", type: Boolean || mongoose.Types.ObjectId})
     @Prop({type: mongoose.Types.ObjectId || Boolean })
     postId;
-  @ApiProperty({example:"2023-10-04T05:56:56.949+00:00", description:"date when this image was uploaded", type: Date})
-    @Prop({ default: Date.now,type:Date})
-    date;
 }
 
 

@@ -20,7 +20,7 @@ const initialState = {
 export const fetchData = createAsyncThunk('auth/fetchData', async ({token,_id}) => {
   try {
     console.log(token,_id);
-    const response = await axios.post('http://localhost:3001/auth/me', {userId:_id},{
+    const response = await axios.get(`http://localhost:3001/user/${_id}`,{
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
@@ -36,7 +36,7 @@ export const fetchData = createAsyncThunk('auth/fetchData', async ({token,_id}) 
 //---------------------------ERROR----------------------------------------
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (params) => {
-  const { data } = await axios.post('/auth/login', params)
+  const { data } = await axios.post('http://localhost:3001/user/login', params)
   return data
 })
 export const registerUser = createAsyncThunk("auth/registerUser", async(params) => {

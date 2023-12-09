@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 
  
-export class UpdateImageDto {
+export class UpdateImageDto implements IUpdateImageDto {
     @ApiProperty({example:"Name", description:"Name of the image"})
     @IsNotEmpty()
     title: string

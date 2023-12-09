@@ -4,6 +4,7 @@ import mongoose, { Model } from 'mongoose';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { PostModel } from 'src/post/entities/post-entity';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { LikeComment } from './dto/like-comment.dto';
 
 
 @Injectable()
@@ -15,7 +16,10 @@ export class CommentService {
 
     public async uploadComment(dto:CreateCommentDto) {
         try {
-            const comment = new this.commentModel(dto);
+            const userId = new mongoose.Types.ObjectId(dto.user);
+            const postId = new mongoose.Types.ObjectId(dto.post);
+            const replyToId = new mongoose.Types.ObjectId(dto.replyTo);
+            const comment = new this.commentModel({...dto, userId, postId, replyToId});
             if(!comment) throw new HttpException("something went wrong while creating comment", HttpStatus.BAD_REQUEST);
             comment.save()
             const post = await this.postModel.findByIdAndUpdate(new mongoose.Types.ObjectId(dto.post), {$push: {comments: comment._id}}, { upsert: true });
@@ -27,15 +31,16 @@ export class CommentService {
     }
     public async updateComment(dto: UpdateCommentDto) {
         try {
+            const commentId = new mongoose.Types.ObjectId(dto._id)
             if(!this.commentModel.findById(dto._id)) throw new NotFoundException(dto, "provided _id is invalid")
-            return await this.commentModel.findByIdAndUpdate(dto._id, dto);
+            return await this.commentModel.findByIdAndUpdate(commentId, {...dto, commentId});
         } catch (error) {
             throw new InternalServerErrorException(error)
         }
     }
-    public async likeComment(commentId:string, authorId:string) {
+    public async likeComment(commentId:string, dto:LikeComment) {
         try {
-            const authorIdMongoose = new mongoose.Types.ObjectId(authorId);
+            const authorIdMongoose = new mongoose.Types.ObjectId(dto.toString());
             const comment = await this.commentModel.findByIdAndUpdate(commentId, {
                 $push: {likes: authorIdMongoose}
             })

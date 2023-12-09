@@ -5,12 +5,12 @@ import mongoose from "mongoose";
 
 
 
-export class UpdateCommentDto {
+export class UpdateCommentDto implements IUpdateCommentDto {
     @ApiProperty({example:"I honestly don't think there's...", description:"comment's text"})
     @IsNotEmpty()
     @IsString()
     text: string
     @ApiProperty({example:"656ed9be81058725b67659fd", description:"comment's id"})
     @IsNotEmpty()
-    _id: mongoose.Types.ObjectId | string
+    _id: string
 }

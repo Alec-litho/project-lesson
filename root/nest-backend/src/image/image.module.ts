@@ -3,7 +3,7 @@ import { ImageService } from './image.service';
 import { ImageController } from './image.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ImageSchema,Image } from './entities/image.entity';
-import { AlbumSchema } from 'src/album/entities/album.entity';
+import { AlbumSchema } from '../album/entities/album.entity';
 
 
 @Module({

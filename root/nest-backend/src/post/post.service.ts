@@ -2,13 +2,13 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { PostModel, PostDocument } from './entities/post-entity';
-import { Image, ImageDocument } from 'src/image/entities/image.entity';
+import { Image, ImageDocument } from '../image/entities/image.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { ImageService } from 'src/image/image.service';
-import { CreateImageDto } from 'src/image/dto/create-image.dto';
-import { UpdateImageDto } from 'src/image/dto/update-image.dto';
-import { DeleteImageDto } from 'src/image/dto/delete-image.dto';
+import { ImageService } from '../image/image.service';
+import { CreateImageDto } from '../image/dto/create-image.dto';
+import { UpdateImageDto } from '../image/dto/update-image.dto';
+import { DeleteImageDto } from '../image/dto/delete-image.dto';
 
 @Injectable()
 export class PostService {
@@ -17,9 +17,9 @@ export class PostService {
         @InjectModel('Image') private readonly imageModel:Model<Image>,
         private readonly imageService:ImageService
     ){}
-    async createPost(createPostDto:CreatePostDto) {
+    async createPost(dto:CreatePostDto) {
         try {
-            const authorId:mongoose.Types.ObjectId = new mongoose.Types.ObjectId(createPostDto.author);
+            const authorId:mongoose.Types.ObjectId = new mongoose.Types.ObjectId(dto.author);
             async function createPostModel(postData:any/*think about it*/):Promise<PostDocument> {
                 if(postData.images.length!==0) {
                     const images:mongoose.Types.ObjectId[] = postData.images.map((img:ImageDocument):mongoose.Types.ObjectId => img._id)
@@ -29,18 +29,18 @@ export class PostService {
                 await post.save()
                 return post;
             }
-            if(createPostDto.images.length!==0) {
+            if(dto.images.length!==0) {
                 //------------------load post's images------------------
-                const images:Image[] = await Promise.all(createPostDto.images.map(async(img:any/*it will always be CreateImageDto type*/):Promise<Image> => {
+                const images:Image[] = await Promise.all(dto.images.map(async(img:any/*it will always be CreateImageDto type*/):Promise<Image> => {
                     return await this.imageService.uploadImage(img);
                 }))
                 //------------------load post itself------------------
-                const post:PostDocument = await createPostModel.call(this,{...createPostDto, author: authorId, images})
+                const post:PostDocument = await createPostModel.call(this,{...dto, author: authorId, images})
                 //-----update loaded images to change postId field as we already got it-----
                 images.forEach(async (img:ImageDocument):Promise<void> => {await this.imageModel.findOneAndUpdate({_id:img._id}, {postId:post._id})})
                 return post;
             } else {
-                return await createPostModel.call(this,{...createPostDto, author: authorId});
+                return await createPostModel.call(this,{...dto, author: authorId});
             }
         } catch (error) {
             throw new InternalServerErrorException({message: error})

@@ -80,11 +80,18 @@ interface IUpdatePostDto {
 //----------------------MODELS----------------------//
 
 //------------Image---------------//
-interface Iimage {
+interface ImageModel {
     title: string; 
-    user: mongoose.Types.ObjectId; 
+    user: string; 
     description: string;
-    album: mongoose.Types.ObjectId;
+    album: string;
     imageURL: string;
-    postId: mongoose.Types.ObjectId | Boolean
+    postId: string | Boolean
 }
+//------------Album---------------//
+interface IAlbumModel {
+    name: string
+    user: string
+    images: ImageModel[]
+    description: string
+  }

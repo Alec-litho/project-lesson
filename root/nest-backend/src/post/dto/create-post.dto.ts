@@ -5,7 +5,7 @@ import { CreateImageDto } from "src/image/dto/create-image.dto"
 
 
 
-export class CreatePostDto {
+export class CreatePostDto implements ICreatePostDto {
     @ApiProperty({example: "Random text of this very long post...", description:"Post's text"})
     @IsString()
     @IsNotEmpty()
@@ -16,9 +16,9 @@ export class CreatePostDto {
     tags: string[]
     @ApiProperty({example: "656395f24db3c1a422c2e8c9", description:"Post's author"})
     @IsNotEmpty()
-    author: mongoose.Types.ObjectId
+    author: string
     @IsArray()
     @ApiProperty({example: "[CreateImageDto]",description:"post's images"})
-    images: CreateImageDto[] | [] | mongoose.Types.ObjectId[]
+    images: CreateImageDto[] | [] 
 
 }
