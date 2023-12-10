@@ -14,7 +14,7 @@ import MessageTool from './MessageTool';
 import axios from 'axios';
 import trimTime from '../helper_functions/trimTime';
 import { useDispatch } from 'react-redux';
-import { deletePost } from '../features/postSlice';
+import { deletePost } from '../features/postSlice.ts';
 
 export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSliderTrue,setCurrPosts,text,token,likes,postId,images,views,comments}=props) {
   let dispatch = useDispatch();

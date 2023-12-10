@@ -67,14 +67,15 @@ interface ICreateAlbumDto {
 interface ICreatePostDto {
     text: string
     tags: string[]
-    author: string
-    images: ICreateImageDto[] | []
+    authorId: string
+    images: ImageModel[] | []
 }
 interface IUpdatePostDto {
     text: string
     tags: string[]
-    images: ICreateImageDto[]
+    images: ImageModel[]
 }
+
 //------------Post---------------//
 
 //----------------------MODELS----------------------//
@@ -86,7 +87,8 @@ interface ImageModel {
     description: string;
     album: string;
     imageURL: string;
-    postId: string | Boolean
+    postId: string | Boolean;
+    _id: string
 }
 //------------Album---------------//
 interface IAlbumModel {
@@ -95,3 +97,37 @@ interface IAlbumModel {
     images: ImageModel[]
     description: string
   }
+
+interface IUser {
+    fullName: string,
+    email: string,
+    password: string,
+    location: string,
+    friends: number,
+    age: number,
+    gender: string,
+    avatarUrl: string,
+    _id: string
+  }
+interface IPost {
+    text: string
+    tags: string[] | []
+    viewCount: number
+    author: string
+    images: ImageModel[] | []
+    comments: IComment[] | []
+    likes: string[]
+    shares: string[]
+    _id: string
+}
+
+interface IComment {
+    text: string
+    user: string
+    userProfilePicture: string
+    post: string
+    replyTo: string
+    likes: string[]
+    replies: IComment[]
+    _id: string
+}

@@ -1,7 +1,7 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, getCookie, fetchData } from "./features/authSlice";
+import { getUser,getCookie, logout} from "./features/authSlice.ts";
 import Dialog from "./pages/dialog-page/DialogPage";
 import Main from "./pages/main-page/MainPage";
 import Music from "./pages/music-page/MusicPage";
@@ -15,13 +15,13 @@ import { useEffect } from "react";
 
 export default function App() {
   const dispatch = useDispatch();
-  const {isAuth, token, status} = useSelector((state) => state.auth);
+  const {isAuth, userToken, status} = useSelector((state) => state.auth);
   useEffect(() => {
     if(!isAuth) {
+      console.log("1",status);
       dispatch(getCookie())
-      .then(res => {
-        if(res.payload.result && status !== 'error') dispatch(fetchData({...res.payload}));
-      });
+      console.log("2",status);
+      if(status !== 'error') dispatch(fetchData({...res.payload}));
     };
   },[])
   if(status==='error') return <div>Error</div>

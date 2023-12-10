@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import {useDispatch, useSelector } from 'react-redux';
-import {fetchMyAlbums} from '../../features/albumSlice';
+import {fetchMyAlbums} from '../../features/albumSlice.ts';
 import Slider from '../../components/Slider.jsx';
 import classes from './mainPage.module.css';
 import PostBlock from './PostBlock.jsx';

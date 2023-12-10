@@ -5,7 +5,7 @@ import { ReactComponent as Cross } from '../assets/icons/cross.svg';
 import classes from '../styles/messageTool.module.css'
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { postComment, postReply } from '../features/postSlice';
+import { uploadComment, uploadReply } from '../features/postSlice.ts';
 
 
 export default function MessageTool({userInfo,type,setReplyToComment,postId,messageToolCordY}) {
@@ -30,11 +30,11 @@ export default function MessageTool({userInfo,type,setReplyToComment,postId,mess
             <Send className={inputNum>0? classes.sendIcon : classes.sendIconHide} onClick={_ => {
                 if(inputNum>0) {
                     if(type === 'comment')  {
-                        dispatch(postComment({text:message.current.value, user:user._id, authorName:user.fullName,authorPicture:user.avatarUrl, postId, replyTo:false, token}));
+                        dispatch(uploadComment({text:message.current.value, user:user._id, authorName:user.fullName,authorPicture:user.avatarUrl, postId, replyTo:false, token}));
                     }
                     if(type === 'reply') {
                         console.log(userInfo.commentId);
-                        dispatch(postReply({text:message.current.value, user:user._id, authorName:user.fullName,authorPicture:user.avatarUrl, commentId:userInfo.commentId, replyTo: userInfo.name, token}))
+                        dispatch(uploadReply({text:message.current.value, user:user._id, authorName:user.fullName,authorPicture:user.avatarUrl, commentId:userInfo.commentId, replyTo: userInfo.name, token}))
                         setReplyToComment(false)
                     }
                     else if(type === 'message') {

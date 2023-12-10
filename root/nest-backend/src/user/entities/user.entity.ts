@@ -35,6 +35,9 @@ export class User {
   @ApiProperty({example: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp", description:"User's avatar image"}) 
     @Prop({default:'https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp'})
     avatarUrl: string;
+    @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"user mongoose model id",type:mongoose.Types.ObjectId})
+    @Prop({type:mongoose.Types.ObjectId})
+    _id;
 }
 
 

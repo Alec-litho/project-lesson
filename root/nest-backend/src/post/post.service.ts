@@ -85,7 +85,7 @@ export class PostService {
     }
     async updatePost(id:string, dto:UpdatePostDto) {
         try {
-            const postId = new mongoose.Types.ObjectId(id);
+            const postId = new mongoose.Types.ObjectId(id); 
             const post = await this.postModel.findById(postId);
             console.log(post,dto);
             

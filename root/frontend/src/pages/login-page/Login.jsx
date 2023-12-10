@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "./login.css";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, fetchData } from "../../features/authSlice";
+import { loginUser, getUser } from "../../features/authSlice.ts";
 import Register from "../register-page/Register";
 
 export default function Login() {
@@ -19,7 +19,7 @@ export default function Login() {
     dispatch(loginUser(values))
       .then(res => {
         console.log(status);
-        if(status !== 'error') dispatch(fetchData(res.payload))
+        if(status !== 'error') dispatch(getUser(res.payload))
       })
   };
   return (

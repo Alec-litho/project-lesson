@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString,IsNotEmpty,IsArray } from "class-validator";
 import { CreateImageDto } from 'src/image/dto/create-image.dto';
+import { Image } from 'src/image/entities/image.entity';
 
 
 
@@ -15,5 +16,5 @@ export class UpdatePostDto implements IUpdatePostDto {
     tags: string[]
     @IsArray()
     @ApiProperty({example: "[CreateImageDto]",description:"post's images"})
-    images: CreateImageDto[]
+    images: Image[]
 }

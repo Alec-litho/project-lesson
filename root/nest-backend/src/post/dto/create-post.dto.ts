@@ -2,7 +2,7 @@ import { IsString, Length, IsNotEmpty, IsArray} from "class-validator"
 import mongoose from "mongoose"
 import { ApiProperty } from "@nestjs/swagger"
 import { CreateImageDto } from "src/image/dto/create-image.dto"
-
+import { Image } from "src/image/entities/image.entity"
 
 
 export class CreatePostDto implements ICreatePostDto {
@@ -19,6 +19,6 @@ export class CreatePostDto implements ICreatePostDto {
     author: string
     @IsArray()
     @ApiProperty({example: "[CreateImageDto]",description:"post's images"})
-    images: CreateImageDto[] | [] 
+    images: Image[] | [] 
 
 }

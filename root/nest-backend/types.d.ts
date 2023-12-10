@@ -2,7 +2,7 @@
 //----------------------DTO's-------------------------
 
 //------------User---------------//
-interface ICreateUserDto {
+ interface ICreateUserDto {
     password: string
     email: string
     fullName: string
@@ -68,23 +68,24 @@ interface ICreatePostDto {
     text: string
     tags: string[]
     author: string
-    images: ICreateImageDto[] | []
+    images: ImageModel[] | []
 }
 interface IUpdatePostDto {
     text: string
     tags: string[]
-    images: ICreateImageDto[]
+    images: ImageModel[]
 }
 //------------Post---------------//
 
 //----------------------MODELS----------------------//
 
 //------------Image---------------//
-interface Iimage {
+interface ImageModel {
     title: string; 
     user: mongoose.Types.ObjectId; 
     description: string;
     album: mongoose.Types.ObjectId;
     imageURL: string;
     postId: mongoose.Types.ObjectId | Boolean
+    _id: mongoose.Types.ObjectId 
 }

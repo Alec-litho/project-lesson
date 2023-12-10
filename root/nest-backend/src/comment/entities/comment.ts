@@ -27,6 +27,9 @@ export class Comment {
     @ApiProperty({example:"[656ed9be81058725b67659fd,656ed9be81058725b67659f7]", description:"Comment's reply count"})
     @Prop({ref:"Comment", default: [], type: mongoose.Types.ObjectId || [String]})
     replies;
+    @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"comment's mongoose model id",type:mongoose.Types.ObjectId})
+    @Prop({type:mongoose.Types.ObjectId})
+    _id;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

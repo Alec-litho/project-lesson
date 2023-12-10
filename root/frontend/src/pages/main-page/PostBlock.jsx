@@ -3,11 +3,10 @@ import { useState, useRef, useEffect } from "react";
 import postImage from '../../helper_functions/postImage.js'
 import Post from '../../components/Post.jsx';
 import classes from './mainPage.module.css'
-import {fetchMyPosts, createPost} from '../../features/postSlice'
-import {savePicture} from '../../features/albumSlice';
+import {fetchMyPosts, createPost} from '../../features/postSlice.ts'
+import {uploadImage} from '../../features/albumSlice.ts';
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
 import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
-
 import viewCount from '../../helper_functions/viewCount.js'
 import axios from "axios";
 import trimTime from "../../helper_functions/trimTime.js";
@@ -35,7 +34,7 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
     // },[currPosts])
     useEffect(() => {
         if(userPosts.length === 0) {
-            dispatch(fetchMyPosts({id:auth.userInfo._id, update:setUpdate, postLength:currPosts.length}))
+            dispatch(fetchMyPosts({id:auth.userInfo._id, postLength:currPosts.length}))
         }
         else setPosts([...userPosts]);
         console.log('w');
@@ -44,7 +43,7 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
     
     function appendImage(e) {
         postImage(e.target, false/*hasAlbum*/,undefined/*album*/, 'undefined'/*postId*/).then(res => {//saves image to 'imgbb.com' server
-            dispatch(savePicture({imgData:res, token:auth.token}))//saves information about image to mongodb 
+            dispatch(uploadImage({imgData:res, token:auth.token}))//saves information about image to mongodb 
             .then(resp => {
                 setImagesToAppend(prev => [...prev, resp.payload])
             })
@@ -64,7 +63,6 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
         else {
             imagesToAppend.forEach((img, indx) => {
                 let id = img._id 
-                console.log(img);
                 axios.post(`http://localhost:3001/images/update/${id}`)
             })
             savePost()

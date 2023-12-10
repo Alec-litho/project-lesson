@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import {useForm, Controller} from 'react-hook-form';
 import "./register.css";
 import { useDispatch } from "react-redux";
-import { fetchData, registerUser } from "../../features/authSlice";
+import { getUser, registerUser } from "../../features/authSlice.ts";
 
 
 export default function Register() {
@@ -26,7 +26,7 @@ export default function Register() {
       dispatch(registerUser(values))
         .then(res => {
           console.log(res);
-          dispatch(fetchData(res.payload));
+          dispatch(getUser(res.payload));
           navigate('/')
         })
       
