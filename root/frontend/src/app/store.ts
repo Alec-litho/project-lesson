@@ -1,7 +1,7 @@
 import { configureStore, combineReducers, ThunkAction, Action } from '@reduxjs/toolkit'
-import postSlice from '../features/postSlice.ts'
-import { albumReducer } from '../features/albumSlice.ts'
-import { authReducer } from '../features/authSlice.ts'
+import postSlice from '../features/postSlice'
+import { albumReducer } from '../features/albumSlice'
+import { authReducer } from '../features/authSlice'
 
 const rootReducer = combineReducers({
   userPosts: postSlice,

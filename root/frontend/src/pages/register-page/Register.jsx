@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import {useForm, Controller} from 'react-hook-form';
 import "./register.css";
 import { useDispatch } from "react-redux";
-import { getUser, registerUser } from "../../features/authSlice.ts";
+import { getUser, registerUser } from "../../features/authSlice";
 
 
 export default function Register() {

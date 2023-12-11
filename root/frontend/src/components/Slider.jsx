@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { ReactComponent as Arrow } from '../assets/icons/arrow.svg'
 import { ReactComponent as Delete } from '../assets/icons/delete.svg'
-import {deletePicture, fetchMyAlbums, fetchImg} from '../features/albumSlice.ts'
+import {deletePicture, fetchMyAlbums, fetchImg} from '../features/albumSlice'
 import { useSelector, useDispatch } from "react-redux"
 import Loader from "./Loader"
 import axios from 'axios'

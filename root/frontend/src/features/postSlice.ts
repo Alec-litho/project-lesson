@@ -31,7 +31,7 @@ export const uploadComment = createAsyncThunk('posts/postComment', async functio
   try{
     const response = await axios.post(`http://localhost:3001/comment/`,JSON.stringify(dto),{headers: {...headers}})
     return response.data
-  } catch(err) {
+  } catch(err:any) {
     console.log(err);
     return err
   }
@@ -46,8 +46,8 @@ export const uploadReply = createAsyncThunk('posts/postReply', async function({d
     if(!initialState.userToken) throw new Error("Token is not defined")
     const response = await axios.post(`http://localhost:3001/comment/${id}`,JSON.stringify(dto),{headers: {...headers}})
     return response.data
-  } catch (error) {
-    return error
+  } catch (err:any) {
+    return err
   }
 })
 
@@ -61,7 +61,7 @@ export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async ({id, p
     console.log('in slice', postLength);
     const response = await axios.get(`http://localhost:3001/post/user/${id}`,{headers: {...headers}})
     return {posts:[...response.data].reverse(), postLength};
-  } catch(err) {
+  } catch(err:any) {
     let error: AxiosError<PaymentValidationErrors> = err // cast the error for access
     if (!error.response) {
       throw err
@@ -80,7 +80,7 @@ export const createPost = createAsyncThunk('posts/createPost', async ({dto}:crea
     if(!initialState.userToken) throw new Error("Token is not defined")
     const response = await axios.post('http://localhost:3001/posts/',JSON.stringify(dto),{headers: {...headers}});
     return response.data;
-  } catch (err) {
+  } catch (err:any) {
     let error: AxiosError<PaymentValidationErrors> = err
     if (!error.response) throw err
     return rejectWithValue(error.response.data)
@@ -92,7 +92,7 @@ export const deletePost = createAsyncThunk('posts/deletePost', async(id, {reject
     if(!initialState.userToken) throw new Error("Token is not defined")
     let response = await axios.delete(`http://localhost:3001/posts/${id}`,{headers:{...headers}});
     return response.data;
-  }catch (err) {
+  }catch (err:any) {
     let error: AxiosError<PaymentValidationErrors> = err
     if (!error.response) throw err
     return rejectWithValue(error.response.data)
@@ -104,8 +104,8 @@ export const watched = createAsyncThunk('posts/watched', async function(id:strin
     if(!initialState.userToken) throw new Error("Token is not defined")
     const response = await axios.get(`http://localhost:3001/post/watched/${id}`,{headers: {...headers}});
     return response.data;
-  } catch (error) {
-    return error
+  } catch (err:any) {
+    return err
   }
 
 })

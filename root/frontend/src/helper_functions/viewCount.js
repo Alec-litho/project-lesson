@@ -1,4 +1,4 @@
-import {fetchMyPosts, watched} from '../features/postSlice.ts'
+import {fetchMyPosts, watched} from '../features/postSlice'
 //to detect if user reached specific post to increase view count of the post, returns an index of the post that will be detected next
 
 export default function viewCount(auth, dispatch, currPosts, postToDetect) {

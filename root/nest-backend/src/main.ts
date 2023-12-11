@@ -3,10 +3,13 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
+import * as cors from "cors";
+import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   
   const app = await NestFactory.create(AppModule);
+  // app.use(cookieParser);
+  app.use(cors());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

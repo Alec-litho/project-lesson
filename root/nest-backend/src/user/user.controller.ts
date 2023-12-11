@@ -35,10 +35,10 @@ export class UserController {
   @ApiOperation({summary:"Log in user"})
   @ApiResponse({status:201,type:User})
   @UsePipes(ValidationPipe)
-  async login(@Body() loginUserDto:LoginUserDto, @Res() res: Response) {
+  async login(@Body() loginUserDto:LoginUserDto, @Res({passthrough:true}) res: Response) {
     const result = await this.userService.login(loginUserDto);
-    res.cookie("token", result.value.access_token);
-    res.cookie("id", result.value.id);
+    res.cookie("token", result.value.access_token, { httpOnly: true, secure: false });
+    res.cookie("id", result.value.id, { httpOnly: true, secure: false });
     res.json({token:result.value.access_token, id:result.value.id}).status(201);
   }
 

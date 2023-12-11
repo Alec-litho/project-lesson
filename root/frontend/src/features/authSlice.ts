@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk, createAction, createReducer } from '@reduxjs/toolkit'
 import axios, { AxiosError } from 'axios'
 
-interface initialState {
+interface InitialState {
   isAuth: boolean
   userToken: string
+  userId: string
   userInfo: IUser | null
   status: string
   error: string | null
@@ -16,9 +17,10 @@ interface ApiHeaders  {
   Authorization: string
 }
 
-const initialState:initialState = {
+const initialState:InitialState = {
   isAuth: false,
   userToken: '',
+  userId: '',
   userInfo: {
     fullName: "Test",
     email: "test@gmail.com",
@@ -44,7 +46,7 @@ export const getUser = createAsyncThunk('auth/fetchData', async function(_id, {r
     console.log(initialState.userToken,_id);
     const response = await axios.get(`http://localhost:3001/user/${_id}`,{headers: {...headers}})
     return response.data
-  }catch (err) {
+  }catch (err:any) {
       let error: AxiosError<PaymentValidationErrors> = err;
       if (!error.response) throw err;
       return rejectWithValue(error.response.data);
@@ -55,7 +57,7 @@ export const loginUser = createAsyncThunk('auth/loginUser', async function(dto:I
   try {
     const response = await axios.post('http://localhost:3001/user/login', dto)
     return response.data
-  } catch (err) {
+  } catch (err:any) {
       let error: AxiosError<PaymentValidationErrors> = err;
       if (!error.response) throw err;
       return rejectWithValue(error.response.data);
@@ -65,7 +67,7 @@ export const registerUser = createAsyncThunk("auth/registerUser", async function
   try {
     const {data} = await axios.post("/auth/register", dto);
     return data
-  } catch (err) {
+  } catch (err:any) {
       let error: AxiosError<PaymentValidationErrors> = err;
       if (!error.response) throw err;
       return rejectWithValue(error.response.data);
@@ -107,7 +109,11 @@ const authSlice = createSlice({
       } else if(key === "id") {
         _id = cookie.split("=")[1].trim();
       }});
-      state.userToken = token
+      state.userToken = token;
+      state.userId = _id
+    },
+    getInitialState: (state:InitialState, action) => {
+      state.userToken = action.payload.token
     }
   },
   extraReducers: (builder) => {
@@ -117,6 +123,8 @@ const authSlice = createSlice({
         state.status = 'fulfilled';
         state.error = null;
         state.isAuth = true
+        state.userId = action.payload.id
+        state.userToken = action.payload.token
       })
       .addCase(loginUser.rejected, (state, action:any) => {
         state.status = 'error';

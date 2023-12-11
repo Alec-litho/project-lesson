@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import classes from "../styles/create_modal.module.css";
 import { ReactComponent as Cross } from "../assets/icons/cross.svg";
-import { uploadAlbum } from "../features/albumSlice.ts";
+import { uploadAlbum } from "../features/albumSlice";
 
 export default function CreateModal({userId,update,token,setModal,closeModal,}) {
   const [limit, setLimit] = useState(true);

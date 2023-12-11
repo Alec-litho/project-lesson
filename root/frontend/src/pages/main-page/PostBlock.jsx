@@ -3,8 +3,8 @@ import { useState, useRef, useEffect } from "react";
 import postImage from '../../helper_functions/postImage.js'
 import Post from '../../components/Post.jsx';
 import classes from './mainPage.module.css'
-import {fetchMyPosts, createPost} from '../../features/postSlice.ts'
-import {uploadImage} from '../../features/albumSlice.ts';
+import {fetchMyPosts, createPost} from '../../features/postSlice'
+import {uploadImage} from '../../features/albumSlice';
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
 import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
 import viewCount from '../../helper_functions/viewCount.js'

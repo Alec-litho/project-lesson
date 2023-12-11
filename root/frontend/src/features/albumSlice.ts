@@ -56,7 +56,7 @@ export const uploadImage = createAsyncThunk('albums/uploadImage', async (dto:ICr
   // if (data.update)data.setUpdate()
   return response.data
 
-  } catch(err) {
+  } catch(err:any) {
     return err
   }
 })

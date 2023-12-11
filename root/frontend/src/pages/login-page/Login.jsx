@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "./login.css";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, getUser } from "../../features/authSlice.ts";
+import { loginUser, getUser } from "../../features/authSlice";
 import Register from "../register-page/Register";
 
 export default function Login() {
