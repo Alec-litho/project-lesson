@@ -13,6 +13,10 @@ interface ILoginUserDto {
     password: string
     email: string
 }
+interface ILoginResponse {
+    token: string
+    _id: string
+}
 interface IUpdateUserDto {
 
 }
@@ -131,3 +135,7 @@ interface IComment {
     replies: IComment[]
     _id: string
 }
+interface ApiHeaders  {
+    'Content-Type': string
+    Authorization: string
+  }

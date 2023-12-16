@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, createAction, createReducer } from '@reduxjs/toolkit'
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 
 interface InitialState {
   isAuth: boolean
@@ -9,13 +9,8 @@ interface InitialState {
   status: string
   error: string | null
   role: string
-
 }
 
-interface ApiHeaders  {
-  'Content-Type': string
-  Authorization: string
-}
 
 const initialState:InitialState = {
   isAuth: false,
@@ -43,7 +38,7 @@ const headers:ApiHeaders = {
 
 export const getUser = createAsyncThunk('auth/fetchData', async function(_id, {rejectWithValue}) {
   try {
-    console.log(initialState.userToken,_id);
+    console.log(initialState,_id);
     const response = await axios.get(`http://localhost:3001/user/${_id}`,{headers: {...headers}})
     return response.data
   }catch (err:any) {
@@ -55,7 +50,7 @@ export const getUser = createAsyncThunk('auth/fetchData', async function(_id, {r
 
 export const loginUser = createAsyncThunk('auth/loginUser', async function(dto:ILoginUserDto, {rejectWithValue}) {
   try {
-    const response = await axios.post('http://localhost:3001/user/login', dto)
+    const response:AxiosResponse<ILoginResponse> = await axios.post('http://localhost:3001/user/login', dto)
     return response.data
   } catch (err:any) {
       let error: AxiosError<PaymentValidationErrors> = err;
@@ -123,7 +118,7 @@ const authSlice = createSlice({
         state.status = 'fulfilled';
         state.error = null;
         state.isAuth = true
-        state.userId = action.payload.id
+        state.userId = action.payload._id
         state.userToken = action.payload.token
       })
       .addCase(loginUser.rejected, (state, action:any) => {
@@ -163,4 +158,4 @@ const authSlice = createSlice({
   }
 });
 export const authReducer = authSlice.reducer
-export const { logout, getCookie } = authSlice.actions
+export const { logout, getCookie, getInitialState } = authSlice.actions

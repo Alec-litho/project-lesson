@@ -21,7 +21,7 @@ export default function App() {
       console.log("1",userToken,userId);
       dispatch(getCookie())
       console.log("2",userToken,userId);
-      if(status !== 'error' && userToken) dispatch(getUser(userId));
+      if(status !== 'error' && userToken.length !== 0) dispatch(getUser(userId));
     };
   },[])
   if(status==='error') return <div>Error</div>

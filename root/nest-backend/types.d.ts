@@ -13,6 +13,10 @@ interface ILoginUserDto {
     password: string
     email: string
 }
+interface ILoginResponse {
+    token: string
+    _id: string
+}
 interface IUpdateUserDto {
 
 }

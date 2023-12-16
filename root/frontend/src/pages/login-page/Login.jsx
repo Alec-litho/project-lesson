@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "./login.css";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, getUser } from "../../features/authSlice";
+import { loginUser, getUser, getInitialState } from "../../features/authSlice";
 import Register from "../register-page/Register";
 
 export default function Login() {
@@ -11,15 +11,16 @@ export default function Login() {
   const status = useSelector(state => state.auth.status);
   const {
     register,
-    handleSubmit,
+    handleSubmit, 
     control,
     formState: { errors, isValid },
   } = useForm({ defaultValues: { email: "", password: "" }, mode: "onChange" });
   const onSubmit = (values) => {
     dispatch(loginUser(values))
       .then(res => {
-        console.log(status);
-        if(status !== 'error') dispatch(getUser(res.payload))
+        console.log(res.payload, status);
+        dispatch(getInitialState(res.payload.token))
+        if(status !== 'error') dispatch(getUser(res.payload._id))
       })
   };
   return (

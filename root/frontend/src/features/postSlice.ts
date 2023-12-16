@@ -8,11 +8,6 @@ interface InitialState {
   status: string
   error: string | null
 }
-interface ApiHeaders  {
-  'Content-Type': string
-  Authorization: string
-}
-
 const initialState:InitialState = {
   userToken: "",
   posts: [],
