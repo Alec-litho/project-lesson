@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, createAction, createReducer } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createAction, createReducer, Action } from '@reduxjs/toolkit'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
 interface InitialState {
@@ -35,6 +35,12 @@ const headers:ApiHeaders = {
   'Content-Type': 'application/json',
   Authorization: `Bearer ${initialState.userToken}` 
 }
+// function createHeader():ApiHeaders {
+//   return {
+//     'Content-Type': 'application/json',
+//     Authorization: `Bearer ${initialState.userToken}` 
+//   }
+// }
 
 export const getUser = createAsyncThunk('auth/fetchData', async function(_id, {rejectWithValue}) {
   try {
@@ -68,6 +74,7 @@ export const registerUser = createAsyncThunk("auth/registerUser", async function
       return rejectWithValue(error.response.data);
   }
 })
+
 // export const getCookie = createReducer("auth/getCookie", function():{result:boolean, token:string,_id:string} {
 //   let result = false;
 //   let token:string = '';

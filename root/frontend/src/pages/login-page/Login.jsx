@@ -19,7 +19,7 @@ export default function Login() {
     dispatch(loginUser(values))
       .then(res => {
         console.log(res.payload, status);
-        dispatch(getInitialState(res.payload.token))
+        // dispatch(getInitialState(res.payload.token))
         if(status !== 'error') dispatch(getUser(res.payload._id))
       })
   };
