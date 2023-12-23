@@ -37,8 +37,8 @@ export class UserController {
   @UsePipes(ValidationPipe)
   async login(@Body() loginUserDto:LoginUserDto, @Res({passthrough:true}) res: Response) {
     const result = await this.userService.login(loginUserDto);
-    res.cookie("token", result.value.access_token, { httpOnly: true, secure: false, "path": "/"});
-    res.cookie("id", result.value.id, { httpOnly: true, secure: false, "path": "/" });
+    res.cookie("token", "result.value.access_token");
+    res.cookie("id", result.value.id);
     res.json({token:result.value.access_token, _id:result.value.id}).status(201);
   }
 

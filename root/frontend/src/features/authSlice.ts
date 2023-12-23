@@ -33,7 +33,9 @@ const initialState:InitialState = {
 }
 const headers:ApiHeaders = {
   'Content-Type': 'application/json',
-  Authorization: `Bearer ${initialState.userToken}` 
+  Authorization: `Bearer ${initialState.userToken}`,
+  accept: "*/*",
+  credentials: "include"
 }
 // function createHeader():ApiHeaders {
 //   return {
@@ -41,11 +43,14 @@ const headers:ApiHeaders = {
 //     Authorization: `Bearer ${initialState.userToken}` 
 //   }
 // }
-
-export const getUser = createAsyncThunk('auth/fetchData', async function(_id, {rejectWithValue}) {
+type data = {_id:string, token:string}
+export const getUser = createAsyncThunk('auth/fetchData', async function(data:data, {rejectWithValue}) {
   try {
-    console.log(initialState,_id);
-    const response = await axios.get(`http://localhost:3001/user/${_id}`,{headers: {...headers}})
+    console.log(initialState,data._id);
+    const response = await axios.get(`http://localhost:3001/user/${data._id}`,{headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${data.token}`
+    }})
     return response.data
   }catch (err:any) {
       let error: AxiosError<PaymentValidationErrors> = err;
@@ -57,6 +62,8 @@ export const getUser = createAsyncThunk('auth/fetchData', async function(_id, {r
 export const loginUser = createAsyncThunk('auth/loginUser', async function(dto:ILoginUserDto, {rejectWithValue}) {
   try {
     const response:AxiosResponse<ILoginResponse> = await axios.post('http://localhost:3001/user/login', dto)
+    console.log(response);
+    
     return response.data
   } catch (err:any) {
       let error: AxiosError<PaymentValidationErrors> = err;
@@ -115,18 +122,18 @@ const authSlice = createSlice({
       state.userId = _id
     },
     getInitialState: (state:InitialState, action) => {
-      state.userToken = action.payload.token
+      return {...state, userToken: action.payload.token}
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.status = 'fulfilled';
         state.error = null;
         state.isAuth = true
         state.userId = action.payload._id
         state.userToken = action.payload.token
+        console.log(state);
       })
       .addCase(loginUser.rejected, (state, action:any) => {
         state.status = 'error';

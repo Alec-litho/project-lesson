@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./login.css";
 import { Controller, useForm } from "react-hook-form";
@@ -8,7 +8,7 @@ import Register from "../register-page/Register";
 
 export default function Login() {
   const dispatch = useDispatch();
-  const status = useSelector(state => state.auth.status);
+  const auth = useSelector(state => state.auth);
   const {
     register,
     handleSubmit, 
@@ -18,11 +18,12 @@ export default function Login() {
   const onSubmit = (values) => {
     dispatch(loginUser(values))
       .then(res => {
-        console.log(res.payload, status);
+        console.log(res.payload, auth.status, auth);
         // dispatch(getInitialState(res.payload.token))
-        if(status !== 'error') dispatch(getUser(res.payload._id))
+        if(auth.status !== 'error') dispatch(getUser({_id:res.payload._id, token:res.payload.token}))
       })
   };
+
   return (
     <section className="container forms">
       <div className="form login">

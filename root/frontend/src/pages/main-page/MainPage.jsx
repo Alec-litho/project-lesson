@@ -21,7 +21,7 @@ export default function Main() {
     const [update, setUpdate] = useState(false);
 
     useEffect(() => {
-        if(photos.length===0 && auth.userInfo.userId){
+        if(photos.length===0 && auth.userId){
             if(albumState.albums.length!==0 && albumState.userToken) {
                 setPhotos([...albumState.albums]);
             }else {
@@ -30,6 +30,7 @@ export default function Main() {
                     setPhotos(res.payload);
                 })
             }
+            console.log(auth);
             setFinish(true);
         };
 

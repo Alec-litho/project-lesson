@@ -12,7 +12,7 @@ import Loader from '../../components/Loader'
 
 export default function Gallery(props) {
     let userInfo = useSelector(state => state.auth.userInfo);
-    let token = useSelector(state => state.auth.token);
+    let token = useSelector(state => state.auth.userToken);
     let albums = useSelector(state => state.albums.albums);
     let dispatch = useDispatch()
     let addPicture = useRef(null), 
@@ -28,16 +28,15 @@ export default function Gallery(props) {
     useEffect(()=> { 
         if((userInfo._id && token)) {
             if(albums.length===0) {
-            dispatch(fetchMyAlbums({userid: userInfo._id, token, update: setUpdate}))
+            dispatch(fetchMyAlbums({_id: userInfo._id, token, update: setUpdate}))
               .then((res) => {
-                console.log([...res.payload]);
-                finishLoading(true)
-                setPictures([...res.payload])
+                console.log(res.payload);
+                if(Array.isArray(res.payload)) setPictures([...res.payload]);
               })
             } else {
                 setPictures([...albums])
-                finishLoading(true)
             }
+            finishLoading(true)
         }
     },[updatePictures,userInfo])
     

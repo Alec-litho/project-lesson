@@ -17,7 +17,9 @@ const initialState:InitialState = {
 }
 const headers:ApiHeaders = {
   'Content-Type': 'application/json',
-  Authorization: `Bearer ${initialState.userToken}` 
+  Authorization: `Bearer ${initialState.userToken}`,
+  accept: "*/*",
+  credentials: "include"
 }
 
 export const uploadComment = createAsyncThunk('posts/postComment', async function(dto: ICreateCommentDto):Promise<IComment> {

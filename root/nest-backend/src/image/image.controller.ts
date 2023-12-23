@@ -17,7 +17,7 @@ export class ImageController {
     res.send(result)
   }
   @ApiOperation({summary:"Get an image"})
-  @ApiResponse({status:200,type:Image})
+  @ApiResponse({status:200,type:Image}) 
   @Get(':id') 
   async getOneImage(@Param('id') id:string,  @Res() res: Response) {
     const result = await this.imageService.getOneImage(id);

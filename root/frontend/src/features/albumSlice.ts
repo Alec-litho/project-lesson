@@ -6,26 +6,38 @@ interface InitialState {
   status: string
   updatingPictures: boolean
   userToken: string
+  error: errorResponse
 }
 
 const initialState:InitialState = {
   albums: [], 
   status: 'idle',
   updatingPictures: false,
-  userToken: ""
+  userToken: "",
+  error: {
+    message: "",
+    value: null
+  }
 }
 const headers:ApiHeaders = {
   'Content-Type': 'application/json',
-  Authorization: `Bearer ${initialState.userToken}` 
+  Authorization: `Bearer ${initialState.userToken}`,
+  accept: "*/*",
+  credentials: "include"
 }
-export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', async function(_id:string):Promise<IAlbumModel[] | []> {
+type errorResponse = {
+  message: string
+  value: any
+}
+export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', async function(data:any):Promise<IAlbumModel[] | [] | errorResponse> {
   try {
-    let result = await axios.get(`http://localhost:3001/albums/user/${_id}`, {headers: {...headers}})
+    let result = await axios.get(`http://localhost:3001/albums/user/${data._id}`, {headers: {...headers}})
     console.log(result.data.value === null,result.data);
     if(result.data.value === null) return [];
+    // if(result.data.code === "ERR_BAD_REQUEST") return {message: "ERR_BAD_REQUEST", value: result.data.response}
     return result.data;
   } catch (error:any) {
-    return error
+    return {message: error.response.data, value:error.response.code}
   }
   
 })
@@ -87,8 +99,17 @@ const albumSlice = createSlice({
     builder
       .addCase(fetchMyAlbums.fulfilled, (state, action) => {
         console.log(action.payload);
-        state.status = 'fulfilled'
-        state.albums = action.payload
+        if(Array.isArray(action.payload)) {
+          console.log('w');
+          
+          const albums = action.payload as IAlbumModel[] | [] 
+          state.status = 'fulfilled'
+          state.albums = albums
+        } else {
+          const error = action.payload as errorResponse
+          state.error = error
+        }
+ 
       })
 
       .addCase(uploadImage.fulfilled, (state, action) => {

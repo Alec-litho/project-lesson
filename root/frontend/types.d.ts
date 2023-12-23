@@ -138,4 +138,6 @@ interface IComment {
 interface ApiHeaders  {
     'Content-Type': string
     Authorization: string
+    accept: string,
+    credentials: string
   }

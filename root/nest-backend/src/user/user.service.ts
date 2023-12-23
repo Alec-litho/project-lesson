@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 // import getAge from '../../utils/getAge'; //rewrite this func in fe
 import { JwtService } from '@nestjs/jwt';
 import {User, UserDocument} from './entities/user.entity'
-import {Model} from 'mongoose';
+import mongoose, {Model} from 'mongoose';
 import {InjectModel} from '@nestjs/mongoose';
 import { Album } from 'src/album/entities/album.entity';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -56,12 +56,13 @@ export class UserService {
 
   async getUser(id: string)/*:Promise<User|ServiceResponse>*/ {
     try {
-      console.log(id);
-      
-      const user:any = await this.userModel.findById(id);
-      if(!user) throw new NotFoundException({message: "User not found"});
+      const userId = new mongoose.Types.ObjectId(id)
+      const user:User = await this.userModel.findById(userId);
+      if(user===null) throw new NotFoundException("User not found");//somehow it triggers error in try catch block
       return {message:'success', value: user};
     } catch (error) {
+      console.log(error);
+      
       throw new InternalServerErrorException(error);
     }
   }
