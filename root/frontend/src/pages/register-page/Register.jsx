@@ -41,14 +41,14 @@ export default function Register() {
           <form onSubmit={handleSubmit(onSubmit, onErrors)}>
                 {/* ---------------------this field's rules list doesn't work------------------------ */}
           <div className="field input-field">
-            <label id="name" className={errors.fullName? "label-error" : "label"}>{errors.fullName? errors.fullName.message : "Name"}</label>
-            <Controller name="name" control={control} rules={{
+            <label id="fullName" className={errors.fullName? "label-error" : "label"}>{errors.fullName? errors.fullName.message : "fullName"}</label>
+            <Controller name="fullName" control={control} rules={{
               // required:{value:true, message:"name is required, please fill this field"},
               minLength:{value:1, message:"name filed length is too short"},
               maxLength:{value:14, message:"name filed length is too long"}
             }}
             render={() => {
-              return <input htmlFor="name" type="text" placeholder="Name" id="fullName" className={errors.fullName? "input-error":"input"} {...register("fullName")}/>
+              return <input htmlFor="name" type="text" placeholder="Name" /*id="fullName"*/ className={errors.fullName? "input-error":"input"} {...register("fullName")}/>
             }}
             />
             </div>

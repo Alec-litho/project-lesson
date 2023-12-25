@@ -5,9 +5,9 @@ import Slider from '../../components/Slider.jsx';
 import classes from './mainPage.module.css';
 import PostBlock from './PostBlock.jsx';
 import Loader from '../../components/Loader.jsx';
-import Profile from './PofileComponent.jsx';
+import Profile from './ProfileComponent.jsx';
 import AboutMeBlock from './AboutMeBlock.jsx';
-import {getInitialState} from "../../features/albumSlice"
+import {setToken} from "../../features/albumSlice"
 
 export default function Main() {
     window.onbeforeunload = () => window.scrollTo(0, 0);
@@ -25,8 +25,9 @@ export default function Main() {
             if(albumState.albums.length!==0 && albumState.userToken) {
                 setPhotos([...albumState.albums]);
             }else {
-                dispatch(getInitialState(auth.userToken))
+                dispatch(setToken(auth.userToken))
                 dispatch(fetchMyAlbums(auth.userId)).then((res) => {
+                    console.log(res);
                     setPhotos(res.payload);
                 })
             }
@@ -34,7 +35,7 @@ export default function Main() {
             setFinish(true);
         };
 
-    },[auth.userInfo,albumState])
+    },[auth.userInfo])
 
     if(isLoaded === false) return <Loader/> 
     return (

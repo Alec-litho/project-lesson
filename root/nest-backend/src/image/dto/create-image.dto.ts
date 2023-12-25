@@ -11,7 +11,6 @@ export class CreateImageDto implements ICreateImageDto {
     @IsNotEmpty()
     album: string /*| mongoose.Types.ObjectId*/
     @ApiProperty({example:"In this image you can see me and...", description:"description of this image"})
-    @IsNotEmpty()
     description: string 
     @IsNotEmpty()
     @ApiProperty({example:"https://i.ibb.co/Bqm8N2r/default-avatar-trendal-me", description:"url of the image"})

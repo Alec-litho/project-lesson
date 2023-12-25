@@ -26,6 +26,9 @@ export class User {
   @ApiProperty({example: "11", description:"User's friends list"}) 
     @Prop({default:[], ref: "User"})
     friends:mongoose.Types.ObjectId[];
+  @ApiProperty({example: "2005-09-13", description:"User's birth date"})  
+    @Prop({default:'not mentioned'})
+    birth:string;
   @ApiProperty({example: "18", description:"User's age"}) 
     @Prop({default:'not mentioned'})
     age:number;
@@ -36,8 +39,8 @@ export class User {
     @Prop({default:'https://i.ibb.co/Bqm8N2r/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg'})
     avatarUrl: string;
     @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"user mongoose model id",type:mongoose.Types.ObjectId})
-    @Prop({type:mongoose.Types.ObjectId})
-    _id;
+    // @Prop({type: mongoose.Types.ObjectId })
+    _id: mongoose.Types.ObjectId;
 }
 
 

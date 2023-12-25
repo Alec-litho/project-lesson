@@ -73,7 +73,7 @@ export const loginUser = createAsyncThunk('auth/loginUser', async function(dto:I
 })
 export const registerUser = createAsyncThunk("auth/registerUser", async function(dto: ICreateUserDto, {rejectWithValue}) {
   try {
-    const {data} = await axios.post("/auth/register", dto);
+    const {data} = await axios.post("http://localhost:3001/user/register", dto);
     return data
   } catch (err:any) {
       let error: AxiosError<PaymentValidationErrors> = err;
@@ -133,7 +133,6 @@ const authSlice = createSlice({
         state.isAuth = true
         state.userId = action.payload._id
         state.userToken = action.payload.token
-        console.log(state);
       })
       .addCase(loginUser.rejected, (state, action:any) => {
         state.status = 'error';
@@ -164,6 +163,8 @@ const authSlice = createSlice({
         state.status = 'fulfilled';
         state.error = null;
         state.isAuth = true;
+        state.userId = action.payload._id;
+        state.userToken = action.payload.token;
       })
       .addCase(registerUser.rejected, (state,action:any) => {
         state.status = 'error';

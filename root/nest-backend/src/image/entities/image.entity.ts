@@ -25,8 +25,8 @@ export class Image implements ImageModel {
     @Prop({type: mongoose.Types.ObjectId || Boolean })
     postId;
     @ApiProperty({example:"771125073b435y39bd5f7024", description:"image mongoose model id", type: mongoose.Types.ObjectId})
-    @Prop({type: mongoose.Types.ObjectId })
-    _id;
+    // @Prop({type: mongoose.Types.ObjectId })
+    _id: mongoose.Types.ObjectId;
 }
 
 

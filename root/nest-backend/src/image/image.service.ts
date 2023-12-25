@@ -18,19 +18,21 @@ export class ImageService {
       const album:AlbumDocument = createImageDto.album !== undefined? await this.albumModel.findById(createImageDto.album) : undefined;
       const albumId = new mongoose.Types.ObjectId(createImageDto.album);
       const userId = new mongoose.Types.ObjectId(createImageDto.user);
-      console.log(createImageDto);
+
       
       const doc:ImageDocument = new this.imageModel({...createImageDto,albumId,userId});
-      await doc.save();
+      await doc.save(); 
       if(album) { 
           album.images.push(doc._id);
           await album.save();
       }
       return doc;
+    } catch (error) {
+      return error
+    }
+   
     
-  } catch(error) {
-    throw new InternalServerErrorException(error);
-  }
+
   }
 
   findAll() {

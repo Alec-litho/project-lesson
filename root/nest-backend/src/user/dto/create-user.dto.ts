@@ -17,9 +17,9 @@ export class CreateUserDto implements ICreateUserDto {
     @IsNotEmpty()
     @Length(4, 16, {message:"email must contain at least 4 characters"})
     fullName:string
-    @ApiProperty({example: "19", description:"Age of the user"})
+    @ApiProperty({example: "2005-12-31", description:"User birth date"})
     @IsNotEmpty()
-    age: number
+    birth: string
     @ApiProperty({example: "male", description:"User's gender"})
     @IsNotEmpty()
     gender: string

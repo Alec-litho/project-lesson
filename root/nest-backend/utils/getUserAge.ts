@@ -1,4 +1,4 @@
-export default function getAge(birthDate/*'2005-09-13'*/) {
+export function getAge(birthDate:string/*'2005-09-13'*/):number {
     let date = birthDate.split('-').slice(1,3)
     let i = 0
     let currDate = new Date();

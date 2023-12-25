@@ -1,7 +1,7 @@
 import classes from './gallery.module.css'
 
 import {useState, useEffect, useRef} from 'react'
-import { ReactComponent as AddPhoto } from '../../assets/icons/addPhoto.svg'
+// import { ReactComponent as AddPhoto } from '../../assets/icons/addPhoto.svg'
 import { ReactComponent as Plus } from '../../assets/icons/plus.svg'
 import { useSelector, useDispatch} from 'react-redux'
 import Slider from '../../components/Slider.jsx'
@@ -9,9 +9,10 @@ import {fetchMyAlbums, uploadImage} from '../../features/albumSlice'
 import CreateModal from '../../components/Create_modal'
 import postImage  from '../../helper_functions/postImage'
 import Loader from '../../components/Loader'
+import { setToken } from '../../features/albumSlice'
 
 export default function Gallery(props) {
-    let userInfo = useSelector(state => state.auth.userInfo);
+    let auth = useSelector(state => state.auth);
     let token = useSelector(state => state.auth.userToken);
     let albums = useSelector(state => state.albums.albums);
     let dispatch = useDispatch()
@@ -22,23 +23,27 @@ export default function Gallery(props) {
     let [currentPictures, setPictures] = useState([])
     let [isLoaded, finishLoading] = useState(false)
     let [currentAlbum, setAlbum] = useState('All')
-    let [currentAlbumId, setAlbumId] = useState(null)
+    let [currentAlbumId, setAlbumId] = useState(albums[0]? albums[0]._id : null)
     let [currPictureId, setCurrPictureId] = useState(null)
     let [updatePictures, setUpdate] = useState(false)
     useEffect(()=> { 
-        if((userInfo._id && token)) {
+
+        if((auth.userId && token)) {
             if(albums.length===0) {
-            dispatch(fetchMyAlbums({_id: userInfo._id, token, update: setUpdate}))
+            dispatch(setToken(auth.userToken));
+            dispatch(fetchMyAlbums(auth.userId))
               .then((res) => {
-                console.log(res.payload);
+                console.log(res);
+                setAlbumId(res.payload[0]._id);
                 if(Array.isArray(res.payload)) setPictures([...res.payload]);
               })
             } else {
                 setPictures([...albums])
             }
+            console.log(currentAlbumId);
             finishLoading(true)
         }
-    },[updatePictures,userInfo])
+    },[updatePictures,auth])
     
     function showAlbum(e) {
         setAlbum(e.target.innerText)
@@ -68,10 +73,10 @@ export default function Gallery(props) {
     })}
     function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
     function uploadPicture(e) {
-        let albumid = currentAlbumId.albumid? currentAlbumId.albumid : 'All'
-        postImage(e.target, true/*hasAlbum*/, albumid, false/*is appended to post?*/ ).then(res => {
-            dispatch(savePicture({imgData:{...res, "album":currentAlbum}, setUpdate,token})).then(_ => {//save in db
-                setUpdate(true)
+        let albumid = currentAlbumId
+        postImage(e.target, albumid, false/*is appended to post?*/ ).then(res => {
+            dispatch(uploadImage({imgData:{...res,user:auth.userId}, /*setUpdate,*/token})).then(_ => {//save in db
+                /*setUpdate(true)*/
                 setPictures(currentPictures)
             })
         })
@@ -86,8 +91,8 @@ export default function Gallery(props) {
                <h1>Albums</h1>
                {currentPictures.map((album, id) => {
                 return (
-                    <div id="albums" data-albumId={album._id} key={id} onClick={showAlbum} className={classes.album} onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}>
-                    <p data-albumId={album._id}>{album.name}</p>
+                    <div id="albums" data-albumid={album._id} key={id} onClick={showAlbum} className={classes.album} onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}>
+                    <p data-albumid={album._id}>{album.name}</p>
                     <div ref={el => underlines.current[id] = el}  id={id} className={classes.underline}><p></p></div>
                     </div>
                 )
@@ -123,7 +128,7 @@ export default function Gallery(props) {
                   <input className={classes.inputHide} id="file-upload" ref={addPicture} type="file" onInput={uploadPicture}/>
                </div>
             </div>
-            <CreateModal closeModal={closeModal} setModal={setModal} userId={userInfo._id} update={setUpdate} token={token}/>
+            <CreateModal closeModal={closeModal} setModal={setModal} userId={auth.userId} update={setUpdate} token={token}/>
             <Slider setUpdate={setUpdate} 
                token={token}   
                currentPictures={currentPictures} 

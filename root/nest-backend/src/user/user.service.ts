@@ -9,7 +9,7 @@ import {InjectModel} from '@nestjs/mongoose';
 import { Album } from 'src/album/entities/album.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import bcrypt, { genSaltSync, hashSync } from 'bcrypt';
-
+import {getAge} from '../../utils/getUserAge'
 
 @Injectable()
 export class UserService {
@@ -21,20 +21,29 @@ export class UserService {
     ) {} 
 
   async register(createUserDto: CreateUserDto) {
-    try {
-      const userExists = await this.userModel.find({email:createUserDto.email})
+
+      const userExists = await this.userModel.findOne({email:createUserDto.email})
+      console.log(userExists);
       
-      if(userExists.length!==0) throw new BadRequestException({message: "User already exists"})
-      const hashPassword = bcrypt.hash(createUserDto.password, 5);
-      const model = new this.userModel({...createUserDto, password:hashPassword})
+      if(userExists) throw new BadRequestException({message: "User already exists"})
+      console.log("1")
+      // const salt = await bcrypt.genSalt(5);
+      // const hashPassword = await bcrypt.hash(createUserDto.password, salt);
+      // console.log(hashPassword)
+      const age = getAge(createUserDto.birth)
+      console.log("3")
+      const model = new this.userModel({...createUserDto,age})
+      console.log(model)
       const user = await model.save();
+      console.log(user)
       const access_token =  await this.jwtService.signAsync({sub:user._id,username:user.fullName});
+      console.log(access_token)
       const newAlbum = new this.albumModel({name: "All", user: user._id})
-      newAlbum.save();
+      console.log(newAlbum)
+      const album = await newAlbum.save();
+      console.log(album)
       return {access_token, id:user._id.toString()}
-  } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
+
   }
   async login(loginUserDto: LoginUserDto)/*:Promise<User|ServiceResponse>*/ {
     try {

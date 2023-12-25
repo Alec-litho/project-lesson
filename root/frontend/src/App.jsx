@@ -18,9 +18,7 @@ export default function App() {
   const {isAuth, userToken, userId, status} = useSelector((state) => state.auth);
   useEffect(() => {
     if(!isAuth) {
-      console.log("1",userToken,userId);
       dispatch(getCookie())
-      console.log("2",userToken,userId);
       if(status !== 'error' && userToken.length !== 0) dispatch(getUser(userId));
     };
   },[])

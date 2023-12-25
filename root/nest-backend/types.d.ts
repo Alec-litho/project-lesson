@@ -6,7 +6,7 @@
     password: string
     email: string
     fullName: string
-    age: number
+    birth: string
     gender: string
 }
 interface ILoginUserDto {
@@ -19,6 +19,10 @@ interface ILoginResponse {
 }
 interface IUpdateUserDto {
 
+}
+type registerResponse = {
+    _id: string
+    token: string
 }
 //------------User---------------//
 

@@ -13,7 +13,7 @@ export class UserController {
   // @UsePipes(new ValidationPipe())
   @Post("/register")
   @ApiOperation({summary:"Register user"})
-  @ApiResponse({status:201,type:User})
+  // @ApiResponse({status:201,type})
   async create(@Body() user: CreateUserDto, @Res() res: Response) {
     console.log(user);
     const result = await this.userService.register(user);
