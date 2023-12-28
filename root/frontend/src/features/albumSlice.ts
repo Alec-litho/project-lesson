@@ -24,7 +24,7 @@ type errorResponse = {
   message: string
   value: any
 }
-export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', async function(_id:string, api):Promise<IAlbumModel[] | [] | errorResponse> {
+export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', async function({_id,token}:DefaultReduxThunkDto, api):Promise<IAlbumModel[] | [] | errorResponse> {
   try {
     const globalState:any = api.getState();
     const albumState = globalState.albums as InitialState
@@ -32,9 +32,7 @@ export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', async func
     
     let result = await axios.get(`http://localhost:3001/albums/user/${_id}`, {headers: {
       'Content-Type': 'application/json',
-       Authorization: `Bearer ${albumState.userToken}`,
-       accept: "*/*",
-       credentials: "include"
+       Authorization: `Bearer ${token}`,
     }})
     if(result.data.value === null) return [];
     return result.data;
@@ -45,11 +43,11 @@ export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', async func
 })
 
 
-export const fetchAlbum = createAsyncThunk('albums/fetchAlbum', async function(id:string):Promise<IAlbumModel> {
+export const fetchAlbum = createAsyncThunk('albums/fetchAlbum', async function({_id,token}:DefaultReduxThunkDto):Promise<IAlbumModel> {
   try {
-    const response = await axios.get(`http://localhost:3001/albums/${id}`,{headers: {
+    const response = await axios.get(`http://localhost:3001/albums/${_id}`,{headers: {
       'Content-Type': 'application/json',
-       Authorization: `Bearer ${initialState.userToken}`,
+       Authorization: `Bearer ${token}`,
        accept: "*/*",
        credentials: "include"
     }})
@@ -60,35 +58,32 @@ export const fetchAlbum = createAsyncThunk('albums/fetchAlbum', async function(i
 })
 
 
-export const fetchImg = createAsyncThunk('albums/fetchImg', async function(_id:string):Promise<ImageModel> {
+export const fetchImg = createAsyncThunk('albums/fetchImg', async function({_id,token}:DefaultReduxThunkDto):Promise<ImageModel> {
   const response = await axios.get(`http://localhost:3001/images/${_id}`, {headers: {
     'Content-Type': 'application/json',
-     Authorization: `Bearer ${initialState.userToken}`
-  }});
+     Authorization: `Bearer ${token}`
+  }}); 
   return response.data
 })
-export const uploadImage = createAsyncThunk('albums/uploadImage', async (dto:ICreateImageDto,api):Promise<ImageModel> => {
+export const uploadImage = createAsyncThunk('albums/uploadImage', async ({image,token}:{image:CreateImageDto,token:string},api):Promise<ImageModel> => {
     const globalState:any = api.getState();
     const albumState = globalState.albums as InitialState
-    console.log(dto,albumState);
-    const response = await axios.post('http://localhost:3001/image', JSON.stringify(dto), {headers: {
+    console.log(image,albumState);
+    const {data} = await axios.post('http://localhost:3001/image', JSON.stringify(image), {headers: {
       'Content-Type': 'application/json',
-       Authorization: `Bearer ${albumState.userToken}`
+       Authorization: `Bearer ${token}`
     }})
 
-    // if (data.update)data.setUpdate()
-    return response.data
+    return data
 
 })
 
  
-export const deletePicture = createAsyncThunk('albums/deletePicture', async(dto:IDeleteImageDto):Promise<boolean> => {
+export const deletePicture = createAsyncThunk('albums/deletePicture', async({_id,token}:DefaultReduxThunkDto):Promise<boolean> => {
   try {
-    const response = await axios.delete(`http://localhost:3001/image/${dto.id}`, {headers: {
+    const response = await axios.delete(`http://localhost:3001/image/${_id}`, {headers: {
       'Content-Type': 'application/json',
-       Authorization: `Bearer ${initialState.userToken}`,
-       accept: "*/*",
-       credentials: "include"
+       Authorization: `Bearer ${token}`,
     }});
     return response.data;
   } catch(err:any) {
@@ -96,15 +91,13 @@ export const deletePicture = createAsyncThunk('albums/deletePicture', async(dto:
   }
 })
 
-export const uploadAlbum = createAsyncThunk('albums/createAlbum', async (dto:ICreateAlbumDto):Promise<IAlbumModel> => {
+export const uploadAlbum = createAsyncThunk('albums/createAlbum', async ({album,token}:{album:CreateAlbumDto,token:string}):Promise<IAlbumModel> => {
   try {
-    console.log(dto)
-    const response = await axios.post('http://localhost:3001/albums', { dto }, {headers: {
+    console.log(album)
+    const response = await axios.post('http://localhost:3001/albums', album, {headers: {
       'Content-Type': 'application/json',
-       Authorization: `Bearer ${initialState.userToken}`,
-       accept: "*/*",
-       credentials: "include"
-    }});/*.then((res) => data.update())*/
+       Authorization: `Bearer ${token}`,
+    }});
     return response.data;
   } catch(err:any) {
     return err

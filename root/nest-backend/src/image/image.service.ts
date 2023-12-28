@@ -15,34 +15,37 @@ export class ImageService {
   ){} 
   async uploadImage(createImageDto: CreateImageDto):Promise<ImageDocument> {
     try {
-      const album:AlbumDocument = createImageDto.album !== undefined? await this.albumModel.findById(createImageDto.album) : undefined;
-      const albumId = new mongoose.Types.ObjectId(createImageDto.album);
+      let doc:ImageDocument;
       const userId = new mongoose.Types.ObjectId(createImageDto.user);
-
-      
-      const doc:ImageDocument = new this.imageModel({...createImageDto,albumId,userId});
-      await doc.save(); 
-      if(album) { 
-          album.images.push(doc._id);
-          await album.save();
+      if(createImageDto.album) {
+        const albumId = new mongoose.Types.ObjectId(createImageDto.album);
+        const album:AlbumDocument = await this.albumModel.findById(albumId)
+        doc = new this.imageModel({...createImageDto,albumId,userId});
+        await doc.save(); 
+        if(album) { 
+          const albumDoc = album as AlbumDocument 
+          albumDoc.images.push(doc._id);
+          await albumDoc.save();
+        }
+      } else {
+        doc = new this.imageModel({...createImageDto,albumId:false,userId});
       }
       return doc;
     } catch (error) {
       return error
     }
-   
-    
-
   }
 
   findAll() {
     return `This action returns all image`;
   }
 
-  async getOneImage(id:string) {
+  async getOneImage(id:string, populated:boolean) {
     try {
+      console.log(populated);
+      
       if(!mongoose.Types.ObjectId.isValid(id)) throw new BadRequestException({message:"id is not valid"});
-      let result = await this.imageModel.findById(id);
+      let result = populated? await this.imageModel.findById(id).populate({path:"album",populate:{path:"images"}}) : await this.imageModel.findById(id);
       if(result!==null) {
         return {message: 'success', value: result}
       } else {

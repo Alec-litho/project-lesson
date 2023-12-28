@@ -23,12 +23,12 @@ interface IUpdateUserDto {
 //------------User---------------//
 
 //------------Image---------------//
-interface ICreateImageDto {
+interface CreateImageDto {
     title: string
-    album: string 
+    album: string | Boolean
     description: string 
     imageURL: string
-    postId: boolean 
+    postId: string | Boolean 
     user: string 
 }
 interface IDeleteImageDto {
@@ -44,7 +44,7 @@ interface IUpdateImageDto {
 //------------Image---------------//
 
 //------------Comment---------------//
-interface ICreateCommentDto {
+interface CreateCommentDto {
     text: string
     user: string
     post:string
@@ -60,7 +60,7 @@ interface IUpdateCommentDto {
 //------------Comment---------------//
 
 //------------Album---------------//
-interface ICreateAlbumDto {
+interface CreateAlbumDto {
     name: string;
     user: string;
     description: string;
@@ -68,7 +68,7 @@ interface ICreateAlbumDto {
 //------------Album---------------//
 
 //------------Post---------------//
-interface ICreatePostDto {
+interface CreatePostDto {
     text: string
     tags: string[]
     authorId: string
@@ -89,7 +89,7 @@ interface ImageModel {
     title: string; 
     user: string; 
     description: string;
-    album: string;
+    album: string | Boolean;
     imageURL: string;
     postId: string | Boolean;
     _id: string
@@ -135,9 +135,8 @@ interface IComment {
     replies: IComment[]
     _id: string
 }
-interface ApiHeaders  {
-    'Content-Type': string
-    Authorization: string
-    accept: string,
-    credentials: string
-  }
+
+interface DefaultReduxThunkDto {
+    _id: string
+    token: string
+}

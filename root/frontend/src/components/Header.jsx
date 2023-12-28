@@ -16,13 +16,6 @@ export default function Header(props) {
                 <Nav/>
             </div>
             <div className='rightSideContent'>
-            {!props.isAuth?         
-                <div className='login'>
-                    <button>Log in</button>
-                </div> :
-                <div className='logout'>
-                    <button onClick={_ => props.dispatch(props.logout())} >Log out</button>
-                </div>}
                 <div className='search'>
                     <Search className='searchSvg'/>
                     <input placeholder='search'></input>

@@ -7,7 +7,7 @@ export class CreateImageDto implements ICreateImageDto {
     @ApiProperty({example:"Name", description:"Name of the image"})
     @IsNotEmpty()
     title: string
-    @ApiProperty({example:"6563912b95db05b60c92022a", description:"album in which the image is stored"})
+    @ApiProperty({example:"6563912b95db05b60c92022a || false", description:"album in which the image is stored"})
     @IsNotEmpty()
     album: string /*| mongoose.Types.ObjectId*/
     @ApiProperty({example:"In this image you can see me and...", description:"description of this image"})

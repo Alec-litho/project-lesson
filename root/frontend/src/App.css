@@ -5,7 +5,7 @@
   font-size: 16px;
 }
 .wrapper {
-  margin-top: 20px;
+  margin-top: 40px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -17,32 +17,33 @@ body {
   box-sizing: border-box;
   width: 100%;
   margin: 0 auto;
-  background-color: rgb(241, 246, 247);
+  background-color: rgb(214, 218, 223);
 }
 .headerBackground { 
   width: 100%;
   z-index: 100;
 }
 .logo{
-  width: 35px;
-  height: 35px;
+  width: 45px;
+  height: 45px;
 }
 
 .header {
-  padding: 5px;
+  padding: 5px 60px;
   background-color: rgb(255, 255, 255);
+  border-radius: 20px;
   position: fixed;
   z-index: 100;
-  left: 0;
   top: 0;
-  width: 100%;
-  height: auto;
+  height: 60px;
+  width: 95%;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .header .rightSideContent {
   display: flex;
+  gap: 20px;
   justify-content: center;
   align-items: center;
 }
@@ -68,12 +69,13 @@ body {
 }
 
 .rightSideContent .search {
+  cursor: pointer;
   position: relative;
   display: flex;
 }
 .rightSideContent .search input {
   width: 200px;
-  height: 30px;
+  height: 45px;
   border: 1px solid white;
   border-radius: 10px;
   background-color: rgb(231, 231, 231);
@@ -83,17 +85,24 @@ body {
   padding-left: 30px;
 }
 .rightSideContent .search .searchSvg {
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   position: absolute;
   left: 10px;
-  top: 10px;
+  top: 12px;
+  fill: rgb(119, 119, 119);
 }
 .rightSideContent .profile {
+  cursor: pointer;
   display: flex;
   gap: 10px;
+  height:40px;
+  width: 40px;
 }
 .level {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
   background-color: blueviolet;
   display: flex;
   justify-content: center;

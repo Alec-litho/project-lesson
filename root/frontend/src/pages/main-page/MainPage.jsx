@@ -8,6 +8,8 @@ import Loader from '../../components/Loader.jsx';
 import Profile from './ProfileComponent.jsx';
 import AboutMeBlock from './AboutMeBlock.jsx';
 import {setToken} from "../../features/albumSlice"
+import AdditionalInfoBlock from './AdditionalInfoBlock';
+
 
 export default function Main() {
     window.onbeforeunload = () => window.scrollTo(0, 0);
@@ -25,8 +27,7 @@ export default function Main() {
             if(albumState.albums.length!==0 && albumState.userToken) {
                 setPhotos([...albumState.albums]);
             }else {
-                dispatch(setToken(auth.userToken))
-                dispatch(fetchMyAlbums(auth.userId)).then((res) => {
+                dispatch(fetchMyAlbums({_id:auth.userId,token:albumState.userToken})).then((res) => {
                     console.log(res);
                     setPhotos(res.payload);
                 })
@@ -45,8 +46,9 @@ export default function Main() {
                 <AboutMeBlock galleryPhotos={photos} setSliderTrue={setSliderTrue} isLoadedState={isLoaded}/>
                 <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue} update={update} setUpdate={setUpdate} auth={auth}/>
             </div>
+            <AdditionalInfoBlock/>
             {/*sidebar??*/}
-            <Slider sliderTrue={sliderTrue} token={auth.token} setSliderTrue={setSliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}></Slider>
+            <Slider sliderTrue={sliderTrue} token={auth.userToken} setSliderTrue={setSliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}></Slider>
         </div>
     );
 }

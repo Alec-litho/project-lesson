@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import Gallery from "../gallery-page/Gallery"
 import classes from './mainPage.module.css';
+import { ReactComponent as Arrow } from '../../assets/icons/arrow.svg'
 
 export default function AboutMeBlock(props) {
     if(!props.isLoadedState) return null
@@ -8,8 +9,7 @@ export default function AboutMeBlock(props) {
     return (
         <div className={classes.aboutMeBlock}>
             <div className={classes.aboutMeHeader}> 
-                <span>20 views</span>
-                <Link to="/gallery" element={<Gallery/>}>See all</Link>
+
             </div>
             <div className={classes.gallery}>
                 {props.galleryPhotos.map(album => {
@@ -19,6 +19,11 @@ export default function AboutMeBlock(props) {
                         })
                     }
                 })}
+                <div className={classes.arrowWrapper}>
+                    <div className={classes.arrowBackground}></div>
+                    <Arrow className={classes.showMoreArrow}/>
+                </div>
+
             </div>
         </div>
     )

@@ -30,8 +30,7 @@ export default function Gallery(props) {
 
         if((auth.userId && token)) {
             if(albums.length===0) {
-            dispatch(setToken(auth.userToken));
-            dispatch(fetchMyAlbums(auth.userId))
+            dispatch(fetchMyAlbums({_id:auth.userId,token}))
               .then((res) => {
                 console.log(res);
                 setAlbumId(res.payload[0]._id);
@@ -65,8 +64,8 @@ export default function Gallery(props) {
         } 
     }
     function showSlider(e) {
-        setSliderTrue(!sliderTrue)
         setCurrPictureId(e.target.dataset.id)
+        setSliderTrue(!sliderTrue)
     }
     function doAnimation(e) {e.target.childNodes.forEach(child => {
         underlines.current.forEach(item => item.id === child.id?  item.style.width = 200 + 'px' : null)
@@ -75,8 +74,7 @@ export default function Gallery(props) {
     function uploadPicture(e) {
         let albumid = currentAlbumId
         postImage(e.target, albumid, false/*is appended to post?*/ ).then(res => {
-            dispatch(uploadImage({imgData:{...res,user:auth.userId}, /*setUpdate,*/token})).then(_ => {//save in db
-                /*setUpdate(true)*/
+            dispatch(uploadImage({image:{...res,user:auth.userId},token})).then(_ => {//save in db
                 setPictures(currentPictures)
             })
         })
@@ -105,7 +103,6 @@ export default function Gallery(props) {
                     currentPictures.map((album, id) => {
                          if(album.name === currentAlbum) {
                             return album.images.map((photo, id) => {
-                                console.log(photo);
                                 return (
                                 <div  key={id} 
                                 className={classes.imgWrapper} 

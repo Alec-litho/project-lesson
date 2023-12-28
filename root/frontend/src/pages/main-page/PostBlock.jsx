@@ -34,19 +34,17 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
     // },[currPosts])
     useEffect(() => {
         if(userPosts.length === 0) {
-            dispatch(fetchMyPosts({id:auth.userInfo._id, postLength:currPosts.length}))
+            dispatch(fetchMyPosts({_id:auth.userId, postLength:currPosts.length, token:auth.userToken}))
+               .then(({payload}) => setPosts(payload.posts))
         }
-        else setPosts([...userPosts]);
-        console.log('w');
-    }, [userPosts])
+        console.log(auth);
+    }, [])
 
     
     function appendImage(e) {
-        postImage(e.target, false/*hasAlbum*/,undefined/*album*/, 'undefined'/*postId*/).then(res => {//saves image to 'imgbb.com' server
-            dispatch(uploadImage({imgData:res, token:auth.token}))//saves information about image to mongodb 
-            .then(resp => {
-                setImagesToAppend(prev => [...prev, resp.payload])
-            })
+        postImage(e.target,false/*album*/,false/*postId*/).then(res => {//saves image to 'imgbb.com' server
+            dispatch(uploadImage({image:{...res, user: auth.userInfo._id,description:""}, token:auth.token}))//saves information about image to mongodb 
+            .then(({payload}) => setImagesToAppend(prev => [...prev, payload]))
         })
     }
     function filterTags(strTags) {
@@ -63,7 +61,7 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
         else {
             imagesToAppend.forEach((img, indx) => {
                 let id = img._id 
-                axios.post(`http://localhost:3001/images/update/${id}`)
+                axios.patch(`http://localhost:3001/image/${id}`)
             })
             savePost()
         }
@@ -71,11 +69,16 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
     async function savePost() {
         let result = filterTags(tags.current.value)
         let imgs = imagesToAppend.map(img => img._id)
-        dispatch(createPost({text: textArea.current.value, id:auth.userInfo._id, tags:result, imageUrl: imgs, token:auth.token, update:setUpdate}))
-        textArea.current.value = ''
-        tags.current.value = ''
-        textArea.current.style.height = 50 + 'px'
-        setImagesToAppend([])
+        const post = {text: textArea.current.value, author:auth.userInfo._id, tags:result, images: imgs}
+        dispatch(createPost({post, token:auth.userToken}))
+          .then(res => {
+            console.log(res);
+            textArea.current.value = ''
+            tags.current.value = ''
+            textArea.current.style.height = 50 + 'px'
+            setImagesToAppend([])
+            // setPosts(posts => [...posts, res]);
+          })
     }
     function showTools() { tools.current.style.display = "flex"}
     function hideTools() {if(focus==false && imagesToAppend.length === 0)setTimeout(_ => tools.current.style.display = "none",200)}
@@ -83,7 +86,7 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
     function addTags(e) {
         e.preventDefault()
         tags.current.style.display = 'flex'
-    }
+    } 
     return (
         <div>
             <div className={classes.makePost} onMouseLeave={hideTools} onMouseEnter={showTools}>

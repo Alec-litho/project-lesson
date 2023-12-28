@@ -15,18 +15,14 @@ const initialState:InitialState = {
   status: 'idle',
   error: null
 }
-const headers:ApiHeaders = {
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${initialState.userToken}`,
-  accept: "*/*",
-  credentials: "include"
-}
 
-export const uploadComment = createAsyncThunk('posts/postComment', async function(dto: ICreateCommentDto):Promise<IComment> {
-  console.log("Test - do headers have real value?",dto);
-  if(!initialState.userToken) throw new Error("Token is not defined")
+
+export const uploadComment = createAsyncThunk('posts/postComment', async function({comment,token}:{comment:CreateCommentDto,token:string}):Promise<IComment> {
   try{
-    const response = await axios.post(`http://localhost:3001/comment/`,JSON.stringify(dto),{headers: {...headers}})
+    const response = await axios.post(`http://localhost:3001/comment/`,JSON.stringify(comment), {headers: {
+      'Content-Type': 'application/json',
+       Authorization: `Bearer ${token}`
+    }})
     return response.data
   } catch(err:any) {
     console.log(err);
@@ -34,49 +30,47 @@ export const uploadComment = createAsyncThunk('posts/postComment', async functio
   }
   
 })
-type ApiArgs = {
-  dto:ICreateCommentDto
-  id:string
-}
-export const uploadReply = createAsyncThunk('posts/postReply', async function({dto,id}:ApiArgs):Promise<IComment> {
+
+export const uploadReply = createAsyncThunk('posts/postReply', async function({comment,id,token}:{comment:CreateCommentDto,id:string,token:string}):Promise<IComment> {
   try {
     if(!initialState.userToken) throw new Error("Token is not defined")
-    const response = await axios.post(`http://localhost:3001/comment/${id}`,JSON.stringify(dto),{headers: {...headers}})
+    const response = await axios.post(`http://localhost:3001/comment/${id}`,JSON.stringify(comment),{headers: {
+      'Content-Type': 'application/json',
+       Authorization: `Bearer ${token}`
+    }})
     return response.data
   } catch (err:any) {
     return err
   }
 })
 
-type fetchPostsType = {
-  id: string
-  postLength: number
-}
-export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async ({id, postLength}:fetchPostsType,{rejectWithValue}) => {
+export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async ({_id, postLength, token}:{_id:string,postLength:number,token:string},{rejectWithValue}) => {
   try {
-    if(!initialState.userToken) throw new Error("Token is not defined")
-    console.log('in slice', postLength);
-    const response = await axios.get(`http://localhost:3001/post/user/${id}`,{headers: {...headers}})
+    const response = await axios.get(`http://localhost:3001/post/user/${_id}`,{headers: {
+      'Content-Type': 'application/json',
+       Authorization: `Bearer ${token}`
+    }})
+    console.log(_id,response);
+    
     return {posts:[...response.data].reverse(), postLength};
   } catch(err:any) {
     let error: AxiosError<PaymentValidationErrors> = err // cast the error for access
     if (!error.response) {
       throw err
     }
-    // We got validation errors, let's return those so we can reference in our component and set form errors
-    return rejectWithValue(error.response.data)
+    return rejectWithValue(error.response.data)    // We got validation errors, let's return those so we can reference in our component and set form errors
   }
 })
-type createPostType = {
-  dto: ICreatePostDto
-  token: string
-}
 
-export const createPost = createAsyncThunk('posts/createPost', async ({dto}:createPostType,{rejectWithValue}) => {
+export const createPost = createAsyncThunk('posts/createPost', async ({post, token}:{post:CreatePostDto,token:string},{rejectWithValue}) => {
   try {
-    if(!initialState.userToken) throw new Error("Token is not defined")
-    const response = await axios.post('http://localhost:3001/posts/',JSON.stringify(dto),{headers: {...headers}});
-    return response.data;
+    console.log(post);
+    
+    const {data}:{data:IPost} = await axios.post('http://localhost:3001/post',JSON.stringify(post),{headers: {
+      'Content-Type': 'application/json',
+       Authorization: `Bearer ${token}`
+    }});
+    return data;
   } catch (err:any) {
     let error: AxiosError<PaymentValidationErrors> = err
     if (!error.response) throw err
@@ -84,10 +78,12 @@ export const createPost = createAsyncThunk('posts/createPost', async ({dto}:crea
   }
 })
 
-export const deletePost = createAsyncThunk('posts/deletePost', async(id, {rejectWithValue}) => {
+export const deletePost = createAsyncThunk('posts/deletePost', async({id,token}:{id:string,token:string}, {rejectWithValue}) => {
   try {
-    if(!initialState.userToken) throw new Error("Token is not defined")
-    let response = await axios.delete(`http://localhost:3001/posts/${id}`,{headers:{...headers}});
+    let response = await axios.delete(`http://localhost:3001/post/${id}`,{headers: {
+      'Content-Type': 'application/json',
+       Authorization: `Bearer ${token}`
+    }});
     return response.data;
   }catch (err:any) {
     let error: AxiosError<PaymentValidationErrors> = err
@@ -96,10 +92,12 @@ export const deletePost = createAsyncThunk('posts/deletePost', async(id, {reject
   }
   
 })
-export const watched = createAsyncThunk('posts/watched', async function(id:string):Promise<boolean> {
+export const watched = createAsyncThunk('posts/watched', async function({id,token}:{id:string,token:string}):Promise<boolean> {
   try {
-    if(!initialState.userToken) throw new Error("Token is not defined")
-    const response = await axios.get(`http://localhost:3001/post/watched/${id}`,{headers: {...headers}});
+    const response = await axios.get(`http://localhost:3001/post/watched/${id}`,{headers: {
+      'Content-Type': 'application/json',
+       Authorization: `Bearer ${token}`
+    }});
     return response.data;
   } catch (err:any) {
     return err
@@ -123,7 +121,7 @@ const postSlice = createSlice({
         let posts = [...action.payload.posts]
         let postLength = action.payload.postLength 
         let slicedPosts = posts.slice(postLength, postLength+10)
-        console.log(slicedPosts);
+        console.log(posts);
         state.myPosts = [...state.myPosts, ...slicedPosts]
       })
       .addCase(fetchMyPosts.rejected, (state, action:any) => {

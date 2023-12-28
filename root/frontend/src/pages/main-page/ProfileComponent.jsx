@@ -6,7 +6,11 @@ export default function Profile({avatarUrl, fullName, location, friends, age}) {
     // let profPicture = props.profilePicture? props.profilePicture : null
     return (
         <div className={classes.profileContainer}>
-            <img src={avatarUrl} className={classes.pofilePicture}></img>
+            <div className={classes.profilePictureWrapper}>
+                <div className={classes.profilePictureBg}></div>
+                <img src={avatarUrl} className={classes.profilePicture}></img>
+            </div>
+           
             <div className={classes.infoBlock}>
             <h1>{fullName}</h1>
             <div className={classes.defaultInfo}>

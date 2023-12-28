@@ -36,8 +36,8 @@ export class PostModel {
     @Prop({ref:"User", default: []})
     shares: mongoose.Types.ObjectId[] | []
     @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"post mongoose model id",type:mongoose.Types.ObjectId})
-    @Prop({type:mongoose.Types.ObjectId})
-    _id;
+    // @Prop({type:mongoose.Types.ObjectId})
+    _id:mongoose.Types.ObjectId;
 }
 
 export const PostSchema = SchemaFactory.createForClass(PostModel);

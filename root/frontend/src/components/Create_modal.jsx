@@ -11,16 +11,10 @@ export default function CreateModal({userId,update,token,setModal,closeModal,}) 
   const descriptionTarget = useRef(null);
   const albumName = useRef(null);
   function createAlbum(e) {
+    console.log(userId, albumName.current.value, descriptionTarget.current.value, token);
+    const album = {user: userId, name: albumName.current.value, description: descriptionTarget.current.value? descriptionTarget.current.value : ''}
     if (limit) {
-      dispatch(
-        uploadAlbum({
-          user: userId,
-          name: albumName.current.value,
-          desc: descriptionTarget.current.value,
-          update,
-          token,
-        }),
-      );
+      dispatch(uploadAlbum({album, token}));
       descriptionTarget.current.value = "";
       albumName.current.value = "";
       setModal((prev) => {

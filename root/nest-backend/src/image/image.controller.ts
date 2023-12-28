@@ -16,11 +16,11 @@ export class ImageController {
     const result = await this.imageService.uploadImage(image);
     res.send(result)
   }
-  @ApiOperation({summary:"Get an image"})
+  @ApiOperation({summary:"Get an image, 'populated' parameter is required to specify if you want to receive detailed information about image or not"})
   @ApiResponse({status:200,type:Image}) 
-  @Get(':id') 
-  async getOneImage(@Param('id') id:string,  @Res() res: Response) {
-    const result = await this.imageService.getOneImage(id);
+  @Get(':id/:populated') 
+  async getOneImage(@Param('id') id:string, @Param('populated') populated: boolean, @Res() res: Response) {
+    const result = await this.imageService.getOneImage(id, populated);
     res.send(result)
   }
   @ApiOperation({summary:"Delete an image"})

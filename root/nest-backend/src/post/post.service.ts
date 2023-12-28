@@ -18,7 +18,6 @@ export class PostService {
         private readonly imageService:ImageService
     ){}
     async createPost(dto:CreatePostDto) {
-        try {
             const authorId:mongoose.Types.ObjectId = new mongoose.Types.ObjectId(dto.author);
             async function createPostModel(postData:any/*think about it*/):Promise<PostDocument> {
                 if(postData.images.length!==0) {
@@ -42,14 +41,12 @@ export class PostService {
             } else {
                 return await createPostModel.call(this,{...dto, author: authorId});
             }
-        } catch (error) {
-            throw new InternalServerErrorException({message: error})
-        }
       
     }
     async getUserPosts(id: string) {
         const authorId = new mongoose.Types.ObjectId(id);
-        const userImages:PostDocument[] = await this.postModel.find({author: authorId}).populate("images")
+        const userImages:PostDocument[] = await this.postModel.find({author: authorId})
+        // .populate("images")
         // .populate({
         //     path: 'comments',
         //     populate: {path:"replies"}

@@ -31,25 +31,14 @@ const initialState:InitialState = {
   status: 'undefined',
   error: null
 }
-const headers:ApiHeaders = {
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${initialState.userToken}`,
-  accept: "*/*",
-  credentials: "include"
-}
-// function createHeader():ApiHeaders {
-//   return {
-//     'Content-Type': 'application/json',
-//     Authorization: `Bearer ${initialState.userToken}` 
-//   }
-// }
-type data = {_id:string, token:string}
-export const getUser = createAsyncThunk('auth/fetchData', async function(data:data, {rejectWithValue}) {
+
+
+export const getUser = createAsyncThunk('auth/fetchData', async function({_id,token}:DefaultReduxThunkDto, {rejectWithValue}) {
   try {
-    console.log(initialState,data._id);
-    const response = await axios.get(`http://localhost:3001/user/${data._id}`,{headers: {
+    console.log(initialState,_id);
+    const response = await axios.get(`http://localhost:3001/user/${_id}`,{headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${data.token}`
+      Authorization: `Bearer ${token}`
     }})
     return response.data
   }catch (err:any) {
@@ -62,8 +51,6 @@ export const getUser = createAsyncThunk('auth/fetchData', async function(data:da
 export const loginUser = createAsyncThunk('auth/loginUser', async function(dto:ILoginUserDto, {rejectWithValue}) {
   try {
     const response:AxiosResponse<ILoginResponse> = await axios.post('http://localhost:3001/user/login', dto)
-    console.log(response);
-    
     return response.data
   } catch (err:any) {
       let error: AxiosError<PaymentValidationErrors> = err;

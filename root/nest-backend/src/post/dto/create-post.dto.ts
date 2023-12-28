@@ -13,7 +13,7 @@ export class CreatePostDto implements ICreatePostDto {
     @IsArray()
     @IsString({each:true})
     @ApiProperty({example: "[cats, fun, business]", description:"Post's tags"})
-    tags: string[]
+    tags: string[] | []
     @ApiProperty({example: "656395f24db3c1a422c2e8c9", description:"Post's author"})
     @IsNotEmpty()
     author: string

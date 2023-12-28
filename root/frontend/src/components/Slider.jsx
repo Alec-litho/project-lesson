@@ -20,22 +20,21 @@ export default function Slider({setSliderTrue, setUpdate, currPictureId, sliderT
         setSliderTrue(!sliderTrue)
     }
     useEffect(_ => {
-            console.log(currPictureId);
+        console.log(currPictureId);
         if(!currPictureId) return
         let headers = {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${token}`}}
-        axios.get(`http://localhost:3001/images/${currPictureId}`,headers)//get info of selected image and thus find out if it has album
-            .then(res => {
-                //if image is not stored in the post and album-----------------------------------------------------------------------------------------------------
-                if(!res.data.album && !res.data.post) axios.get(`http://localhost:3001/images/${res.data._id}`,headers).then(res => setPictures([res.data])) 
-                //if image is stored in the post-------------------------------------------------------------------------------------------------------------------
-                else if(res.data.post) {
-                    axios.post(`http://localhost:3001/posts/images`,{imgId:currPictureId},headers).then(res => {
-                        console.log(res);
-                        setPictures(res.data[0].images)
-                    })
-                }
-                //if image is stored in the album-----------------------------------------------------------------------------------------------------------------
-                else {axios.get(`http://localhost:3001/albums/${res.data.album}`,headers).then(res => setPictures(res.data.images))}
+        axios.get(`http://localhost:3001/image/${currPictureId}/true`,headers)//get info of selected image and thus find out if it has album
+            .then(({data}) => {
+                console.log(data);
+                if(Array.isArray(data.value.album)&& !data.value.post) setPictures([data.value]);//if image is not stored in the post and album
+                else if(data.value.album) setPictures(data.value.album.images);//if image is stored in the album
+                // else if(res.data.post) { //if image is stored in the post
+                //     axios.post(`http://localhost:3001/posts/images`,{imgId:currPictureId},headers).then(res => {
+                //         console.log(res);
+                //         setPictures(res.data[0].images)
+                //     })
+                // }
+                //if image is stored in the album
             })
     }, [sliderTrue])
     function hideSlider(e) {
@@ -83,21 +82,19 @@ export default function Slider({setSliderTrue, setUpdate, currPictureId, sliderT
                     return  <div key={id} className='img-cont-slider show'>
                                 <Loader/>
                                 <div className='comments-slider'>
-                                    <div>{token & <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}</div>
+                                    <div>{token && <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}</div>
                                     <p>{desc}</p>
                                 </div>
                             </div>
                 }
                     return  <div key={id} className={currPictureId === photo._id? 'img-cont-slider show' : 'img-cont-slider'} >
                                  <div className='image-slider-header'>
-                                    <Arrow ref={leftArrow} className='arrowLeft' onClick={sliderMoveBackwards}/>
+                                    {/* <Arrow ref={leftArrow} className='arrowLeft' onClick={sliderMoveBackwards}/> */}
                                     <img className='img-slider' src={photo.imageURL} onClick={sliderMoveForward}/>
-                                    <Arrow ref={rightArrow} className='arrowRight' onClick={sliderMoveForward}/>
+                                    {/* <Arrow ref={rightArrow} className='arrowRight' onClick={sliderMoveForward}/> */}
                                  </div>
                                  <div className='comments-slider'>
-                                     <div>
-                                        {token & <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}
-                                     </div>
+                                     <div>{token && <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}</div>
                                      <p>{desc}</p>
                                  </div>
                             </div>

@@ -47,7 +47,7 @@ export class UserService {
   }
   async login(loginUserDto: LoginUserDto)/*:Promise<User|ServiceResponse>*/ {
     try {
-      const user:any = await this.userModel.findOne({email:loginUserDto.email});
+      const user:User = await this.userModel.findOne({email:loginUserDto.email});
       if(!user) {
         throw new NotFoundException({message: "User not found"})
       } else if(!this.comparePass(loginUserDto, user)) {

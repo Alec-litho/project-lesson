@@ -15,9 +15,9 @@ export class Image implements ImageModel {
   @ApiProperty({example:"In this image you can see me and...", description:"description of this image", type: String})
     @Prop({default: ''})
     description: string;
-  @ApiProperty({example:"771125073b435y39bd5f7024", description:"album id", type: mongoose.Types.ObjectId})
-    @Prop({ref: "Album"})
-    album: mongoose.Types.ObjectId;
+  @ApiProperty({example:"771125073b435y39bd5f7024 || false", description:"album id", type: mongoose.Types.ObjectId})
+    @Prop({type: mongoose.Types.ObjectId || Boolean, ref: "Album" })
+    album;
   @ApiProperty({example:"https://i.ibb.co/Bqm8N2r/default-avatar-trendal-me", description:"url of the image", type: String})
     @Prop({required: true})
     imageURL: string;
