@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import {useDispatch, useSelector } from 'react-redux';
 import {fetchMyAlbums} from '../../features/albumSlice';
 import Slider from '../../components/Slider.jsx';
-import classes from './mainPage.module.css';
+import classes from './style/mainPage.module.css';
 import PostBlock from './PostBlock.jsx';
 import Loader from '../../components/Loader.jsx';
 import Profile from './ProfileComponent.jsx';

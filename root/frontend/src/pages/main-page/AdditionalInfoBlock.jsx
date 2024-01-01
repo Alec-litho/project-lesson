@@ -1,4 +1,4 @@
-import classes from './style/additionalInfoBlock.module.css'
+import classes from './style/mainPage.module.css'
 
 
 export default function AdditionalInfoBlock() {

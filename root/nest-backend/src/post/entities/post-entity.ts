@@ -7,6 +7,7 @@ import { ApiProperty } from '@nestjs/swagger';
   import mongoose, {
     HydratedDocument
   } from 'mongoose'; 
+  import { Image } from 'src/image/entities/image.entity';
 export type PostDocument = HydratedDocument<PostModel>;
 
 @Schema()
@@ -22,10 +23,10 @@ export class PostModel {
     viewCount: number
   @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"post's author"})
     @Prop({required: true, ref:'User'})
-    author:mongoose.Types.ObjectId
+    author:mongoose.Schema.Types.ObjectId
   @ApiProperty({example: "[656395f24db3c1a422c2e8c9]",description:"post's images"})
-    @Prop({ref:'Image', default:[]})
-    images: mongoose.Types.ObjectId[] | []
+    @Prop({ref:'Image', type: [mongoose.Schema.Types.ObjectId] || [], default:[]})
+    images: mongoose.Schema.Types.ObjectId[] | Image[] | []
   @ApiProperty({example: "[656395f24db3c1a422c2e8c9]",description:"post's comments"})
     @Prop({ref:"Comment", default: []})
     comments: mongoose.Types.ObjectId[] | []

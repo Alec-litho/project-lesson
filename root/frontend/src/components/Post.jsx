@@ -18,6 +18,7 @@ import { deletePost } from '../features/postSlice';
 
 export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSliderTrue,setCurrPosts,text,token,likes,postId,images,views,comments}=props) {
   let dispatch = useDispatch();
+  console.log(auth);
   // let [sliderTrue, setSliderTrue] = useState(false);
   let [editPost, setEditPost] = useState(false);
   let [replyToComment, setReplyToComment] = useState(false);
@@ -40,7 +41,7 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
     // }
     console.log(postY);
     setCurrPosts((prevState) => [...prevState, {postId, watched:false, positionY:postY.current.getBoundingClientRect().top}])
-  },[alreadySmashedLike])
+  },[/*alreadySmashedLike*/])
 
   function smashLike() {
     setAlreadySmashedLike([auth._id])

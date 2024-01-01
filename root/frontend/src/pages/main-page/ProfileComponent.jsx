@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import Dialog from "../dialog-page/DialogPage"
-import classes from './mainPage.module.css';
+import classes from './style/mainPage.module.css';
 
 export default function Profile({avatarUrl, fullName, location, friends, age}) {
     // let profPicture = props.profilePicture? props.profilePicture : null

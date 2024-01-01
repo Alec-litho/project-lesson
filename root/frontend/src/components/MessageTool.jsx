@@ -14,7 +14,7 @@ export default function MessageTool({userInfo,type,setReplyToComment,postId,mess
     const token = useSelector(state => state.auth.token);
     const user = useSelector(state => state.auth.userInfo);
     const dispatch = useDispatch();
-    console.log(userInfo);
+    // console.log(userInfo);//too many messages
 
     return <div ref={messageToolCordY} className={classes.keyboard}>
         {type === 'reply' && 

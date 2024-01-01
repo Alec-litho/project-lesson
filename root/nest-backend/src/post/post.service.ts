@@ -45,13 +45,20 @@ export class PostService {
     }
     async getUserPosts(id: string) {
         const authorId = new mongoose.Types.ObjectId(id);
-        const userImages:PostDocument[] = await this.postModel.find({author: authorId})
-        // .populate("images")
+        const userImages:PostDocument[] = await this.postModel.find({author: authorId}) //нихуя не полкчается популейтит 
+        // const posts = await Promise.all(userImages.map(async(post) => {
+        //     const postImages:Image[] = await Promise.all(post.images.map(async(imageId) => await this.imageModel.findOne(imageId)));
+        //     post.images = postImages;
+        //     console.log(post);
+            
+        //     return post;
+        // }))
+        //.populate("images")
         // .populate({
         //     path: 'comments',
         //     populate: {path:"replies"}
         // });
-        console.log(userImages,id);
+
         
         if(!userImages) return []
         return userImages

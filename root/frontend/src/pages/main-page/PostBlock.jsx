@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useState, useRef, useEffect } from "react";
 import postImage from '../../helper_functions/postImage.js'
 import Post from '../../components/Post.jsx';
-import classes from './mainPage.module.css'
+import classes from './style/mainPage.module.css'
 import {fetchMyPosts, createPost} from '../../features/postSlice'
 import {uploadImage} from '../../features/albumSlice';
 import { ReactComponent as Append } from '../../assets/icons/append.svg'
@@ -27,7 +27,7 @@ export default function PostBlock({auth,setSliderTrue,setCurrPictureId,currPictu
     let [imagesToAppend, setImagesToAppend] = useState([])
     let [textLeng, setTextLeng] = useState(0)
     let dispatch = useDispatch()
-    window.onscroll = () => postToDetect = viewCount(auth, dispatch, currPosts, postToDetect);
+    // window.onscroll = () => postToDetect = viewCount(auth, dispatch, currPosts, postToDetect);
     // useEffect(() => {
     //     console.log(currPosts)
 

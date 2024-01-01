@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import Gallery from "../gallery-page/Gallery"
-import classes from './mainPage.module.css';
+import classes from './style/mainPage.module.css';
 import { ReactComponent as Arrow } from '../../assets/icons/arrow.svg'
 
 export default function AboutMeBlock(props) {
