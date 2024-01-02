@@ -25,12 +25,12 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
   let [showCross, setShowCross] = useState(false);
   let [textArea, setTextArea] = useState(text);
   // let [currPictureId, setCurrPictureId] = useState(false);
-  let [commentsTrue, setCommentsTrue] = useState(false);
   // let [comment, setComment] = useState(null);
   let [showMenu, setShowMenu] = useState(false);
   let [alreadySmashedLike, setAlreadySmashedLike] = useState(likes.filter(user => user === auth._id));
   let postY = useRef(null);
   let [userInfo, setUserInfo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
+  let [isCommenting, setComment] = useState(false)
   let messageToolCordY = useRef()
 
 
@@ -84,26 +84,26 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
                    <PostBody images={images} text={text} setCurrPictureId={setCurrPictureId} setSliderTrue={setSliderTrue}/>
         }
           <div className={classes.tools}>
-          <div className={classes.tool}>
-               <p>{views}</p>
-               <Views className={classes.views}/>
-          </div>
-            <div className={classes.rightBlock}>
+          <div className={classes.rightBlock}>
               <div className={classes.tool}>
-                <p>{comments.length}</p>
-                <Comments className={classes.icon} onClick={_ => setCommentsTrue(prev => !prev)}/>
+                <p>{alreadySmashedLike.length>0? [alreadySmashedLike].length : ""}</p>
+                <Like className={alreadySmashedLike.length>0? classes.iconBlue : classes.icon} onClick={alreadySmashedLike.length>0? removeLike : smashLike}/>
               </div>
               <div className={classes.tool}>
-                <p>{alreadySmashedLike.length>0? [alreadySmashedLike].length : 0}</p>
-                <Like className={alreadySmashedLike.length>0? classes.iconBlue : classes.icon} onClick={alreadySmashedLike.length>0? removeLike : smashLike}/>
+                <p>{comments.length===0? "" : comments.length}</p>
+                <Comments className={classes.icon} onClick={_ => setComment(prev => !prev)}/>
               </div>
               <div className={classes.tool}>
                 <p>{share}</p>
                 <Share className={classes.icon}/>
               </div>
-            </div>
           </div>
-          <div className={commentsTrue? classes.comments : comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
+          <div className={classes.tool}>
+               <p>{views}</p>
+               <Views className={classes.icon}/>
+          </div>
+          </div>
+          <div className={isCommenting? classes.comments : comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
             {comments.map((comment, id) => {
               return ( 
               <div key={id} className={classes.commentWrapper}>
@@ -121,7 +121,7 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
             })}
     
           </div>
-          <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userInfo={userInfo}/*in case user replying*/ postId={postId}/>
+          {isCommenting && <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userInfo={userInfo}/*in case user replying*/ postId={postId}/>}
         </div>
     )
 }

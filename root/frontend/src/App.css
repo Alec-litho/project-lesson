@@ -6,7 +6,7 @@
 }
 .wrapper {
   margin-top: 40px;
-  width: 100%;
+  max-width: 1600px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -108,4 +108,9 @@ body {
   justify-content: center;
   align-items: center;
   color: white;
+}
+
+
+@media only screen and (max-width: 1500px) {
+  
 }

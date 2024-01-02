@@ -2,18 +2,19 @@
   margin-bottom: 30px;
   border-radius: 10px;
   width: 100%;
-  height: auto;
+  max-height: 700px;
   background-color: white;
 }
 .post .profileCircle {
-
+  border-radius: 50%;
   border: 1px solid white;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
 }
 .profileCircle:hover {
   border: 1px solid rgb(53, 121, 199);
 }
+
 .postTools {
 position: relative;
 }
@@ -57,8 +58,8 @@ fill: rgb(128, 128, 128);
 .icon {
 fill: rgb(99, 99, 99);
 cursor: pointer;
-width: 25px;
-height: 25px;
+width: 30px;
+height: 30px;
 }
 .iconBlue {
 fill: rgb(45, 115, 206);
@@ -109,6 +110,9 @@ height: 500px;
 transition: .2s;
 height: auto;
 height: 500px;
+}
+.postBody {
+  padding: 0 20px;
 }
 .postBody .image:hover {
 filter:brightness(90%);

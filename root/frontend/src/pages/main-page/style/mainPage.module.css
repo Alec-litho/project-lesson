@@ -11,8 +11,9 @@
     margin-top: 40px;
   }
   .mainpage {
+
     display: flex;
-    width: 2000px;
+    width: 100%;
     gap: 20px;
     padding: 0 30px;
   }
@@ -20,7 +21,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 50%;
+    width: 60%;
     height: auto;
   }
   .profileContainer {
@@ -31,24 +32,33 @@
     display: flex;
     flex-direction: column;
   }
+  .profileIcon {
+    fill: rgb(122, 122, 122);
+    width: 30px;
+    height: 30px;
+  }
   .profileContainer .defaultInfo {
+    width: 100%;
     display: flex;
-    gap: 50px;
-    margin: 20px 0;
+    gap: 10px;
+    margin: 10px 0;
   }
   .defaultInfo .leftInfoBlock, .defaultInfo .rightInfoBlock {
     display: grid;
     justify-content: center;
     align-items: center;
-    grid-template-rows: repeat(4, 30px);
+    grid-template-rows: repeat(3, 30px);
     gap: 10px;
+    margin: 10px 0;
   }
   .defaultInfo .leftInfoBlock p {
     font-weight: 500;
     font-size: 18px;
   }
   .defaultInfo .rightInfoBlock a  {
-    color: black;
+    color: rgb(94, 94, 94);
+    font-weight: 500;
+    font-size: 17px;
     text-decoration: none;
     
   }
@@ -74,9 +84,13 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     padding: 20px;
   }
-  
+  .infoBlock .messageBtn {
+    color: white;
+    text-decoration: none;
+  }
   .infoBlock .book, .infoBlock .subscribe {
     font-weight: 600;
     font-size: 15px;
@@ -86,22 +100,55 @@
     color: white;
     border-radius: 5px;
     height: 40px;
-    width: 200px;
+    width: 100%;
     transition: color .1s;
     cursor: pointer;
   }
-  .infoBlock .subscribe {
-    margin-top: 5px;
+  .infoBlock .menu {
+    position: relative;
+    margin-top: 3px;
+    width: 100%;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+  }
+  .menu .subscribe {
     color: rgb(58, 101, 241);
     font-weight: 600;
     font-size: 15px;
     background-color: white;
-    width: 199px;
+    width: 80%;
     border: 1px solid rgb(58, 101, 241);
   }
+  .optionsIcon {
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid rgb(58, 101, 241);
+    background-color:  rgb(58, 101, 241);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+    height: 100%;
+  }
+  .options {
+    width: 100px;
+    height: 60px;
+    background-color: white;
+    border: 1px solid  rgb(58, 101, 241);
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+  }
+  .menu .profileIcon {
+    fill:  rgb(255, 255, 255);
+  }
   .infoBlock .subscribe:hover {
-    background-color: rgb(240, 240, 240);
+    background-color: rgb(58, 101, 241);
     border: 1px solid rgb(240, 240, 240);
+    color: white;
     transition: .1s;
   }
   .infoBlock h1 {
@@ -367,6 +414,7 @@
   width: 100%;
   height: 350px;
   display: grid;
+  justify-content: center;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3,1fr);
   background-color: white;
@@ -392,4 +440,69 @@
   width: 100%;
   height: 350px;
   background-color: white;
+}
+/*------------------------------AboutMeBlock------------------------------------*/
+/*------------Responsive Design-------------*/
+
+@media only screen and (max-width: 1600px) {
+  .friends {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3,1fr);
+    background-color: white;
+  }
+}
+@media only screen and (max-width: 1380px) {
+  .friends {
+    display: grid;
+    grid-template-columns: repeat(3, 80px);
+    grid-template-rows: repeat(3,100px);
+    background-color: white;
+  }
+  .friends .friendCircleImg {
+    width: 65px;
+    height: 65px;
+  }
+  .profileContainer {
+    width: 15%;
+    height: 400px;
+  }
+  .profilePictureWrapper {margin: 0;width: 130px; height: 130px;}
+
+  .mainContent {width: 60%;}
+  .infoBlock {padding: 0px;}
+  .infoBlock .defaultInfo a {font-size: 15px;}
+  .infoBlock .defaultInfo {
+    margin: 0;
+    gap: 0px;
+  }  
+  .defaultInfo .leftInfoBlock, .defaultInfo .rightInfoBlock {gap: 3px;}
+  .defaultInfo .profileIcon {width: 25px;}
+  .additionalInfoBlock {width: 25%;}
+}
+@media only screen and (max-width: 1080px) {
+  .mainContent {width: 80%;}
+  .profileContainer {width: 15%;}
+  .additionalInfoBlock {width: 5%;}
+  .friends {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .friends .friendCircleImg {
+    width: 40px;
+    height: 40px;
+  }
+  .friends .friendCircle p {display: none;}
+}
+@media only screen and (max-width: 880px) {
+  .mainContent {width: 85%;}
+  .profileContainer {width: 10%; height: 300px;}
+  .additionalInfoBlock {width: 5%;}
+
+  .profilePictureWrapper {
+    width: 70px;
+    height: 70px;
+  }
 }
