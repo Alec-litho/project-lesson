@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
   import { Image } from 'src/image/entities/image.entity';
 export type PostDocument = HydratedDocument<PostModel>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class PostModel {
   @ApiProperty({example: "In this post i'd like to tell...",description:"post's text"})
     @Prop()
@@ -36,9 +36,12 @@ export class PostModel {
   @ApiProperty({example: "23",description:"post's shares count"})
     @Prop({ref:"User", default: []})
     shares: mongoose.Types.ObjectId[] | []
-    @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"post mongoose model id",type:mongoose.Types.ObjectId})
+  @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"post mongoose model id",type:mongoose.Types.ObjectId})
     // @Prop({type:mongoose.Types.ObjectId})
     _id:mongoose.Types.ObjectId;
+  @ApiProperty({example: "2023-08-17T15:41:10.645+00:00", description: 'Created At' })
+    @Prop()
+    createdAt?: Date
 }
 
 export const PostSchema = SchemaFactory.createForClass(PostModel);

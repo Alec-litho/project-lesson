@@ -5,7 +5,7 @@ interface InitialState {
   isAuth: boolean
   userToken: string
   userId: string
-  userInfo: IUser | null
+  userInfo: IUser
   status: string
   error: string | null
   role: string
@@ -90,7 +90,8 @@ const authSlice = createSlice({
   initialState,
   reducers: { 
     logout: (state, action) => {
-      state.userInfo = null
+      console.log("log out");
+      
     },
     getCookie: (state, action) => {
       let result = false;

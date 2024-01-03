@@ -1,25 +1,33 @@
-import { useEffect, useRef, useState } from "react"
-import { ReactComponent as Arrow } from '../assets/icons/arrow.svg'
-import { ReactComponent as Delete } from '../assets/icons/delete.svg'
+import { useEffect, useRef, useState  } from "react"
+// import { ReactComponent as Arrow } from '../assets/icons/arrow.svg'
+import  Delete from '../assets/icons/delete'
 import {deletePicture, fetchMyAlbums, fetchImg} from '../features/albumSlice'
-import { useSelector, useDispatch } from "react-redux"
 import Loader from "./Loader"
 import axios from 'axios'
 import '../styles/gallery_slider_style.css'
+import { Dispatch, SetStateAction } from "react";
+import { useAppDispatch } from "../hooks/reduxCustomHooks"
 
- 
-export default function Slider({setSliderTrue, setUpdate, currPictureId, sliderTrue,setCurrPictureId, desc}) {
+type Islider = {
+    setSliderTrue: Dispatch<SetStateAction<boolean>>;
+    currPictureId: string | null;
+    sliderTrue: boolean;
+    setCurrPictureId: Dispatch<SetStateAction<string | null>>
+    desc?: string;
+    token: string
+}
+export default function Slider({setSliderTrue, currPictureId, sliderTrue,setCurrPictureId, desc,token}:Islider) {
     let leftArrow = useRef(null), rightArrow = useRef(null);
-    let sliderContainer = useRef(null)
+    let sliderContainer = useRef<HTMLDivElement>(null)
     let slider = useRef(null)
-    let [pictures, setPictures] = useState([])
-    let token = useSelector(state => state.auth.token)
-    let dispatch = useDispatch()
-    function deleteImage(id) {
-        dispatch(deletePicture({token, id, update:setUpdate}))
+    let [pictures, setPictures] = useState<ImageModel[] | []>([])
+    // let token = useSelector(state => state.auth.token)
+    let dispatch = useAppDispatch()
+    function deleteImage(_id:string) {
+        dispatch(deletePicture({_id,token}))
         setSliderTrue(!sliderTrue)
     }
-    useEffect(_ => {
+    useEffect(() => {
         console.log(currPictureId);
         if(!currPictureId) return
         let headers = {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${token}`}}
@@ -37,43 +45,52 @@ export default function Slider({setSliderTrue, setUpdate, currPictureId, sliderT
                 //if image is stored in the album
             })
     }, [sliderTrue])
-    function hideSlider(e) {
+    function hideSlider(e:React.SyntheticEvent<HTMLElement>) {
+        if(e.target instanceof Element === false) return 
         if(e.target.className === 'imageContainer') {
             setPictures([]);
             setSliderTrue(prev => prev = false);
             setCurrPictureId(null);
         }
     }
-    function sliderMoveForward(e) {
-        let images = [...sliderContainer.current.childNodes]
-        let curr = ''
-        images.map((div, id) => {
-            [...div.classList].forEach(elem => elem === 'show'? curr = id : null )
+    function sliderMoveForward() {
+        let images = sliderContainer.current? [...sliderContainer.current.childNodes] : []
+        let curr = 0
+        images.map((element, id:number) => {
+            if(element instanceof Element) [...element.classList].forEach(elem => elem === 'show'? curr = id : null );
         })
         curr++
-        images.forEach(elem => elem.className = 'img-cont-slider')
-        if(curr == images.length) curr = 0
-        images[curr].className = 'img-cont-slider show' 
+        images.forEach(elem => {if(elem instanceof Element) elem.className = 'img-cont-slider'})
+        if(curr == images.length && images[curr] instanceof Element) {
+            curr = 0
+            let element = images[curr] as Element
+            element.className = 'img-cont-slider show' 
+    }
         
     }
-    function sliderMoveBackwards(e) {
-        let images = [...sliderContainer.current.childNodes]
-        let curr = ''
-        images.map((div, id) => [...div.classList].forEach(elem => elem === 'show'? curr = id : null ))
-        curr--
-        images.forEach(elem => elem.className = 'img-cont-slider')
-        if(curr < 0) curr = images.length-1
-        images[curr].className = 'img-cont-slider show' 
+    function sliderMoveBackwards() {
+        let images = sliderContainer.current? [...sliderContainer.current.childNodes] : [];
+        let curr = 0;
+        images.map((elem, id) => {
+            if(elem instanceof Element) [...elem.classList].forEach(elem => elem === 'show'? curr = id : null );
+        });
+        curr--;
+        images.forEach(elem => {if(elem instanceof Element) elem.className = 'img-cont-slider'});
+        if(curr < 0 && images[curr] instanceof Element) {
+            curr = images.length-1;
+            const elem = images[curr] as Element;
+            elem.className = 'img-cont-slider show';
+        }
     }
     return (
         <div style={{"display": sliderTrue? "flex" : "none"}} ref={slider} className='slider'>
         <div className='imageContainer' ref={sliderContainer} onClick={e => hideSlider(e)}>
             {pictures.map((photo, id) => {
-                if(!photo.album && !photo.post) {//if image doesnt have album then show only one image
+                if(!photo.album && !photo.postId) {//if image doesnt have album then show only one image
                     return <div key={id} className='img-cont-slider show'>
                                 <div className='image-slider-header'><img className='img-slider' src={photo.imageURL}/></div>
                                 <div className='comments-slider'>
-                                    <div>{token & <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}</div>
+                                    <div>{token && ''/*<Delete className="icon" onClick={_ => deleteImage(photo._id)}/>*/}</div>
                                     <p>{desc}</p>
                                 </div>
                             </div>
@@ -82,7 +99,7 @@ export default function Slider({setSliderTrue, setUpdate, currPictureId, sliderT
                     return  <div key={id} className='img-cont-slider show'>
                                 <Loader/>
                                 <div className='comments-slider'>
-                                    <div>{token && <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}</div>
+                                    <div>{token && ''/*<Delete className="icon" onClick={_ => deleteImage(photo._id)}/>*/}</div>
                                     <p>{desc}</p>
                                 </div>
                             </div>
@@ -94,7 +111,7 @@ export default function Slider({setSliderTrue, setUpdate, currPictureId, sliderT
                                     {/* <Arrow ref={rightArrow} className='arrowRight' onClick={sliderMoveForward}/> */}
                                  </div>
                                  <div className='comments-slider'>
-                                     <div>{token && <Delete className="icon" onClick={_ => deleteImage(photo._id)}/>}</div>
+                                     <div>{token && ''/*<Delete className="icon" onClick={_ => deleteImage(photo._id)}/>*/}</div>
                                      <p>{desc}</p>
                                  </div>
                             </div>

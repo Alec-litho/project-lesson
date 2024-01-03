@@ -1,4 +1,11 @@
 
+type errorResponse = {
+    message: string
+    value: any
+  }
+
+
+
 //----------------------DTO's-------------------------
 
 //------------User---------------//
@@ -123,6 +130,7 @@ interface IPost {
     likes: string[]
     shares: string[]
     _id: string
+    createdAt: Date
 }
 
 interface IComment {

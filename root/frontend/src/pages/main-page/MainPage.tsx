@@ -1,25 +1,24 @@
 import {useState, useEffect} from 'react';
-import {useDispatch, useSelector } from 'react-redux';
 import {fetchMyAlbums} from '../../features/albumSlice';
-import Slider from '../../components/Slider.jsx';
+import Slider from '../../components/Slider';
 import classes from './style/mainPage.module.css';
-import PostBlock from './PostBlock.jsx';
+import PostBlock from './PostBlock';
 import Loader from '../../components/Loader.jsx';
 import Profile from './ProfileComponent.jsx';
 import AboutMeBlock from './AboutMeBlock.jsx';
 import {setToken} from "../../features/albumSlice"
 import AdditionalInfoBlock from './AdditionalInfoBlock';
-
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxCustomHooks';
 
 export default function Main() {
     window.onbeforeunload = () => window.scrollTo(0, 0);
     const [isLoaded, setFinish] = useState(false);
-    const [photos, setPhotos] = useState([]);
-    const dispatch = useDispatch();
-    const auth = useSelector(state => state.auth);
-    const albumState = useSelector(state => state.albums);
-    const [sliderTrue, setSliderTrue] = useState(false);
-    const [currPictureId, setCurrPictureId] = useState(null);8//current img id to show in slider
+    const [photos, setPhotos] = useState<IAlbumModel[]>([]);
+    const dispatch = useAppDispatch();
+    const auth = useAppSelector(state => state.auth);
+    const albumState = useAppSelector(state => state.albums);
+    const [sliderTrue, setSliderTrue] = useState<boolean>(false);
+    const [currPictureId, setCurrPictureId] = useState<string | null>(null);//current img id to show in slider
     const [update, setUpdate] = useState(false);
 
     useEffect(() => {
@@ -27,7 +26,7 @@ export default function Main() {
             if(albumState.albums.length!==0 && albumState.userToken) {
                 setPhotos([...albumState.albums]);
             }else {
-                dispatch(fetchMyAlbums({_id:auth.userId,token:albumState.userToken})).then((res) => {
+                dispatch(fetchMyAlbums({_id:auth.userId,token:albumState.userToken})).then((res:any) => {
                     console.log(res);
                     setPhotos(res.payload);
                 })
@@ -44,7 +43,7 @@ export default function Main() {
             <Profile fullName={auth.userInfo.fullName} age={auth.userInfo.age} friends={auth.userInfo.friends} avatarUrl={auth.userInfo.avatarUrl} location={auth.userInfo.location}/>
             <div className={classes.mainContent}>
                 <AboutMeBlock galleryPhotos={photos} setSliderTrue={setSliderTrue} isLoadedState={isLoaded}/>
-                <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue} update={update} setUpdate={setUpdate} auth={auth}/>
+                <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue}/>
             </div>
             <AdditionalInfoBlock/>
             {/*sidebar??*/}

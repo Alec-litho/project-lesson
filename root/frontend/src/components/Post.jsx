@@ -1,4 +1,4 @@
-import { ReactComponent as Delete } from '../assets/icons/delete.svg';
+import { ReactComponent as Delete } from '../assets/icons/delete.tsx';
 import { ReactComponent as Menu } from '../assets/icons/dots.svg';
 import { ReactComponent as Share } from '../assets/icons/share.svg';
 import { ReactComponent as Like } from '../assets/icons/like.svg';

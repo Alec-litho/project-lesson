@@ -44,22 +44,13 @@ export const uploadReply = createAsyncThunk('posts/postReply', async function({c
   }
 })
 
-export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async ({_id, postLength, token}:{_id:string,postLength:number,token:string},{rejectWithValue}) => {
-  try {
+export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async ({_id, postLength, token}:{_id:string,postLength:number,token:string},{rejectWithValue}):Promise<{posts:IPost[] | [], postLength: number}> => {
     const response = await axios.get(`http://localhost:3001/post/user/${_id}`,{headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`
     }})
     console.log(_id,response);
-    
     return {posts:[...response.data].reverse(), postLength};
-  } catch(err:any) {
-    let error: AxiosError<PaymentValidationErrors> = err // cast the error for access
-    if (!error.response) {
-      throw err
-    }
-    return rejectWithValue(error.response.data)    // We got validation errors, let's return those so we can reference in our component and set form errors
-  }
 })
 
 export const createPost = createAsyncThunk('posts/createPost', async ({post, token}:{post:CreatePostDto,token:string},{rejectWithValue}) => {
