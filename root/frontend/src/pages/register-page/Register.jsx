@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import React, { useState } from "react";
 import {useForm, Controller} from 'react-hook-form';
 import "./register.css";
@@ -7,7 +7,6 @@ import { getUser, registerUser } from "../../features/authSlice";
 
 
 export default function Register() {
-  const navigate = useNavigate();
   let dispatch = useDispatch();
   let [gender, setGender] = useState("male");
   let [confirmPass, setConfirmedPass] = useState(null)
@@ -25,9 +24,13 @@ export default function Register() {
     if(confirmPass) {
       dispatch(registerUser(values))
         .then(res => {
-          console.log(res);
-          dispatch(getUser(res.payload));
-          navigate('/')
+          console.log(res, res.error.message);
+          if(!res.error.message) {
+            dispatch(getUser(res.payload));
+          }else {
+            return redirect('/error');//not working
+          }
+          return redirect('/')
         })
       
     }
