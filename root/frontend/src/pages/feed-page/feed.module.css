@@ -1,0 +1,25 @@
+
+.feedBody {
+    width: 100%;
+    display: flex;
+    gap: 20px;
+}
+
+.mainContent {
+    width: 50%;
+    height: 1000px;
+    border: 1px solid red;
+    border-radius: 10px;
+}
+.leftSideContent {
+    width: 20%;
+    height: 500px;
+    border: 1px solid rgb(19, 5, 209);
+    border-radius: 10px;
+}
+.rightSideContent {
+    width: 30%;
+    height: 500px;
+    border: 1px solid rgb(19, 5, 209);
+    border-radius: 10px;
+}

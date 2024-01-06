@@ -77,8 +77,7 @@ interface CreateAlbumDto {
 //------------Post---------------//
 interface CreatePostDto {
     text: string
-    tags: string[]
-    authorId: string
+    author: string
     images: ImageModel[] | []
 }
 interface IUpdatePostDto {

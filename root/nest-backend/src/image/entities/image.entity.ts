@@ -4,7 +4,7 @@ import mongoose, {HydratedDocument} from 'mongoose';
   
   export type ImageDocument = HydratedDocument<Image>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Image implements ImageModel {
   @ApiProperty({example:"Name", description:"Name of the image", type: String})
     @Prop({required:true})
@@ -27,6 +27,9 @@ export class Image implements ImageModel {
     @ApiProperty({example:"771125073b435y39bd5f7024", description:"image mongoose model id", type: mongoose.Types.ObjectId})
     // @Prop({type: mongoose.Types.ObjectId })
     _id: mongoose.Types.ObjectId;
+    @ApiProperty({example: "2023-08-17T15:41:10.645+00:00", description: 'Created At' })
+    @Prop()
+    createdAt?: Date
 }
 
 

@@ -95,7 +95,10 @@ export const watched = createAsyncThunk('posts/watched', async function({id,toke
   }
 
 })
-
+export const likePost = createAsyncThunk('posts/like', async function({id,userId}:{id:string,userId:string}):Promise<boolean> {
+  const response = await axios.post(`http://localhost:3001/post/liked/${id}`, {userId})
+  return response.data
+})
 const postSlice = createSlice({
   name: 'posts',
   initialState,

@@ -18,9 +18,9 @@ export class PostModel {
   @ApiProperty({example: "[fun,interesting,animals]",description:"post's tags"})
     @Prop({type: Array, default: []})
     tags:[]
-  @ApiProperty({example: "1190",description:"post's views"})
-    @Prop({default: 0})
-    viewCount: number
+  @ApiProperty({example: "[656395f24db3c1a422c2e8c9]",description:"post's views"})
+    @Prop({default: []})
+    viewCount: mongoose.Types.ObjectId[] | [] 
   @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"post's author"})
     @Prop({required: true, ref:'User'})
     author:mongoose.Schema.Types.ObjectId

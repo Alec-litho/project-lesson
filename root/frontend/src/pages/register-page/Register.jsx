@@ -24,8 +24,8 @@ export default function Register() {
     if(confirmPass) {
       dispatch(registerUser(values))
         .then(res => {
-          console.log(res, res.error.message);
-          if(!res.error.message) {
+          console.log(res, res.error);
+          if(!res.error) {
             dispatch(getUser(res.payload));
           }else {
             return redirect('/error');//not working

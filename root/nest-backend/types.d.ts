@@ -2,6 +2,11 @@
 //----------------------DTO's-------------------------
 
 //------------User---------------//
+type Recommendations = {
+    frequentlyAppearingKeyWords: string[];
+    newKeyWords: string[];
+    oldKeyWords: string[]
+}
  interface ICreateUserDto {
     password: string
     email: string
@@ -74,7 +79,6 @@ interface ICreateAlbumDto {
 //------------Post---------------//
 interface ICreatePostDto {
     text: string
-    tags: string[]
     author: string
     images: ImageModel[] | []
 }

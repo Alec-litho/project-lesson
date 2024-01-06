@@ -10,9 +10,11 @@ import { RolesController } from './roles/roles.controller';
 import { RolesModule } from './roles/roles.module';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     ImageModule,
     UserModule,
     AlbumModule,

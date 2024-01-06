@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link,redirect } from "react-router-dom";
 import "./login.css";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, getUser, getInitialState } from "../../features/authSlice";
 import Register from "../register-page/Register";
 
+
 export default function Login() {
   const dispatch = useDispatch();
-  const auth = useSelector(state => state.auth);
   const {
     register,
     handleSubmit, 
@@ -18,9 +18,11 @@ export default function Login() {
   const onSubmit = (values) => {
     dispatch(loginUser(values))
       .then(res => {
-        console.log(res.payload, auth.status, auth);
-        // dispatch(getInitialState(res.payload.token))
-        if(auth.status !== 'error') dispatch(getUser({_id:res.payload._id, token:res.payload.token}))
+        console.log(res.payload);
+        if(res.payload.status !== 404) dispatch(getUser({_id:res.payload._id, token:res.payload.token}))
+        else {
+      redirect("/error")
+    }
       })
   };
 

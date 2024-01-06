@@ -31,7 +31,6 @@ export default function Main() {
                     setPhotos(res.payload);
                 })
             }
-            console.log(auth);
             setFinish(true);
         };
 

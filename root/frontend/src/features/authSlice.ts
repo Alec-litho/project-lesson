@@ -7,7 +7,7 @@ interface InitialState {
   userId: string
   userInfo: IUser
   status: string
-  error: string | null
+  error: any
   role: string
 }
 

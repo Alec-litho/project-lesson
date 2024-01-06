@@ -4,7 +4,7 @@ import { ReactComponent as Search } from '../assets/icons/search.svg';
 import Dialog from '../pages/dialog-page/DialogPage.jsx'
 import Main from '../pages/main-page/MainPage.tsx'
 import Music from '../pages/music-page/MusicPage.jsx'
-import Subscriptions from '../pages/subscriptions-page/SubscriptionsPage.jsx'
+import Feed from '../pages/feed-page/FeedPage.jsx'
 import Gallery from '../pages/gallery-page/Gallery.jsx'
 
 
@@ -35,7 +35,7 @@ function Nav() {
            <Link to="/gallery" element={<Gallery/>}>Gallery</Link>
            <Link to="/music" element={<Music/>}>Music</Link>
            <Link to="/" element={<Main/>}>Home</Link>
-           <Link to="/subscriptions" element={<Subscriptions/>}>Subscriptions</Link>
+           <Link to="/feed" element={<Feed/>}>Feed</Link>
            <Link to="/dialogs" element={<Dialog/>}>Dialogs</Link>
         </div>
     )

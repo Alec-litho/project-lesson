@@ -58,15 +58,6 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
             .then(({payload}:{payload:any}) => setImagesToAppend(prev => [...prev, payload]))
         })
     }
-    function filterTags(strTags:string) {
-        let result = strTags.split(' ')
-        for (let i = 0; i < result.length-1; i++) {//gets rib of repeating tags
-            for (let j = i; j < result.length-1; j++) {
-                if(result[i] === result[j+1]) result[i] = ''
-            }    
-        }
-        return result.filter(str => str.length > 0)
-    }
     function loadImages() {
         if(imagesToAppend.length===0) savePost()
         else {
@@ -78,10 +69,9 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
         }
     }
     async function savePost() {
-        if(!tags.current || !textArea.current) return
-        let result = filterTags(tags.current.value)
+        if(!textArea.current) return
         // let imgs = imagesToAppend.map(img => img._id)
-        const post = {text: textArea.current.value, authorId:auth.userInfo._id, tags:result, images: [...imagesToAppend]}
+        const post = {text: textArea.current.value, author:auth.userInfo._id,images: [...imagesToAppend]}
         dispatch(createPost({post, token:auth.userToken}))
           .then(res => {
             console.log(res);
@@ -96,11 +86,19 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
     }
     function showTools() { if(tools.current) tools.current.style.display = "flex"};
     function hideTools() {if(focus==false && imagesToAppend.length === 0)setTimeout(() => {if(tools.current) tools.current.style.display = "none"},200)};
-
-    function addTags(e:Event) {
-        e.preventDefault();
-        if(tags.current) tags.current.style.display = 'flex';
-    } 
+    // function filterTags(strTags:string) {
+    //     let result = strTags.split(' ')
+    //     for (let i = 0; i < result.length-1; i++) {//gets rib of repeating tags
+    //         for (let j = i; j < result.length-1; j++) {
+    //             if(result[i] === result[j+1]) result[i] = ''
+    //         }    
+    //     }
+    //     return result.filter(str => str.length > 0)
+    // }
+    // function addTags(e:Event) {
+    //     e.preventDefault();
+    //     if(tags.current) tags.current.style.display = 'flex';
+    // } 
     return (
         <div>
             <div className={classes.makePost} onMouseLeave={hideTools} onMouseEnter={showTools}>
@@ -127,9 +125,9 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
                    <input className={classes.append} id="image-append" ref={append} type="file" onInput={e => appendImage(e.target)}></input>
                    {/* <Append className={classes.appendIcon}/> */}
                    {/* <a href='' className={classes.tag}> <Tags className={classes.tagsIcon} onClick={addTags}/></a> */}
-                   <div>
+                   {/* <div>
                       <input ref={tags} className={classes.tagsInput} onFocus={_ => setFocus(true)} onBlur={_ => setFocus(false)} placeholder='firstTag secondTag...'/>
-                   </div>
+                   </div> */}
                 </div>
             </div>
             <div className={classes.postsList}>{

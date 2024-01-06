@@ -14,7 +14,8 @@ import MessageTool from './MessageTool';
 import axios from 'axios';
 import trimTime from '../helper_functions/trimTime';
 import { useDispatch } from 'react-redux';
-import { deletePost } from '../features/postSlice';
+import { deletePost, likePost } from '../features/postSlice';
+
 
 export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSliderTrue,setCurrPosts,text,token,likes,postId,images,views,comments}=props) {
   let dispatch = useDispatch();
@@ -44,9 +45,9 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
   },[/*alreadySmashedLike*/])
 
   function smashLike() {
-    setAlreadySmashedLike([auth._id])
-    axios.post(`http://localhost:3001/posts/like`, {userId: auth._id, postId}).then(res => {
-    })
+    setAlreadySmashedLike([auth._id]);
+    console.log(postId);
+    dispatch(likePost({id:postId, userId:auth._id}));
   }
   function removeLike() {
     setAlreadySmashedLike([])

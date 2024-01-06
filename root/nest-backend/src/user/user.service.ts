@@ -8,7 +8,7 @@ import mongoose, {Model} from 'mongoose';
 import {InjectModel} from '@nestjs/mongoose';
 import { Album } from 'src/album/entities/album.entity';
 import { LoginUserDto } from './dto/login-user.dto';
-import bcrypt, { genSaltSync, hashSync } from 'bcrypt';
+import { genSaltSync, hashSync, genSalt, hash, compare } from 'bcrypt';
 import {getAge} from '../../utils/getUserAge'
 
 @Injectable()
@@ -21,28 +21,18 @@ export class UserService {
     ) {} 
 
   async register(createUserDto: CreateUserDto) {
-
       const userExists = await this.userModel.findOne({email:createUserDto.email})
-      console.log(userExists);
       
-      if(userExists) throw new BadRequestException({message: "User already exists"})
-      console.log("1")
-      // const salt = await bcrypt.genSalt(5);
-      // const hashPassword = await bcrypt.hash(createUserDto.password, salt);
-      // console.log(hashPassword)
-      const age = getAge(createUserDto.birth)
-      console.log("3")
-      const model = new this.userModel({...createUserDto,age})
-      console.log(model)
+      if(userExists) throw new BadRequestException({message: "User already exists"});
+      const salt = await genSalt(5);
+      const hashPassword = await hash(createUserDto.password, salt);
+      const age = getAge(createUserDto.birth);
+      const model = new this.userModel({...createUserDto,age, password:hashPassword});
       const user = await model.save();
-      console.log(user)
       const access_token =  await this.jwtService.signAsync({sub:user._id,username:user.fullName});
-      console.log(access_token)
-      const newAlbum = new this.albumModel({name: "All", user: user._id})
-      console.log(newAlbum)
+      const newAlbum = new this.albumModel({name: "All", user: user._id});
       const album = await newAlbum.save();
-      console.log(album)
-      return {access_token, id:user._id.toString()}
+      return {access_token, id:user._id.toString()};
 
   }
   async login(loginUserDto: LoginUserDto)/*:Promise<User|ServiceResponse>*/ {
@@ -76,13 +66,9 @@ export class UserService {
     }
   }
 
-  hashPassword(password:string) {
-    return hashSync(password, genSaltSync(10));
-  }
   private async comparePass(loginUserDto: LoginUserDto, user: User) {
     console.log(loginUserDto.password, user.password);
-    const passCompare = true //ILL FIX IT LATER
-    // const passCompare = await bcrypt.compare(loginUserDto.password, user.password);
-    return passCompare? true : false;
+    const passCompare = await compare(loginUserDto.password, user.password);
+    return passCompare
   }
 }
