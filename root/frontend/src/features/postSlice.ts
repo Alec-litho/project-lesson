@@ -19,7 +19,9 @@ const initialState:InitialState = {
 
 export const uploadComment = createAsyncThunk('posts/postComment', async function({comment,token}:{comment:CreateCommentDto,token:string}):Promise<IComment> {
   try{
-    const response = await axios.post(`http://localhost:3001/comment/`,JSON.stringify(comment), {headers: {
+    console.log(comment);
+    
+    const response = await axios.post(`http://localhost:3001/comment/`,comment, {headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`
     }})
@@ -54,19 +56,12 @@ export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async ({_id, 
 })
 
 export const createPost = createAsyncThunk('posts/createPost', async ({post, token}:{post:CreatePostDto,token:string},{rejectWithValue}) => {
-  try {
     console.log(post);
-    
     const {data}:{data:IPost} = await axios.post('http://localhost:3001/post',JSON.stringify(post),{headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`
     }});
     return data;
-  } catch (err:any) {
-    let error: AxiosError<PaymentValidationErrors> = err
-    if (!error.response) throw err
-    return rejectWithValue(error.response.data)
-  }
 })
 
 export const deletePost = createAsyncThunk('posts/deletePost', async({id,token}:{id:string,token:string}, {rejectWithValue}) => {

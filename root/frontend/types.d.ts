@@ -55,7 +55,7 @@ interface CreateCommentDto {
     text: string
     user: string
     post:string
-    replyTo:string
+    replyTo:string | Boolean
 }
 interface ILikeComment {
     userId: string

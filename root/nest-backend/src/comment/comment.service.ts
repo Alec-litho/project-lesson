@@ -5,6 +5,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { PostModel } from 'src/post/entities/post-entity';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { LikeComment } from './dto/like-comment.dto';
+import { CommentDocument } from './entities/comment';
 
 
 @Injectable()
@@ -15,19 +16,19 @@ export class CommentService {
     ){}
 
     public async uploadComment(dto:CreateCommentDto) {
-        try {
             const userId = new mongoose.Types.ObjectId(dto.user);
             const postId = new mongoose.Types.ObjectId(dto.post);
-            const replyToId = new mongoose.Types.ObjectId(dto.replyTo);
-            const comment = new this.commentModel({...dto, userId, postId, replyToId});
+            let comment;
+            if(dto.replyTo) {
+                comment = new this.commentModel({...dto, userId, postId, replyTo:new mongoose.Types.ObjectId(dto.replyTo as string)});
+            } else {
+                comment = new this.commentModel({...dto, userId, postId, replyTo:dto.replyTo});
+            }
             if(!comment) throw new HttpException("something went wrong while creating comment", HttpStatus.BAD_REQUEST);
             comment.save()
             const post = await this.postModel.findByIdAndUpdate(new mongoose.Types.ObjectId(dto.post), {$push: {comments: comment._id}}, { upsert: true });
             if(!post) throw new HttpException("something went wrong while pushing comment to the post", HttpStatus.BAD_REQUEST);
             return comment
-        } catch (error) {
-            throw new InternalServerErrorException(error)
-        }
     }
     public async updateComment(dto: UpdateCommentDto) {
         try {

@@ -58,8 +58,8 @@ fill: rgb(128, 128, 128);
 .icon {
 fill: rgb(99, 99, 99);
 cursor: pointer;
-width: 30px;
-height: 30px;
+width: 25px;
+height: 25px;
 }
 .iconBlue {
 fill: rgb(45, 115, 206);
@@ -130,11 +130,10 @@ justify-content: space-between;
 }
 .tool {
 display: flex;
-justify-content: center;
-align-items: center; 
+
 gap: 5px;
 }
-
+.tool p {align-self: flex-end;}
 .rightBlock {
 display: flex;
 align-items: center;

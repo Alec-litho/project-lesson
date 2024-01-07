@@ -9,6 +9,13 @@ import { ApiProperty } from '@nestjs/swagger';
   } from 'mongoose';
   import { Album } from 'src/album/entities/album.entity';
   export type UserDocument = HydratedDocument<User>;
+
+  type Recommendations = {
+    frequentlyAppearingKeyWords: string[];
+    newKeyWords: string[];
+    oldKeyWords: string[]
+}
+
 @Schema()
 export class User { 
   @ApiProperty({example: "Oleg", description:"Name of the user"})
@@ -39,8 +46,12 @@ export class User {
     @Prop({default:'https://i.ibb.co/Bqm8N2r/default-avatar-profile-trendy-style-social-media-user-icon-187599373.jpg'})
     avatarUrl: string;
   @ApiProperty({example: "[dogs,cats,politics,steaming]", description:"User's recommendation key words"}) 
-    @Prop()
-    recommendations:Recommendations;
+    @Prop({type:{frequentlyAppearingKeyWords:[String],newKeyWords: [String],oldKeyWords: [String]}, default:{frequentlyAppearingKeyWords:[],newKeyWords:[],oldKeyWords:[]}})
+    recommendations:{
+      frequentlyAppearingKeyWords: string[];
+      newKeyWords: string[];
+      oldKeyWords: string[]
+  };
   @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"user mongoose model id",type:mongoose.Types.ObjectId})
     // @Prop({type: mongoose.Types.ObjectId })
     _id: mongoose.Types.ObjectId;

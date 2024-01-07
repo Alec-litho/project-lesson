@@ -30,7 +30,7 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
   let [showMenu, setShowMenu] = useState(false);
   let [alreadySmashedLike, setAlreadySmashedLike] = useState(likes.filter(user => user === auth._id));
   let postY = useRef(null);
-  let [userInfo, setUserInfo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
+  let [userReplyTo, setUserReplyTo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
   let [isCommenting, setComment] = useState(false)
   let messageToolCordY = useRef()
 
@@ -51,8 +51,9 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
   }
   function removeLike() {
     setAlreadySmashedLike([])
-    axios.post(`http://localhost:3001/posts/removeLike`, {userId: auth._id, postId}).then(res => {
-    })
+    console.log('removed');
+    // axios.post(`http://localhost:3001/posts/removeLike`, {userId: auth._id, postId}).then(res => {
+    // })
   }
   function reply(data) {
     data.e.preventDefault();
@@ -60,7 +61,7 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
     console.log(repliedTo);
     [...data.e.target.parentNode.parentNode.childNodes].forEach(node => {
       if(node.nodeName == 'H5') {//find h5 tag and use its inner text to reply, later this name will be checked on the server
-        setUserInfo({commentId: repliedTo,name:node.innerText, cordY:node.offsetTop});
+        setUserReplyTo({commentId:null, name:null, cordY:null});
       }
     });
     window.scrollTo({top:messageToolCordY.current.offsetTop-650, behavior:'smooth'})
@@ -122,7 +123,7 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
             })}
     
           </div>
-          {isCommenting && <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userInfo={userInfo}/*in case user replying*/ postId={postId}/>}
+          {isCommenting && <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userReplyTo={userReplyTo}/*in case user replying*/ postId={postId}/>}
         </div>
     )
 }

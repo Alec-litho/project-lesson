@@ -2,11 +2,6 @@
 //----------------------DTO's-------------------------
 
 //------------User---------------//
-type Recommendations = {
-    frequentlyAppearingKeyWords: string[];
-    newKeyWords: string[];
-    oldKeyWords: string[]
-}
  interface ICreateUserDto {
     password: string
     email: string
@@ -57,7 +52,7 @@ interface ICreateCommentDto {
     text: string
     user: string
     post:string
-    replyTo:string
+    replyTo:string | Boolean
 }
 interface ILikeComment {
     userId: string

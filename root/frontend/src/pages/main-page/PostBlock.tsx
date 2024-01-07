@@ -20,12 +20,11 @@ type PostBlock = {
 
 export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}:PostBlock) {
     let tools = useRef<HTMLDivElement>(null)
-    let tags = useRef<HTMLInputElement>(null)
     let append = useRef(null)
     let textArea = useRef<HTMLTextAreaElement>(null)
     let userPosts = useAppSelector(state => state.userPosts.myPosts)
     let auth = useAppSelector(state => state.auth)
-    let [posts, setPosts] = useState<IPost[]>([])
+    let [posts, setPosts] = useState<IPost[] | []>([])
     let [currPosts, setCurrPosts] = useState([...userPosts])
     let postToDetect = 0;
     //---------------------------------------
@@ -48,7 +47,6 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
         } else {
             setPosts(userPosts)
         }
-        console.log(auth);
     }, [])
 
     
@@ -75,12 +73,12 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
         dispatch(createPost({post, token:auth.userToken}))
           .then(res => {
             console.log(res);
-            if(tags.current && textArea.current) {
+            if(textArea.current) {
+                const post = res.payload as IPost
                 textArea.current.value = ''
-                tags.current.value = ''
                 textArea.current.style.height = 50 + 'px'
                 setImagesToAppend([])
-                // setPosts(posts => [...posts, res]);
+                setPosts([post,...posts]);
             }
           })
     }
@@ -103,7 +101,7 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
         <div>
             <div className={classes.makePost} onMouseLeave={hideTools} onMouseEnter={showTools}>
                 <h2>Make post</h2>
-                <textarea ref={textArea} placeholder='Text' onFocus={_ => setFocus(true)} onBlur={_ => setFocus(false)} onInput={({target}:{target:any}) => setTextLeng(target.value.length)}></textarea>
+                <textarea ref={textArea} placeholder='Text' onFocus={_ => setFocus(true)} onBlur={_ => setFocus(false)} onInput={()=>/*({target}:{target:any}) => setTextLeng(target.value.length)*/console.log("input")}></textarea>
                 <div className={imagesToAppend.length !== 0? classes.imagesToAppend_show :  classes.imagesToAppend_hide}>
                     {imagesToAppend.map((image, id) => {
                         return <div key={id} className={classes.imgToAppendWrapper}>

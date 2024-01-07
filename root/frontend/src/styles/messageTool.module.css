@@ -63,6 +63,10 @@
     height: 30px;
 }
 
+.sendIconHide, .sendIcon {
+    content: "";
+    background-color: blue;
+}
 .sendIcon {
     width: 30px;
     height: 30px;

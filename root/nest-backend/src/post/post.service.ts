@@ -80,7 +80,7 @@ export class PostService {
         const friendsPosts = await Promise.all(user.friends.map(async(friend) => {
             const userPosts = await this.postModel.find({author:friend._id});
             const posts = userPosts.filter(post => {
-                if(!post.likes.some(user => user===user._id) || !post.viewCount.some(user => user===user._id)) {//if post was liked by user or user already have seen this post don't return it
+                if(!post.likes.some(userLike => userLike===user._id) || !post.viewCount.some(userLike => userLike===user._id)) {//if post was liked by user or user already have seen this post don't return it
                     filterOldData(14, post)? true : false
                 } else {
                     return false
@@ -93,7 +93,7 @@ export class PostService {
         user.friends.forEach(async(friend) => {
             const posts = await this.postModel.find({likes:{$in:[friend._id]}})//get posts that your friend liked
             posts.map(post => {//filter these post so user doesn't receive old posts
-                if((!post.likes.some(user => user===user._id) || !post.viewCount.some(user => user===user._id)) && filterOldData(14, post)) friendsLikes.push(post)
+                if((!post.likes.some(userLike => userLike===user._id) || !post.viewCount.some(userLike => userLike===user._id)) && filterOldData(14, post)) friendsLikes.push(post)
             })
         })
         const posts = [];
@@ -177,11 +177,31 @@ export class PostService {
         const postId = new mongoose.Types.ObjectId(id)
         const user = await this.userModel.findById(userMongoId);
         const post = await this.postModel.findById(postId);
-        let oldWords:string[] = []
-        Object.values(user.recommendations).forEach(category => oldWords = [...oldWords, ...category]);//{frequentlyAppearingKeyWords:[dogs,cats], newKeyWords:[politics], oldKeyWords:[food]} => [dogs,cats,politics,food]
+        const recomm:any = {}
+        let oldWords:string[] = user.recommendations.oldKeyWords
+        
         if(oldWords.length===0) {
-            oldWords = post.tags;
+            const newKeyWords = user.recommendations.newKeyWords//shorter name
+            
+            if(newKeyWords.length===0) {
+                user.recommendations.newKeyWords =  post.tags
+            }else {
+                post.tags.forEach(tag => {
+                    const indx = newKeyWords.indexOf(tag);
+                    if(indx===-1){
+                        user.recommendations.newKeyWords = [...newKeyWords,tag] 
+                    } else {
+                        user.recommendations.newKeyWords.splice(indx,1)//remove old word from newKeyWords category
+                        user.recommendations.oldKeyWords = [...user.recommendations.oldKeyWords,newKeyWords[indx]]
+                    }
+                })
+            }
+
         } else {
+            Object.assign(recomm,user.recommendations)
+            console.log(Object.values(recomm._doc));//[ [], [], [], new ObjectId('659ac33ce183c984ff3a2c9e') ]
+            Object.values(recomm._doc).slice(0,3).forEach((category:[]) => oldWords = [...oldWords, ...category]);//{frequentlyAppearingKeyWords:[dogs,cats], newKeyWords:[politics], oldKeyWords:[food]} => [dogs,cats,politics,food]
+            console.log(oldWords);
             const postTags = post.tags;
             const frequentlyAppearingWords = []
             const newWords = []

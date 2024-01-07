@@ -15,5 +15,5 @@ export class CreateCommentDto implements ICreateCommentDto{
     post:string
     @ApiProperty({example:"656ed9be81058725b67659fd", description:"Comment that user replied to"})
     @IsNotEmpty()
-    replyTo:string
+    replyTo:string | Boolean
 }
