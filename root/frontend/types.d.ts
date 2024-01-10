@@ -53,7 +53,7 @@ interface IUpdateImageDto {
 //------------Comment---------------//
 interface CreateCommentDto {
     text: string
-    user: string
+    user: IUser | string 
     post:string
     replyTo:string | Boolean
 }
@@ -131,17 +131,18 @@ interface IPost {
     _id: string
     createdAt: Date
 }
-
-interface IComment {
-    text: string
-    user: string
-    userProfilePicture: string
-    post: string
-    replyTo: string
-    likes: string[]
-    replies: IComment[]
+interface CommentModel {
     _id: string
+    user: IUser | string
+    text: string 
+    replyTo: Boolean
+    replies: CommentModel[] | string
+    post: string 
+    likes: IUser[] | string
+    created_at: string
+    
 }
+
 
 interface DefaultReduxThunkDto {
     _id: string

@@ -21,7 +21,6 @@ export class ImageService {
         const albumId = new mongoose.Types.ObjectId(createImageDto.album);
         const album:AlbumDocument = await this.albumModel.findById(albumId)
         doc = new this.imageModel({...createImageDto,albumId,userId});
-        await doc.save(); 
         if(album) { 
           const albumDoc = album as AlbumDocument 
           albumDoc.images.push(doc._id);
@@ -30,6 +29,7 @@ export class ImageService {
       } else {
         doc = new this.imageModel({...createImageDto,albumId:false,userId});
       }
+      await doc.save(); 
       return doc;
     } catch (error) {
       return error

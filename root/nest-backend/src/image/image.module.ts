@@ -13,6 +13,6 @@ import { AlbumSchema } from '../album/entities/album.entity';
   ],
   controllers: [ImageController],
   providers: [ImageService],
-  exports:[ImageModule, MongooseModule, ImageService]
+  exports:[ImageModule, ImageService]
 })
 export class ImageModule {}

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios, { AxiosError, AxiosRequestConfig } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 interface InitialState {
   userToken: string
@@ -17,14 +17,16 @@ const initialState:InitialState = {
 }
 
 
-export const uploadComment = createAsyncThunk('posts/postComment', async function({comment,token}:{comment:CreateCommentDto,token:string}):Promise<IComment> {
+export const uploadComment = createAsyncThunk('posts/postComment', async function({comment,token}:{comment:CreateCommentDto,token:string}):Promise<CommentModel> {
   try{
     console.log(comment);
     
-    const response = await axios.post(`http://localhost:3001/comment/`,comment, {headers: {
+    const response:AxiosResponse<CommentModel,any> = await axios.post(`http://localhost:3001/comment/`,comment, {headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`
     }})
+    console.log(response.data);
+    
     return response.data
   } catch(err:any) {
     console.log(err);
@@ -33,10 +35,11 @@ export const uploadComment = createAsyncThunk('posts/postComment', async functio
   
 })
 
-export const uploadReply = createAsyncThunk('posts/postReply', async function({comment,id,token}:{comment:CreateCommentDto,id:string,token:string}):Promise<IComment> {
+export const uploadReply = createAsyncThunk('posts/postReply', async function({comment,id,token}:{comment:CreateCommentDto,id:string,token:string}):Promise<CommentModel> {
   try {
-    if(!initialState.userToken) throw new Error("Token is not defined")
-    const response = await axios.post(`http://localhost:3001/comment/${id}`,JSON.stringify(comment),{headers: {
+    console.log(comment);
+    
+    const response = await axios.post(`http://localhost:3001/comment/${id}`,comment,{headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`
     }})

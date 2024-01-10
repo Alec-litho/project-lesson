@@ -141,7 +141,7 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
                     views={post.viewCount} 
                     share={post.shares} 
                     likes={post.likes} 
-                    comments={post.comments} 
+                    postComments={post.comments} 
                     commentsNum={post.comments} 
                     date={trimTime(post.createdAt)} 
                     images={post.images} 

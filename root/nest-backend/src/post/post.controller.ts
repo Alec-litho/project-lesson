@@ -19,7 +19,9 @@ export class PostController {
   async createPost(@Body() createPostDto:CreatePostDto, @Res() res:Response) {
 
     const newPost = await this.postService.createPost(createPostDto);
-    res.json(newPost);
+    console.log(newPost);
+    
+    res.send(newPost);
   }
   @ApiOperation({summary:"Get all user's posts"})
   @ApiResponse({status:200,type:[PostModel]})

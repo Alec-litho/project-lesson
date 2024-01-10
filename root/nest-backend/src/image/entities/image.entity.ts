@@ -5,16 +5,16 @@ import mongoose, {HydratedDocument} from 'mongoose';
   export type ImageDocument = HydratedDocument<Image>;
 
 @Schema({ timestamps: true })
-export class Image implements ImageModel {
+export class Image {
   @ApiProperty({example:"Name", description:"Name of the image", type: String})
     @Prop({required:true})
     title: string; 
   @ApiProperty({example:"651125073b4359d9bd5f7b74", description:"user id", type: mongoose.Types.ObjectId})
-    @Prop({required:true, ref: "User"})
-    user: mongoose.Types.ObjectId; 
+    @Prop({required:true, ref: "User", type:mongoose.Types.ObjectId})
+    user; 
   @ApiProperty({example:"In this image you can see me and...", description:"description of this image", type: String})
     @Prop({default: ''})
-    description: string;
+    description: string; 
   @ApiProperty({example:"771125073b435y39bd5f7024 || false", description:"album id", type: mongoose.Types.ObjectId})
     @Prop({type: mongoose.Types.ObjectId || Boolean, ref: "Album" })
     album;
@@ -25,7 +25,6 @@ export class Image implements ImageModel {
     @Prop({type: mongoose.Types.ObjectId || Boolean })
     postId;
     @ApiProperty({example:"771125073b435y39bd5f7024", description:"image mongoose model id", type: mongoose.Types.ObjectId})
-    // @Prop({type: mongoose.Types.ObjectId })
     _id: mongoose.Types.ObjectId;
     @ApiProperty({example: "2023-08-17T15:41:10.645+00:00", description: 'Created At' })
     @Prop()

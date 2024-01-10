@@ -15,9 +15,10 @@ type ReplyType = {
     postId: string,
     messageToolCordY: Ref<HTMLDivElement>,
     userReplyTo: {commentId: string,name:string, cordY:number}
+    setComment: Dispatch<SetStateAction<(prev:CommentModel[])=>CommentModel[]>>,
 }
 
-export default function MessageTool({type,setReplyToComment,messageToolCordY,postId,userReplyTo}:ReplyType) {
+export default function MessageTool({type,setReplyToComment,messageToolCordY,postId,userReplyTo,setComment}:ReplyType) {
     let message = useRef<HTMLInputElement>(null);
     let [inputNum, setInputNum] = useState(0);
 
@@ -25,7 +26,7 @@ export default function MessageTool({type,setReplyToComment,messageToolCordY,pos
     const dispatch = useAppDispatch();
     // console.log(userInfo);//too many messages
 
-    return <div ref={messageToolCordY} className={classes.keyboard}>
+    return <div ref={messageToolCordY} className={classes.keyboard}> 
         {type === 'reply' && 
         <div className={classes.keyboardReply}>
             <h5>You're replying to <span className={classes.userName} onClick={()=>window.scrollTo({top:userReplyTo.cordY-350, behavior:'smooth'})}>{userReplyTo.name}</span></h5>
@@ -39,13 +40,14 @@ export default function MessageTool({type,setReplyToComment,messageToolCordY,pos
             setInputNum(target.value.length)
         }} placeholder='Type'/>
         <div className={classes.send}>
-            <div /*Send*/ className={inputNum>0? classes.sendIcon : classes.sendIconHide} onClick={() => {
+            <div /*Send*/ className={inputNum>0? classes.sendIcon : classes.sendIconHide} onClick={async() => {
                 if(inputNum>0) {
                     if(type === 'comment')  {
                         const text = message.current? message.current.value : "";
-                        // const comment = {text, user:user.userInfo._id, authorName:userReplyTo.name,authorPicture:user.avatarUrl, post:postId, replyTo:false} as CreateCommentDto
-                        const comment = {text, user:user.userInfo._id,post:postId, replyTo:false}
-                        dispatch(uploadComment({comment, token:user.userToken}));
+                        const response = await dispatch(uploadComment({comment:{text, user:user.userInfo._id,post:postId, replyTo:false}, token:user.userToken}));
+                        const payload = response.payload as CommentModel 
+                        const comment = {...payload,user:user.userInfo} as CommentModel 
+                        setComment((prev:CommentModel[]) => [...prev, comment])
                     }
                     if(type === 'reply') {
                         console.log(userReplyTo.commentId);

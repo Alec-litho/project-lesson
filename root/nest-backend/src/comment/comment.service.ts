@@ -65,15 +65,17 @@ export class CommentService {
             throw new InternalServerErrorException(error)
         }
     }
-    public async uploadReply(id:string, dto: CreateCommentDto) {
+    public async uploadReply(id:string, dto: CreateCommentDto) { 
         try {
-            const commentId = new mongoose.Types.ObjectId(id);
+            const commentId = new mongoose.Types.ObjectId(id); 
             const comment = new this.commentModel(dto);
             if(!comment) throw new HttpException("something went wrong while creating comment", HttpStatus.BAD_REQUEST);
             comment.save()
             const response = await this.commentModel.findByIdAndUpdate(commentId, {
                 $push:{replies: comment._id}
             })
+            console.log(response,commentId, id);
+            
             if(!response) throw new HttpException("something went wrong while pushing reply to the comment", HttpStatus.BAD_REQUEST);
         } catch (error) {
             throw new InternalServerErrorException(error)

@@ -23,57 +23,49 @@ export class PostService {
     ){}
     async createPost(dto:CreatePostDto) {
             const authorId:mongoose.Types.ObjectId = new mongoose.Types.ObjectId(dto.author);
-            async function createPostModel(postData:any/*think about it*/):Promise<PostDocument> {
-                if(postData.images.length!==0) {
-                    const images:mongoose.Types.ObjectId[] = postData.images.map((img:ImageDocument):mongoose.Types.ObjectId => img._id)
-                    postData.images = images
-                }
-                const post:PostDocument = new this.postModel(postData);
-                await post.save()
-                return post;
+            let getKeyWords;
+            try {
+                getKeyWords = await axios.post('https://gw.cortical.io/nlp/keywords', {text:dto.text}, {headers: {'Content-Type': 'application/json', Authorization: TAG_EXTRACTOR_KEY}, params:{limit:15}});
+            } catch (error) {
+                console.log(error);
             }
-            const getKeyWords = await axios.post('https://gw.cortical.io/nlp/keywords', {text:dto.text}, {headers: {'Content-Type': 'application/json', Authorization: TAG_EXTRACTOR_KEY}, params:{limit:15}});
-            const postTags = getKeyWords.data.keywords.map(obj => obj.word);
+            const postTags:string[] = getKeyWords? getKeyWords.data.keywords.map(obj => obj.word) : [];
+            let post:PostDocument;
             if(dto.images.length!==0) {
-                //------------------load post's images------------------
-                const images:Image[] = await Promise.all(dto.images.map(async(img:any/*it will always be CreateImageDto type*/):Promise<Image> => {
-                    return await this.imageService.uploadImage(img);
-                }))
-                //------------------load post itself------------------
-                const post:PostDocument = await createPostModel.call(this,{...dto, author: authorId, images, tags:postTags})
+                post = new this.postModel({text:dto.text, author: authorId, tags:postTags, images: dto.images.map((img:ImageDocument):mongoose.Types.ObjectId => img._id)});
                 //-----update loaded images to change postId field as we already got it-----
-                images.forEach(async (img:ImageDocument):Promise<void> => {await this.imageModel.findOneAndUpdate({_id:img._id}, {postId:post._id})})
-                return post;
+                dto.images.forEach(async (img:ImageDocument):Promise<void> => {await this.imageModel.findOneAndUpdate({_id:img._id}, {postId:post._id})})
             } else {
-                return await createPostModel.call(this,{...dto, author: authorId,tags:postTags});
+                post = new this.postModel({text:dto.text, author: authorId, tags:postTags, images:[]});
             }
+            await post.save()
+            return post
       
     }
     async getUserPosts(id: string) {
         const authorId = new mongoose.Types.ObjectId(id);
-        const userImages:PostDocument[] = await this.postModel.find({author: authorId}) //нихуя не полкчается популейтит 
-        // const posts = await Promise.all(userImages.map(async(post) => {
-        //     const postImages:Image[] = await Promise.all(post.images.map(async(imageId) => await this.imageModel.findOne(imageId)));
-        //     post.images = postImages;
-        //     console.log(post);
-            
-        //     return post;
-        // }))
-        //.populate("images")
-        // .populate({
-        //     path: 'comments',
-        //     populate: {path:"replies"}
-        // });
-
-        
-        if(!userImages) return []
-        return userImages
+        const userPosts:PostDocument[] = await this.postModel.find({author: authorId})
+        .populate([{
+            path: "comments",
+            model: "Comment",
+            select: "text user createdAt likes post replies replyTo",
+            populate: ["replies", {
+                path: "user",
+                model: "User",
+                select: "avatarUrl fullName gender"
+            }]
+        },{
+            path: 'images',
+            model: "Image"
+        }])
+        if(!userPosts) return []
+        return userPosts
     }
     async getUserRecommendations(id:string) {
         //1 - Friends posts (friendsPosts)
         //2 - Posts that user's friends like (friendsLikes)
         //3 - Posts by keywords (keywordsPosts)
-        //4 - Posts that was created recently
+        //4 - Posts that were created recently
         const user = await this.userModel.findById(id);
         let userRecommendations:string[] = []
         Object.values(user.recommendations).forEach(category => userRecommendations = [...userRecommendations, ...category]);//{frequentlyAppearingKeyWords:[dogs,cats], newKeyWords:[politics], oldKeyWords:[food]} => [dogs,cats,politics,food]
@@ -230,3 +222,4 @@ export class PostService {
         return post? true : false;
     }
 }
+

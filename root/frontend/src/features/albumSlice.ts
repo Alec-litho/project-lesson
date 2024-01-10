@@ -48,7 +48,7 @@ export const fetchAlbum = createAsyncThunk('albums/fetchAlbum', async function({
 export const fetchImg = createAsyncThunk('albums/fetchImg', async function({_id,token}:DefaultReduxThunkDto):Promise<ImageModel> {
   const response = await axios.get(`http://localhost:3001/images/${_id}`, {headers: {
     'Content-Type': 'application/json',
-     Authorization: `Bearer ${token}`
+     Authorization: `Bearer ${token}` 
   }}); 
   return response.data
 })

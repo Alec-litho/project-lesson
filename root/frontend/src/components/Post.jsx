@@ -17,24 +17,23 @@ import { useDispatch } from 'react-redux';
 import { deletePost, likePost } from '../features/postSlice';
 
 
-export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSliderTrue,setCurrPosts,text,token,likes,postId,images,views,comments}=props) {
+export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSliderTrue,setCurrPosts,text,token,likes,postId,images,views,postComments}=props) {
   let dispatch = useDispatch();
-  console.log(auth);
   // let [sliderTrue, setSliderTrue] = useState(false);
   let [editPost, setEditPost] = useState(false);
   let [replyToComment, setReplyToComment] = useState(false);
   let [showCross, setShowCross] = useState(false);
   let [textArea, setTextArea] = useState(text);
   // let [currPictureId, setCurrPictureId] = useState(false);
-  // let [comment, setComment] = useState(null);
   let [showMenu, setShowMenu] = useState(false);
   let [alreadySmashedLike, setAlreadySmashedLike] = useState(likes.filter(user => user === auth._id));
   let postY = useRef(null);
   let [userReplyTo, setUserReplyTo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
-  let [isCommenting, setComment] = useState(false)
+  let [comments, setComment] = useState(postComments);
+  let [isCommenting, setCommentStatus] = useState(false)
   let messageToolCordY = useRef()
 
-
+console.log(comments);
   useEffect(_ => {
     // if(comment!==null) {
       // axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
@@ -57,16 +56,16 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
   }
   function reply(data) {
     data.e.preventDefault();
-    const repliedTo = data.e.target.parentNode.parentNode.parentNode.parentNode.dataset.id;
-    console.log(repliedTo);
+    const commentId = data.e.target.parentNode.parentNode.parentNode.parentNode.dataset.id;
+    console.log(commentId);
     [...data.e.target.parentNode.parentNode.childNodes].forEach(node => {
       if(node.nodeName == 'H5') {//find h5 tag and use its inner text to reply, later this name will be checked on the server
-        setUserReplyTo({commentId:null, name:null, cordY:null});
+        console.log(node.offsetTop);
+        setUserReplyTo({commentId, name:node.innerText, cordY:node.offsetTop});
       }
     });
-    window.scrollTo({top:messageToolCordY.current.offsetTop-650, behavior:'smooth'})
+    window.scrollTo({top:messageToolCordY.current.offsetTop-400, behavior:'smooth'})
     setReplyToComment(replyToComment = true)
-    // dispatch(postReply({}))
   }
     return (
         <div className={classes.post} ref={postY}>
@@ -93,7 +92,7 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
               </div>
               <div className={classes.tool}>
                 <p>{comments.length===0? "" : comments.length}</p>
-                <Comments className={classes.icon} onClick={_ => setComment(prev => !prev)}/>
+                <Comments className={classes.icon} onClick={_ => setCommentStatus(prev => !prev)}/>
               </div>
               <div className={classes.tool}>
                 <p>{share}</p>
@@ -107,14 +106,16 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
           </div>
           <div className={isCommenting? classes.comments : comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
             {comments.map((comment, id) => {
+
+              const replies = Array.isArray(comment.replies)? comment.replies : [comment.replies]//mongoose returns object instead of array when populating 1 doc
               return ( 
               <div key={id} className={classes.commentWrapper}>
-                <Comment reply={reply} dataset={comment._id} authorPicture={comment.authorPicture} authorName={comment.authorName} likes={comment.likes} comment={comment.comment} text={comment.text} time={trimTime(comment.createdAt)}/>
-                { comment.replies.length>0 && ( 
+                <Comment reply={reply} dataset={comment._id} authorPicture={comment.user.avatarUrl} authorName={comment.user.fullName} likes={comment.likes} text={comment.text} time={trimTime(comment.createdAt)}/>
+                {replies.length>0 && ( 
                 <div className={classes.repliesWrapper}>
                   <a >Show replies</a>
                   <div className={classes.replies}>
-                    {comment.replies.map((reply,id) => {
+                    {replies.map((reply,id) => {
                       return <Comment key={id} authorPicture={reply.authorPicture} authorName={reply.authorName} likes={reply.likes} comment={reply.text} time={trimTime(reply)} text={comment.text}/>
                     })}
                   </div>
@@ -123,7 +124,7 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
             })}
     
           </div>
-          {isCommenting && <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userReplyTo={userReplyTo}/*in case user replying*/ postId={postId}/>}
+          {isCommenting && <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} setReplyToComment={setReplyToComment} userReplyTo={userReplyTo}/*in case user replying*/ postId={postId} setComment={setComment}/>}
         </div>
     )
 }
