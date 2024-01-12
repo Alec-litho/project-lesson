@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link,redirect } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import "./login.css";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import Register from "../register-page/Register";
 
 
 export default function Login() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
     register,
@@ -19,10 +20,11 @@ export default function Login() {
     dispatch(loginUser(values))
       .then(res => {
         console.log(res.payload);
-        if(res.payload.status !== 404) dispatch(getUser({_id:res.payload._id, token:res.payload.token}))
-        else {
-      redirect("/error")
-    }
+        if(res.payload.status !== 404) {
+          dispatch(getUser({_id:res.payload._id, token:res.payload.token})).then(()=>navigate(`/${res.payload._id}`));
+        }else {
+          navigate("/error");
+        }
       })
   };
 

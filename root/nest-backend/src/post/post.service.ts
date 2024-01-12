@@ -45,11 +45,21 @@ export class PostService {
     async getUserPosts(id: string) {
         const authorId = new mongoose.Types.ObjectId(id);
         const userPosts:PostDocument[] = await this.postModel.find({author: authorId})
-        .populate([{
+        .populate([{//--------------------------i need to populate replies recursive until replies array is empty
             path: "comments",
             model: "Comment",
             select: "text user createdAt likes post replies replyTo",
-            populate: ["replies", {
+            populate: [{
+                path: "replies",
+                model: "Comment",
+                select: "text user createdAt likes post replies replyTo",
+                populate: [{
+                    path: "user",
+                    model: "User",
+                    select: "avatarUrl fullName gender"
+                }]
+
+            }, {
                 path: "user",
                 model: "User",
                 select: "avatarUrl fullName gender"

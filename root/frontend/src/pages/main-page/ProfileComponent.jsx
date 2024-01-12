@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Dialog from "../dialog-page/DialogPage";
-import classes from './style/mainPage.module.css';
+import classes from './style/userPage.module.css';
 import { ReactComponent as Friends } from '../../assets/icons/friends.svg';
 import { ReactComponent as Location } from '../../assets/icons/location.svg';
 import { ReactComponent as Age } from '../../assets/icons/age.svg';

@@ -35,13 +35,15 @@ const initialState:InitialState = {
 
 export const getUser = createAsyncThunk('auth/fetchData', async function({_id,token}:DefaultReduxThunkDto, {rejectWithValue}) {
   try {
-    console.log(initialState,_id);
+    console.log(token,_id);
     const response = await axios.get(`http://localhost:3001/user/${_id}`,{headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     }})
     return response.data
   }catch (err:any) {
+    console.log(err);
+    
       let error: AxiosError<PaymentValidationErrors> = err;
       if (!error.response) throw err;
       return rejectWithValue(error.response.data);
@@ -50,7 +52,15 @@ export const getUser = createAsyncThunk('auth/fetchData', async function({_id,to
 
 export const loginUser = createAsyncThunk('auth/loginUser', async function(dto:ILoginUserDto, {rejectWithValue}) {
   try {
-    const response:AxiosResponse<ILoginResponse> = await axios.post('http://localhost:3001/user/login', dto)
+    const response:AxiosResponse<ILoginResponse> = await axios.post('http://localhost:3001/user/login', dto, {headers: {
+     ' Content-Type': 'application/json',
+      credentials:"include",
+      "Access-Control-Allow-Credentials": true,
+    },
+    withCredentials:true
+  })
+    console.log(response);
+    
     return response.data
   } catch (err:any) {
       let error: AxiosError<PaymentValidationErrors> = err;
@@ -97,7 +107,8 @@ const authSlice = createSlice({
       let result = false;
       let token:string = '';
       let _id:string = '';
-      const cookies = document.cookie;
+      const cookies = document.cookie.toString();
+
       cookies.split(';').forEach(cookie => {
       let key = cookie.split("=")[0].trim();
       if(key === "token") {
@@ -131,6 +142,7 @@ const authSlice = createSlice({
         state.error = null;
         if(state.userInfo !== null) {
           state.userInfo = action.payload
+          state.isAuth = true
         } else {
           state.status = 'error'
         }
@@ -139,14 +151,6 @@ const authSlice = createSlice({
         state.status = 'error';
         state.error = action.payload
       })
-      // .addCase(getCookie.fulfilled, (state, action) => {
-      //   console.log(action.payload);
-      //   if(action.payload.result === true) {
-      //     state.isAuth = true;
-      //     state.userInfo._id = action.payload._id;
-      //     state.token = action.payload.token;
-      //   }
-      // })
       .addCase(registerUser.fulfilled, (state,action) => {
         state.status = 'fulfilled';
         state.error = null;

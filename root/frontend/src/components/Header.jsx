@@ -2,7 +2,7 @@ import '../App.css'
 import { Route, Routes, Link} from 'react-router-dom';
 import { ReactComponent as Search } from '../assets/icons/search.svg';
 import Dialog from '../pages/dialog-page/DialogPage.jsx'
-import Main from '../pages/main-page/MainPage.tsx'
+import Main from '../pages/main-page/UserPage'
 import Music from '../pages/music-page/MusicPage.jsx'
 import Feed from '../pages/feed-page/FeedPage.jsx'
 import Gallery from '../pages/gallery-page/Gallery.jsx'

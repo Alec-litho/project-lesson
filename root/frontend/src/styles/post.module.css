@@ -198,6 +198,9 @@ color: #727272;
 color: rgb(53, 94, 172);
 text-decoration: none;
 }
+.replies {
+  margin-left: 50px;
+}
 .commentInf {
 display: flex;
 align-items: center;

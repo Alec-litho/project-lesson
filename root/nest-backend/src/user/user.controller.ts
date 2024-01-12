@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,ValidationPipe, Res, UsePipes, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,ValidationPipe, Res, UsePipes, UseGuards, Header } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Response } from "express";
@@ -37,8 +37,11 @@ export class UserController {
   @UsePipes(ValidationPipe)
   async login(@Body() loginUserDto:LoginUserDto, @Res({passthrough:true}) res: Response) {
     const result = await this.userService.login(loginUserDto);
-    res.cookie("token", "result.value.access_token");
+    res.cookie("token", result.value.access_token);
     res.cookie("id", result.value.id);
+    res.header("Access-Control-Allow-Origin",'http://localhost:3000')
+    res.header("Access-Control-Allow-Credentials",'true')
+    res.header("withCredentials",'true')
     res.json({token:result.value.access_token, _id:result.value.id}).status(201);
   }
 

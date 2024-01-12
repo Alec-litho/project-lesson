@@ -5,18 +5,11 @@ import { useContainer } from 'class-validator';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cors from "cors";
 import * as cookieParser from 'cookie-parser';
-// const cordConfig = {
-//   origin: "http://localhost:300",
-//   credentials: true,
-//   allowedHeaders: 'Content-Type, Accept, Origin',
-//   preflightContinue: false,
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-// }
 async function bootstrap() {
   
   const app = await NestFactory.create(AppModule);
-  // app.use(cookieParser);
-  app.use(cors());
+  app.use(cookieParser())
+  app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

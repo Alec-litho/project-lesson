@@ -1,4 +1,4 @@
-import { Link, redirect } from "react-router-dom";
+import { Link, redirect,useNavigate  } from "react-router-dom";
 import React, { useState } from "react";
 import {useForm, Controller} from 'react-hook-form';
 import "./register.css";
@@ -8,6 +8,7 @@ import { getUser, registerUser } from "../../features/authSlice";
 
 export default function Register() {
   let dispatch = useDispatch();
+  const navigate = useNavigate()
   let [gender, setGender] = useState("male");
   let [confirmPass, setConfirmedPass] = useState(null)
   let {register, handleSubmit, onErrors, control, formState:{errors, isValid},getValues} = useForm({defaultValues:{fullName:"",birth:"",email:"",password:"", gender},mode:"onChange"});
@@ -26,11 +27,10 @@ export default function Register() {
         .then(res => {
           console.log(res, res.error);
           if(!res.error) {
-            dispatch(getUser(res.payload));
+            dispatch(getUser(res.payload)).then(()=>navigate(`/${res.payload._id}`));
           }else {
-            return redirect('/error');//not working
+            navigate('/error');//not working
           }
-          return redirect('/')
         })
       
     }

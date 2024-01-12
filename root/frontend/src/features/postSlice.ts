@@ -49,7 +49,7 @@ export const uploadReply = createAsyncThunk('posts/postReply', async function({c
   }
 })
 
-export const fetchMyPosts = createAsyncThunk('posts/fetchMyPosts', async ({_id, postLength, token}:{_id:string,postLength:number,token:string},{rejectWithValue}):Promise<{posts:IPost[] | [], postLength: number}> => {
+export const fetchUserPosts = createAsyncThunk('posts/fetchUserPosts', async ({_id, postLength, token}:{_id:string,postLength:number,token:string},{rejectWithValue}):Promise<{posts:IPost[] | [], postLength: number}> => {
     const response = await axios.get(`http://localhost:3001/post/user/${_id}`,{headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`
@@ -107,7 +107,7 @@ const postSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchMyPosts.fulfilled, (state, action) => {
+      .addCase(fetchUserPosts.fulfilled, (state, action) => {
         console.log('w');
         state.status = 'fulfilled'
         let posts = [...action.payload.posts]
@@ -116,7 +116,7 @@ const postSlice = createSlice({
         console.log(posts);
         state.myPosts = [...state.myPosts, ...slicedPosts]
       })
-      .addCase(fetchMyPosts.rejected, (state, action:any) => {
+      .addCase(fetchUserPosts.rejected, (state, action:any) => {
         state.status = 'error'
         state.error = action.payload
       })

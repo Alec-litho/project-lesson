@@ -31,6 +31,7 @@ export default function Post({auth,avatarUrl,date,share,setCurrPictureId,setSlid
   let [userReplyTo, setUserReplyTo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
   let [comments, setComment] = useState(postComments);
   let [isCommenting, setCommentStatus] = useState(false)
+  let [showReplies, setShowReplies] = useState(true)
   let messageToolCordY = useRef()
 
 console.log(comments);
@@ -110,15 +111,17 @@ console.log(comments);
               const replies = Array.isArray(comment.replies)? comment.replies : [comment.replies]//mongoose returns object instead of array when populating 1 doc
               return ( 
               <div key={id} className={classes.commentWrapper}>
-                <Comment reply={reply} dataset={comment._id} authorPicture={comment.user.avatarUrl} authorName={comment.user.fullName} likes={comment.likes} text={comment.text} time={trimTime(comment.createdAt)}/>
+                <Comment reply={reply} dataset={comment._id} avatarUrl={comment.user.avatarUrl} fullName={comment.user.fullName} likes={comment.likes} text={comment.text} time={trimTime(comment.createdAt)}/>
                 {replies.length>0 && ( 
                 <div className={classes.repliesWrapper}>
-                  <a >Show replies</a>
+                  <a onClick={() => setShowReplies(prev => !prev)}>Show replies</a>
+                  {showReplies && (
                   <div className={classes.replies}>
                     {replies.map((reply,id) => {
-                      return <Comment key={id} authorPicture={reply.authorPicture} authorName={reply.authorName} likes={reply.likes} comment={reply.text} time={trimTime(reply)} text={comment.text}/>
+                      console.log(reply); 
+                      return <Comment key={id} avatarUrl={reply.user.avatarUrl} fullName={reply.user.fullName} userReplyTo={comment.user.fullName} likes={reply.likes.length} time={trimTime(reply.createdAt)} text={comment.text}/>
                     })}
-                  </div>
+                  </div>)}
                 </div>)}
               </div>)
             })}
@@ -133,10 +136,10 @@ function Comment(props) {
   return (
     <div data-id={props.dataset} className={classes.comment}>
       <div className={classes.postLeftside}>
-        <img className={classes.profilePicture} src={props.authorPicture}></img>
+        <img className={classes.profilePicture} src={props.avatarUrl}></img>
         <div className={classes.commentBody}>
-          <h5 className={classes.autherName}>{props.authorName}</h5>
-          <p className={classes.text}>{props.text}</p>
+          <h5 className={classes.autherName}>{props.fullName}</h5>
+          <p className={classes.text}><span style={{color:"rgb(53, 121, 199);"}}>{props.userReplyTo} </span>{props.text}</p>
           <div className={classes.commentInf}>
             <p className={classes.time}>{props.time}</p>
             <a href='#' className={classes.reply} onClick={(e) => props.reply({e})}>Reply</a>
@@ -144,7 +147,7 @@ function Comment(props) {
         </div>
       </div>
       <div className={classes.postRightside}>
-        <p className={classes.likesNum}>{props.likes}</p>
+        <p className={classes.likesNum}>{props.likes===0? "" : props.likes}</p>
         <Like className={classes.commentLike}/>
       </div>
     </div>

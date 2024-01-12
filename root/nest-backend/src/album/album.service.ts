@@ -25,6 +25,8 @@ export class AlbumService {
   }}
 
   async getUserAlbums(id:string) {
+    console.log(id);
+    
     const userId = new mongoose.Types.ObjectId(id)
     const albums = await this.albumModel.find({user:userId}).populate("images")
     if(albums.length===0) throw new NotFoundException({message: "user doesn't have any albums"})

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import Main from '../pages/main-page/MainPage'
+import Main from '../pages/main-page/UserPage'
 
 describe('main page test', () => {
   it('main page', () => {

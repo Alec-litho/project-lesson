@@ -29,7 +29,7 @@ export class UserService {
       const age = getAge(createUserDto.birth);
       const model = new this.userModel({...createUserDto,age, password:hashPassword});
       const user = await model.save();
-      const access_token =  await this.jwtService.signAsync({sub:user._id,username:user.fullName});
+      const access_token = await this.jwtService.signAsync({sub:user._id,username:user.fullName});
       const newAlbum = new this.albumModel({name: "All", user: user._id});
       const album = await newAlbum.save();
       return {access_token, id:user._id.toString()};
@@ -44,7 +44,7 @@ export class UserService {
         throw new UnauthorizedException({message:"password doesn't match"});
       }
       const access_token =  await this.jwtService.signAsync({sub:user._id,username:user.fullName});
-      return {message: "success", value: {access_token,id:user._id}}; 
+      return {message: "success", value: {access_token,id:user._id.toString()}}; 
     }catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -56,6 +56,8 @@ export class UserService {
   async getUser(id: string)/*:Promise<User|ServiceResponse>*/ {
     try {
       const userId = new mongoose.Types.ObjectId(id)
+      console.log(userId, id);
+      
       const user:User = await this.userModel.findById(userId);
       if(user===null) throw new NotFoundException("User not found");//somehow it triggers error in try catch block
       return {message:'success', value: user};

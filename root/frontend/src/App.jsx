@@ -3,7 +3,7 @@ import { Route, Routes,redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser,getCookie, logout} from "./features/authSlice";
 import Dialog from "./pages/dialog-page/DialogPage";
-import Main from "./pages/main-page/MainPage";
+import User from "./pages/main-page/UserPage";
 import Music from "./pages/music-page/MusicPage";
 import Feed from "./pages/feed-page/FeedPage";
 import Gallery from "./pages/gallery-page/Gallery";
@@ -16,12 +16,13 @@ import { useEffect } from "react";
 
 export default function App() {
   const dispatch = useDispatch();
+  dispatch(getCookie())
   const {isAuth, userToken, userId, status, error} = useSelector((state) => state.auth);
   useEffect(() => {
     console.log(status, error);
     if(!isAuth) {
-      dispatch(getCookie())
-      if(status !== 'error' && userToken.length !== 0) dispatch(getUser(userId));
+      console.log(userId,userToken);
+      if(status !== 'error') dispatch(getUser({_id:userId, token:userToken}));
     }
     if(error) {
       console.log('redirect');
@@ -48,7 +49,8 @@ export default function App() {
           ) : (
             <Routes>
               <Route path="/dialogs" element={<Dialog />} />
-              <Route path="/" element={<Main />} />
+              <Route path="/:id" element={<User />} />
+              <Route path="/" element={<User />} />
               <Route path="/music" element={<Music />} />
               <Route path="/feed" element={<Feed />} />
               <Route path="/gallery" element={<Gallery />} />

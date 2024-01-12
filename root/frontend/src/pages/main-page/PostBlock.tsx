@@ -2,8 +2,8 @@ import { useAppDispatch, useAppSelector } from "../../hooks/reduxCustomHooks";
 import { useState, useRef, useEffect } from "react";
 import postImage from '../../helper_functions/postImage.js'
 import Post from '../../components/Post.jsx';
-import classes from './style/mainPage.module.css'
-import {fetchMyPosts, createPost} from '../../features/postSlice'
+import classes from './style/userPage.module.css'
+import {fetchUserPosts, createPost} from '../../features/postSlice'
 import {uploadImage} from '../../features/albumSlice';
 // import { ReactComponent as Append } from '../../assets/icons/append.svg'
 // import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
@@ -16,16 +16,17 @@ type PostBlock = {
     setSliderTrue: Dispatch<SetStateAction<boolean>>;
     setCurrPictureId: Dispatch<SetStateAction<string | null>>;
     currPictureId: string | null;
+    user: IUser;
 }
 
-export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}:PostBlock) {
+export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,user}:PostBlock) {
+    let userPosts = useAppSelector(state => state.userPosts.myPosts)
+    let auth = useAppSelector(state => state.auth)
     let tools = useRef<HTMLDivElement>(null)
     let append = useRef(null)
     let textArea = useRef<HTMLTextAreaElement>(null)
-    let userPosts = useAppSelector(state => state.userPosts.myPosts)
-    let auth = useAppSelector(state => state.auth)
     let [posts, setPosts] = useState<IPost[] | []>([])
-    let [currPosts, setCurrPosts] = useState([...userPosts])
+    let [currPosts, setCurrPosts] = useState([])
     let postToDetect = 0;
     //---------------------------------------
     let [update, setUpdate] = useState(false) // useless, need to get rid of this
@@ -41,18 +42,14 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
 
     // },[currPosts])
     useEffect(() => {
-        if(userPosts.length === 0) {
-            dispatch(fetchMyPosts({_id:auth.userId, postLength:currPosts.length, token:auth.userToken}))
-               .then((response:any) => setPosts(response.payload.posts))
-        } else {
-            setPosts(userPosts)
-        }
+        dispatch(fetchUserPosts({_id:user._id, postLength:currPosts.length, token:"token"}))
+            .then((response:any) => setPosts(response.payload.posts))
     }, [])
 
     
     function appendImage(target:EventTarget) {
         postImage(target,false/*album*/,false/*postId*/).then(res => {//saves image to 'imgbb.com' server
-            dispatch(uploadImage({image:{...res, user: auth.userInfo._id,description:""}, token:auth.userToken}))//saves information about image to mongodb 
+            dispatch(uploadImage({image:{...res, user: user._id,description:""}, token:"token"}))//saves information about image to mongodb 
             .then(({payload}:{payload:any}) => setImagesToAppend(prev => [...prev, payload]))
         })
     }
@@ -68,9 +65,8 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
     }
     async function savePost() {
         if(!textArea.current) return
-        // let imgs = imagesToAppend.map(img => img._id)
-        const post = {text: textArea.current.value, author:auth.userInfo._id,images: [...imagesToAppend]}
-        dispatch(createPost({post, token:auth.userToken}))
+        const post = {text: textArea.current.value, author:user._id,images: [...imagesToAppend]}
+        dispatch(createPost({post, token:"token"}))
           .then(res => {
             console.log(res);
             if(textArea.current) {
@@ -84,22 +80,9 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
     }
     function showTools() { if(tools.current) tools.current.style.display = "flex"};
     function hideTools() {if(focus==false && imagesToAppend.length === 0)setTimeout(() => {if(tools.current) tools.current.style.display = "none"},200)};
-    // function filterTags(strTags:string) {
-    //     let result = strTags.split(' ')
-    //     for (let i = 0; i < result.length-1; i++) {//gets rib of repeating tags
-    //         for (let j = i; j < result.length-1; j++) {
-    //             if(result[i] === result[j+1]) result[i] = ''
-    //         }    
-    //     }
-    //     return result.filter(str => str.length > 0)
-    // }
-    // function addTags(e:Event) {
-    //     e.preventDefault();
-    //     if(tags.current) tags.current.style.display = 'flex';
-    // } 
     return (
         <div>
-            <div className={classes.makePost} onMouseLeave={hideTools} onMouseEnter={showTools}>
+            {user._id === auth.userId && <div className={classes.makePost} onMouseLeave={hideTools} onMouseEnter={showTools}>
                 <h2>Make post</h2>
                 <textarea ref={textArea} placeholder='Text' onFocus={_ => setFocus(true)} onBlur={_ => setFocus(false)} onInput={()=>/*({target}:{target:any}) => setTextLeng(target.value.length)*/console.log("input")}></textarea>
                 <div className={imagesToAppend.length !== 0? classes.imagesToAppend_show :  classes.imagesToAppend_hide}>
@@ -121,22 +104,17 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
                 <div className={classes.tools} ref={tools}>
                    <button className={classes.publish} onClick={loadImages/*first, images should be updated*/}>Publish</button>
                    <input className={classes.append} id="image-append" ref={append} type="file" onInput={e => appendImage(e.target)}></input>
-                   {/* <Append className={classes.appendIcon}/> */}
-                   {/* <a href='' className={classes.tag}> <Tags className={classes.tagsIcon} onClick={addTags}/></a> */}
-                   {/* <div>
-                      <input ref={tags} className={classes.tagsInput} onFocus={_ => setFocus(true)} onBlur={_ => setFocus(false)} placeholder='firstTag secondTag...'/>
-                   </div> */}
                 </div>
-            </div>
+            </div>}
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
-                    return <Post key={post._id} auth={auth.userInfo} 
+                    return <Post key={post._id} auth={user} 
                     setCurrPosts={setCurrPosts}
                     setSliderTrue={setSliderTrue}
-                    token={auth.userToken} 
+                    token={"token"} 
                     setCurrPictureId={setCurrPictureId} 
                     currPictureId={currPictureId} 
-                    avatarUrl={auth.userInfo.avatarUrl} 
+                    avatarUrl={user.avatarUrl} 
                     postId={post._id} 
                     views={post.viewCount} 
                     share={post.shares} 
@@ -152,3 +130,4 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId}
         </div>
     )
 }
+
