@@ -1,7 +1,7 @@
 import "./App.css";
 import { Route, Routes,redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getUser,getCookie, logout} from "./features/authSlice";
+import {getCookie, logout, getMe} from "./features/authSlice";
 import Dialog from "./pages/dialog-page/DialogPage";
 import User from "./pages/main-page/UserPage";
 import Music from "./pages/music-page/MusicPage";
@@ -11,18 +11,19 @@ import Login from "./pages/login-page/Login";
 import Register from "./pages/register-page/Register";
 import Header from "./components/Header";
 import Error from "./pages/error-page/Error"
+import Settings from "./pages/settings-page/SettingsPage"
 import { useEffect } from "react";
 // -----------------------------------------------//
 
 export default function App() {
   const dispatch = useDispatch();
   dispatch(getCookie())
-  const {isAuth, userToken, userId, status, error} = useSelector((state) => state.auth);
+  const {isAuth, userToken, userId, status, error, userInfo} = useSelector((state) => state.auth);
   useEffect(() => {
     console.log(status, error);
     if(!isAuth) {
       console.log(userId,userToken);
-      if(status !== 'error') dispatch(getUser({_id:userId, token:userToken}));
+      if(status !== 'error') dispatch(getMe({_id:userId, token:userToken}));
     }
     if(error) {
       console.log('redirect');
@@ -33,7 +34,7 @@ export default function App() {
     <div>
       <div className="headerBackground">
         <div className="wrapper">
-          <Header isAuth={isAuth} dispatch={dispatch} logout={logout} />
+          <Header isAuth={isAuth} dispatch={dispatch} logout={logout} avatarUrl={userInfo.avatarUrl}/>
         </div>
       </div>
       <div className="body">
@@ -57,6 +58,7 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/error" element={<Error />} />
+              <Route path="/settings" element={<Settings/>}/>
             </Routes>
           )}
         </div>

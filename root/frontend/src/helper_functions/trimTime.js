@@ -1,6 +1,6 @@
 export default function trimTime (str /* 2023-08-17T15:41:10.645+00:00 */) {
   if(typeof str !== 'string') return
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   const year = str.slice(0, 4)
   let month = str.slice(5, 7)
   month = month[0] === '0' ? +month[1] - 1 : +month - 1

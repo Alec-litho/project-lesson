@@ -48,6 +48,14 @@ export const uploadReply = createAsyncThunk('posts/postReply', async function({c
     return err
   }
 })
+export const likePostComment = createAsyncThunk('posts/likePostComment', async function({commentId,userId,token}:{commentId:string,userId:string,token:string}):Promise<CommentModel> {
+  const response = await axios.post(`http://localhost:3001/comment/like/${commentId}`, userId, {headers:{
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`
+  }})
+  console.log(response);
+  return response.data
+})
 
 export const fetchUserPosts = createAsyncThunk('posts/fetchUserPosts', async ({_id, postLength, token}:{_id:string,postLength:number,token:string},{rejectWithValue}):Promise<{posts:IPost[] | [], postLength: number}> => {
     const response = await axios.get(`http://localhost:3001/post/user/${_id}`,{headers: {
@@ -93,8 +101,16 @@ export const watched = createAsyncThunk('posts/watched', async function({id,toke
   }
 
 })
+export const removeRecommendation = createAsyncThunk('posts/removeRecommendation', async function({postId,userId}:{postId:string,userId:string}):Promise<boolean> {
+  const response = await axios.post(`http://localhost:3001/post/remove-recommendation/${postId}`,postId)
+  return response.data
+})
 export const likePost = createAsyncThunk('posts/like', async function({id,userId}:{id:string,userId:string}):Promise<boolean> {
   const response = await axios.post(`http://localhost:3001/post/liked/${id}`, {userId})
+  return response.data
+})
+export const removeLike = createAsyncThunk('posts/removeLike', async function({id,userId}:{id:string,userId:string}):Promise<boolean> {
+  const response:AxiosResponse<boolean> = await axios.post(`http://localhost:3001/post/remove-like/${id}`, {userId})
   return response.data
 })
 const postSlice = createSlice({
@@ -155,5 +171,6 @@ const postSlice = createSlice({
       })
   }
 })
+
 
 export default postSlice.reducer

@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import postImage from '../../helper_functions/postImage.js'
 import Post from '../../components/Post.jsx';
 import classes from './style/userPage.module.css'
-import {fetchUserPosts, createPost} from '../../features/postSlice'
+import {fetchUserPosts, createPost, removeRecommendation} from '../../features/postSlice'
 import {uploadImage} from '../../features/albumSlice';
 // import { ReactComponent as Append } from '../../assets/icons/append.svg'
 // import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
@@ -41,10 +41,12 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     //     console.log(currPosts)
 
     // },[currPosts])
+    console.log(user);
+    
     useEffect(() => {
         dispatch(fetchUserPosts({_id:user._id, postLength:currPosts.length, token:"token"}))
             .then((response:any) => setPosts(response.payload.posts))
-    }, [])
+    }, [user])
 
     
     function appendImage(target:EventTarget) {
@@ -78,6 +80,11 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
             }
           })
     }
+    function removeFromRecommendations(postId:string) {
+        const filteredPosts = posts.filter(post => post._id !== postId);
+        setPosts(filteredPosts);
+        dispatch(removeRecommendation({postId, userId:user._id}))
+    }
     function showTools() { if(tools.current) tools.current.style.display = "flex"};
     function hideTools() {if(focus==false && imagesToAppend.length === 0)setTimeout(() => {if(tools.current) tools.current.style.display = "none"},200)};
     return (
@@ -108,22 +115,11 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
             </div>}
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
-                    return <Post key={post._id} auth={user} 
-                    setCurrPosts={setCurrPosts}
-                    setSliderTrue={setSliderTrue}
-                    token={"token"} 
+                    return <Post key={id} author={user} visitor={auth.userInfo} post={post}setCurrPosts={setCurrPosts}setSliderTrue={setSliderTrue}token={"token"} 
                     setCurrPictureId={setCurrPictureId} 
                     currPictureId={currPictureId} 
-                    avatarUrl={user.avatarUrl} 
-                    postId={post._id} 
-                    views={post.viewCount} 
-                    share={post.shares} 
-                    likes={post.likes} 
-                    postComments={post.comments} 
-                    commentsNum={post.comments} 
-                    date={trimTime(post.createdAt)} 
-                    images={post.images} 
-                    text={post.text}/>
+                    removeFromRecommendations={removeFromRecommendations}
+                    />
                 })
             }
             </div>

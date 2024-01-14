@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import {useForm, Controller} from 'react-hook-form';
 import "./register.css";
 import { useDispatch } from "react-redux";
-import { getUser, registerUser } from "../../features/authSlice";
+import { getMe, registerUser } from "../../features/authSlice";
 
 
 export default function Register() {
@@ -27,7 +27,7 @@ export default function Register() {
         .then(res => {
           console.log(res, res.error);
           if(!res.error) {
-            dispatch(getUser(res.payload)).then(()=>navigate(`/${res.payload._id}`));
+            dispatch(getMe(res.payload)).then(()=>navigate(`/${res.payload._id}`));
           }else {
             navigate('/error');//not working
           }

@@ -21,8 +21,7 @@ export default function Header(props) {
                     <input placeholder='search'></input>
                 </div>
                 <div className='profile'>
-                <div className='level'>9</div>
-                {/* <div><img  className="profileCircle" src={require('./friends/p.jpg')}></img></div> */}
+                <div><img  className="profileCircle" src={props.avatarUrl}></img></div>
                 </div>
             </div>
         </div>

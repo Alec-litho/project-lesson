@@ -32,22 +32,24 @@ const initialState:InitialState = {
   error: null
 }
 
-
-export const getUser = createAsyncThunk('auth/fetchData', async function({_id,token}:DefaultReduxThunkDto, {rejectWithValue}) {
+export const getMe = createAsyncThunk('auth/getMe', async function({_id,token}:DefaultReduxThunkDto, {rejectWithValue}) {
   try {
     console.log(token,_id);
-    const response = await axios.get(`http://localhost:3001/user/${_id}`,{headers: {
+    const response = await axios.get(`http://localhost:3001/user/self/${_id}`,{headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     }})
     return response.data
   }catch (err:any) {
-    console.log(err);
-    
       let error: AxiosError<PaymentValidationErrors> = err;
       if (!error.response) throw err;
       return rejectWithValue(error.response.data);
   }
+})
+export const getUser = createAsyncThunk('auth/fetchData', async function({_id,token}:DefaultReduxThunkDto, {rejectWithValue}) {
+    console.log(token,_id);
+    const response = await axios.get(`http://localhost:3001/user/${_id}`)
+    return response.data
 })
 
 export const loginUser = createAsyncThunk('auth/loginUser', async function(dto:ILoginUserDto, {rejectWithValue}) {
@@ -137,17 +139,17 @@ const authSlice = createSlice({
         state.status = 'error';
         state.error = action.payload
       })
-      .addCase(getUser.fulfilled, (state,action) => {
-        state.status = 'fulfilled';
-        state.error = null;
+      .addCase(getMe.fulfilled, (state,action) => {
         if(state.userInfo !== null) {
+          state.status = 'fulfilled';
+          state.error = null;
           state.userInfo = action.payload
           state.isAuth = true
         } else {
           state.status = 'error'
         }
       })
-      .addCase(getUser.rejected, (state,action:any) => {
+      .addCase(getMe.rejected, (state,action:any) => {
         state.status = 'error';
         state.error = action.payload
       })

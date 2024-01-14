@@ -50,7 +50,7 @@ export default function MessageTool({type,setReplyToComment,messageToolCordY,pos
                         setComment((prev:CommentModel[]) => [...prev, comment])
                     }
                     if(type === 'reply') {
-                        console.log(userReplyTo.commentId);
+                        console.log(userReplyTo);
                         const text = message.current? message.current.value : "";
                         const comment = {text, user:user.userInfo._id, authorName:user.userInfo.fullName,authorPicture:user.userInfo.avatarUrl, commentId:userReplyTo.commentId, replyTo: userReplyTo.name, post:postId}
                         dispatch(uploadReply({comment, id:userReplyTo.commentId, token:user.userToken}))

@@ -123,7 +123,7 @@ interface IPost {
     text: string
     tags: string[] | []
     viewCount: number
-    author: string
+    author: IUser | string
     images: ImageModel[] | []
     comments: IComment[] | []
     likes: string[]

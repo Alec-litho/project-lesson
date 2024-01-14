@@ -3,7 +3,7 @@ import { Link,useNavigate } from "react-router-dom";
 import "./login.css";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, getUser, getInitialState } from "../../features/authSlice";
+import { loginUser, getInitialState, getMe } from "../../features/authSlice";
 import Register from "../register-page/Register";
 
 
@@ -21,7 +21,7 @@ export default function Login() {
       .then(res => {
         console.log(res.payload);
         if(res.payload.status !== 404) {
-          dispatch(getUser({_id:res.payload._id, token:res.payload.token})).then(()=>navigate(`/${res.payload._id}`));
+          dispatch(getMe({_id:res.payload._id, token:res.payload.token})).then(()=>navigate(`/${res.payload._id}`));
         }else {
           navigate("/error");
         }

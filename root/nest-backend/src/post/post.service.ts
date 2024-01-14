@@ -32,14 +32,14 @@ export class PostService {
             const postTags:string[] = getKeyWords? getKeyWords.data.keywords.map(obj => obj.word) : [];
             let post:PostDocument;
             if(dto.images.length!==0) {
-                post = new this.postModel({text:dto.text, author: authorId, tags:postTags, images: dto.images.map((img:ImageDocument):mongoose.Types.ObjectId => img._id)});
+                post = new this.postModel({text:dto.text, author: authorId, tags:postTags, images: dto.images.map((img:ImageDocument):mongoose.Types.ObjectId => new mongoose.Types.ObjectId(img._id))});
                 //-----update loaded images to change postId field as we already got it-----
                 dto.images.forEach(async (img:ImageDocument):Promise<void> => {await this.imageModel.findOneAndUpdate({_id:img._id}, {postId:post._id})})
             } else {
                 post = new this.postModel({text:dto.text, author: authorId, tags:postTags, images:[]});
             }
-            await post.save()
-            return post
+            await post.save();
+            return post.populate("images");
       
     }
     async getUserPosts(id: string) {
@@ -67,7 +67,13 @@ export class PostService {
         },{
             path: 'images',
             model: "Image"
-        }])
+        },
+        {
+            path: 'author',
+            model: "User"
+        }
+    ])
+        
         if(!userPosts) return []
         return userPosts
     }
@@ -225,11 +231,23 @@ export class PostService {
               }
         
         }
-        user.age = user.age//somehow its giving me error if i dont set same age as it was before
+        user.age = user.age//somehow its giving me error if i don't set same age as it was before
         user.save()
         post.likes = [...post.likes, userMongoId];
         post.save()
         return post? true : false;
+    }
+    async removeLike(id:string, userId:string) {
+        const postId = new mongoose.Types.ObjectId(id);
+        const userIdMongoose = new mongoose.Types.ObjectId(userId);
+        const post = await this.postModel.findByIdAndUpdate(postId, {likes:{$pull:userIdMongoose}})
+        return post? true : false
+    }
+    async removeRecommendations(id:string, userId:string) {
+        const postId = new mongoose.Types.ObjectId(id);
+        const userIdMongoose = new mongoose.Types.ObjectId(userId);
+        const updatedPost = await this.postModel.findByIdAndUpdate(postId,{removedRecommendation:{$push:userIdMongoose}})
+        return updatedPost? true : false
     }
 }
 

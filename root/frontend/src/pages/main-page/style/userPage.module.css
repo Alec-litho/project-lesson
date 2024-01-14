@@ -87,6 +87,12 @@
     align-items: center;
     padding: 20px;
   }
+  .menu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
   .infoBlock .messageBtn {
     color: white;
     text-decoration: none;
@@ -104,7 +110,7 @@
     transition: color .1s;
     cursor: pointer;
   }
-  .infoBlock .menu {
+  .infoBlock .profileToolsMenu {
     position: relative;
     margin-top: 3px;
     width: 100%;
@@ -113,7 +119,7 @@
     justify-content: center;
     align-items: center;
   }
-  .menu .subscribe {
+  .profileToolsMenu .subscribe {
     color: rgb(58, 101, 241);
     font-weight: 600;
     font-size: 15px;
@@ -121,6 +127,25 @@
     width: 80%;
     border: 1px solid rgb(58, 101, 241);
   }
+  .infoBlock .settingsBtnWrapper {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    background-color: rgb(215, 219, 235); 
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+  }
+  .settingsBtnWrapper .settingsBtn {
+    padding-top: 7px;
+    text-decoration: none;
+    color: rgb(58, 101, 241);
+    font-weight: 600;
+    font-size: 18px;
+    width: 100%;
+  }
+  .settingsBtnWrapper .settingsBtn:hover {color: rgb(51, 87, 207);}
+  .infoBlock .settingsBtnWrapper:hover {background-color: rgb(204, 209, 224);}
   .optionsIcon {
     cursor: pointer;
     border-radius: 5px;
@@ -142,7 +167,7 @@
     flex-direction: column;
     align-items: center;
   }
-  .menu .profileIcon {
+  .profileToolsMenu .profileIcon {
     fill:  rgb(255, 255, 255);
   }
   .infoBlock .subscribe:hover {

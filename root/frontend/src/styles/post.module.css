@@ -29,26 +29,31 @@ box-sizing: border-box;
 display: flex;
 flex-direction: column;
 width: 100px;
-height: 100px;
-border: 2px solid rgb(166, 185, 247);
+height: auto;
 border-radius: 5px;
 background-color: white;
 position: absolute;
+padding: 5px;
 left: 10px;
-top: -90px;
+top: -80px;
+box-shadow: 0px 2px 3px 2px rgb(182, 182, 182);
 }
+
 .menuToolsHide {
 display: none;
 }
 .menuTools a {
-padding-left: 10px;
+  color: rgb(53, 121, 199);
+  font-size: 14px;
+  font-weight: 600;
+padding-left: 5px;
 transition: .2s;
 cursor: pointer;
 margin-bottom: 5px;
 }
 .menuTools a:hover {
-border-bottom: 1px solid rgb(144, 161, 218);
 background-color: #ececec;
+color: rgb(48, 110, 180);
 }
 .views {
 width: 20px;
@@ -165,11 +170,23 @@ height: auto;
 display: flex;
 justify-content: space-between;
 padding: 5px 0;
-margin-bottom: 10px;
+margin-top: 10px;
+}
+.commentHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .profilePicture {
-width: 50px;
-height: 50px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  transition: .2s;
+  cursor: pointer;
+}
+.profilePicture:hover {
+  filter:brightness(80%);
+
 }
 .commentLike {width: 20px; height: 20px; margin-bottom: 3px; cursor: pointer; fill:#727272}
 .postLeftside {
@@ -181,8 +198,11 @@ display: flex;
 align-items: flex-end;
 gap: 5px;
 }
-.autherName {
-margin: 0;
+.authorName, .myName {
+  font-size: 16px;
+}
+.myName {
+  color: rgb(53, 121, 199);
 }
 .text {
 margin: 0;
@@ -197,6 +217,22 @@ color: #727272;
 .reply {
 color: rgb(53, 94, 172);
 text-decoration: none;
+}
+.commentReplies {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.commentReplies a {
+  cursor: pointer;
+  color: rgb(53, 94, 172);
+}
+.replyImgCircle {
+  display: flex;
+  align-self: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
 }
 .replies {
   margin-left: 50px;

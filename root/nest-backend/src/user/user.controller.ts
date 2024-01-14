@@ -21,11 +21,18 @@ export class UserController {
     res.cookie("id", result.id);
     res.json({token:result.access_token, _id:result.id});
   } 
+  @Get("/self/:id")
+  @ApiOperation({summary:"Get user"})
+  @ApiResponse({status:201,type:User})
+  @UseGuards(JwtAuthGuard)
+  async getMe(@Param("id") id:string, @Res() res: Response) {
+    const result = await this.userService.getMe(id);
+    res.json(result.value);
+  } 
 
   @Get(":id")
   @ApiOperation({summary:"Get user"})
   @ApiResponse({status:201,type:User})
-  @UseGuards(JwtAuthGuard)
   async getUser(@Param("id") id:string, @Res() res: Response) {
     const result = await this.userService.getUser(id);
     res.json(result.value);

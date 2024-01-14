@@ -53,7 +53,7 @@ export class UserService {
     return this.userModel.find();
   }
 
-  async getUser(id: string)/*:Promise<User|ServiceResponse>*/ {
+  async getMe(id: string)/*:Promise<User|ServiceResponse>*/ {
     try {
       const userId = new mongoose.Types.ObjectId(id)
       console.log(userId, id);
@@ -67,7 +67,17 @@ export class UserService {
       throw new InternalServerErrorException(error);
     }
   }
-
+  async getUser(id:string) {
+    const userId = new mongoose.Types.ObjectId(id)
+    console.log(userId, id);
+    const viewUserFields = "fullName location friends birth age gender avatarUrl _id"
+    const user:User = await this.userModel.findById(userId).select(viewUserFields).populate({
+      path: 'friends',
+      select: viewUserFields
+    })
+    if(user===null) throw new NotFoundException("User not found");//somehow it triggers error in try catch block
+    return {message:'success', value: user};
+  }
   private async comparePass(loginUserDto: LoginUserDto, user: User) {
     console.log(loginUserDto.password, user.password);
     const passCompare = await compare(loginUserDto.password, user.password);

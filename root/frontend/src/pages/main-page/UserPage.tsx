@@ -35,6 +35,7 @@ console.log('w');
             
             setUser(auth.userInfo)
             setAlbums(albumState)
+                        console.log(user);
         } else {//if its page of another user
             dispatch(getUser({_id:id,token:auth.userToken})).then(res => setUser(res.payload))
         }
@@ -60,7 +61,7 @@ console.log('w');
         <div className={classes.mainpage}>
            { user!==undefined && 
            <>
-           <Profile fullName={user.fullName} age={user.age} friends={user.friends} avatarUrl={user.avatarUrl} location={user.location}/>
+           <Profile fullName={user.fullName} age={user.age} friends={user.friends} avatarUrl={user.avatarUrl} location={user.location} user={user}/>
             <div className={classes.mainContent}>
                 <AboutMeBlock galleryPhotos={photos} setSliderTrue={setSliderTrue} isLoadedState={isLoaded}/>
                 <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue} user={user}/>
