@@ -28,14 +28,15 @@ export class CommentController {
   @ApiOperation({summary:"Like the comment"})
   @ApiResponse({status:200, type: Boolean})
   @Post("like/:id")
-  async likeComment(@Param("id") commentId: string, @Body() dto: LikeComment, @Res() res:Response) {
-    const response = await this.commentService.likeComment(commentId, dto);
+  async likeComment(@Param("id") commentId: string, @Body() {userId}:{userId:string}, @Res() res:Response) {
+    const response = await this.commentService.likeComment(commentId, userId);
     res.json(response);
   }
   @ApiOperation({summary:"Remove like from comment"})
   @ApiResponse({status:200, type: Boolean})
-  async removeLike(@Param("id") commentId: string, @Body() authorId:string, @Res() res:Response) {
-    const response = await this.commentService.removeLike(commentId, authorId);
+  @Post("remove-like/:id")
+  async removeLike(@Param("id") commentId: string, @Body() {userId}:{userId:string}, @Res() res:Response) {
+    const response = await this.commentService.removeLike(commentId, userId);
     res.json(response);
   }
   @ApiOperation({summary:"Upload reply to the comment"})

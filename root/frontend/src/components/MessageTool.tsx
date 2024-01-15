@@ -4,7 +4,6 @@
 // import { ReactComponent as Cross } from '../assets/icons/cross.svg';
 import classes from '../styles/messageTool.module.css'
 import { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { uploadComment, uploadReply } from '../features/postSlice';
 import { Dispatch, SetStateAction, Ref} from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxCustomHooks';

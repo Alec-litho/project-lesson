@@ -17,36 +17,28 @@ export default function User() {
     const auth = useAppSelector(state => state.auth);
     const albumState = useAppSelector(state => state.albums.albums);
     const dispatch = useAppDispatch();
-    const [user, setUser] = useState<IUser>(auth.userInfo)
+    const [user, setUser] = useState<IUser>({fullName:'empty_object',email:'',password:'',location:'',friends:0,age:0,gender:'',_id:'656395f24db3c1a422c2e8c9',avatarUrl: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp"})
     const [albums, setAlbums] = useState<IAlbumModel[] | []>([])
     const [isLoaded, setFinish] = useState(false);
     const [photos, setPhotos] = useState<IAlbumModel[]>([]);
     const [sliderTrue, setSliderTrue] = useState<boolean>(false);
     const [currPictureId, setCurrPictureId] = useState<string | null>(null);//current img id to show in slider
 
-console.log('w');
-
     useEffect(() => {
         if(albums!==undefined && user!==undefined) {
-            console.log(id);
-            
         if(id === auth.userId || id===undefined) {//if user enters his own page
-            console.log(user);
-            
             setUser(auth.userInfo)
             setAlbums(albumState)
-                        console.log(user);
         } else {//if its page of another user
             dispatch(getUser({_id:id,token:auth.userToken})).then(res => setUser(res.payload))
         }
-        if(photos.length===0){
+        if(photos.length===0 || user._id !== '656395f24db3c1a422c2e8c9'/*initial empty user*/){
             if(albums.length!==0) {setPhotos([...albums])}
             else {
                 const data = {_id: id === auth.userId? auth.userId : user._id, token:auth.userToken}
                 dispatch(fetchMyAlbums(data)).then((res:any) => {
                     console.log(res);
                     res.error? setPhotos([]) : setPhotos(res.payload);
-                    
                 })
             }
             

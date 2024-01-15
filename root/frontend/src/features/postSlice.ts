@@ -48,15 +48,37 @@ export const uploadReply = createAsyncThunk('posts/postReply', async function({c
     return err
   }
 })
-export const likePostComment = createAsyncThunk('posts/likePostComment', async function({commentId,userId,token}:{commentId:string,userId:string,token:string}):Promise<CommentModel> {
-  const response = await axios.post(`http://localhost:3001/comment/like/${commentId}`, userId, {headers:{
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`
-  }})
-  console.log(response);
-  return response.data
-})
+export const likePostComment = createAsyncThunk('posts/likePostComment', async function({commentId,userId,token}:{commentId:string,userId:string,token:string}):Promise<CommentModel | undefined> {
+  try {
+    console.log(userId);
+    
+    const response = await axios.post(`http://localhost:3001/comment/like/${commentId}`, {userId}, {headers:{
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }})
+    console.log(response);
+    return response.data
+  } catch (error) {
+    console.log(error);
+    
+  }
 
+})
+export const removeLikeCommentReducer = createAsyncThunk('posts/removeLikeCommentReducer', async function({commentId,userId,token}:{commentId:string,userId:string,token:string}):Promise<CommentModel | undefined> {
+  try {
+    console.log(userId);
+    const response = await axios.post(`http://localhost:3001/comment/remove-like/${commentId}`, {userId}, {headers:{
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }})
+    console.log(response);
+    return response.data
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+})
 export const fetchUserPosts = createAsyncThunk('posts/fetchUserPosts', async ({_id, postLength, token}:{_id:string,postLength:number,token:string},{rejectWithValue}):Promise<{posts:IPost[] | [], postLength: number}> => {
     const response = await axios.get(`http://localhost:3001/post/user/${_id}`,{headers: {
       'Content-Type': 'application/json',

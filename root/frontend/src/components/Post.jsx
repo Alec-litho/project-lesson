@@ -14,7 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import MessageTool from './MessageTool';
 import trimTime from '../helper_functions/trimTime';
 import { useDispatch, useSelector } from 'react-redux';
-import { deletePost, likePost, likePostComment, removeLike} from '../features/postSlice';
+import { deletePost, likePost, likePostComment, removeLikeCommentReducer, removeLike} from '../features/postSlice';
 import { useNavigate } from "react-router-dom";
 
 
@@ -32,28 +32,26 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   let [postLike, setPostLike] = useState(post.likes.filter(user => user === visitor._id));
   let postY = useRef(null);
   let [userReplyTo, setUserReplyTo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
-  let [comments, setComment] = useState(post.comments);
+  let [comments, setComments] = useState([]);
   let [commentLikes, setCommentLike] = useState(countCommentsLikes(post.comments))
   let [isCommenting, setCommentStatus] = useState(false)
   let [showReplies, setShowReplies] = useState(false)
   let messageToolCordY = useRef()
+  let commentAuthorH5 = useRef()
 
 // console.log("visitor -->",visitor,"author -->", author, comments);
 console.log(commentLikes);
   useEffect(_ => {
-    // if(comment!==null) {
-      // axios.post(`http://localhost:3001/posts/comments/${props.postId}`,
-      // {text: comment, user:props.auth._id, authorName:props.auth.fullName, authorPicture:props.auth.avatarUrl, post:props.post._id})
-    // }
+    setComments(post.comments)
     setCurrPosts((prevState) => [...prevState, {postId:post._id, watched:false, positionY:postY.current.getBoundingClientRect().top}])
-  },[/*alreadySmashedLike*/userReplyTo])
+  },[post])
   function countCommentsLikes(comment) {//counts likes that were put by visitor
     console.log(comment);
     return comment.map(comment => {
       if(comment.replies.length>0){
-        return [comment.likes.indexOf(visitor._id)===-1?[]:[comment._id],...countCommentsLikes(comment.replies) ]
+        return [comment.likes.indexOf(visitor._id)===-1?'':comment._id,...countCommentsLikes(comment.replies) ]
       } else {
-        return comment.likes.indexOf(visitor._id)===-1?[]:[comment._id]
+        return comment.likes.indexOf(visitor._id)===-1?'':comment._id
       }
     })
   }
@@ -66,19 +64,17 @@ console.log(commentLikes);
     dispatch(removeLike({id:post._id, userId:author._id}))
   }
   function likeComment(commentId) {
-    setCommentLike(prev => [...prev,commentId])
+    // setCommentLike(prev => [...prev,commentId])
     dispatch(likePostComment({commentId, userId:visitor._id}))
+  }
+  function removeLikeComment(commentId) {
+    dispatch(removeLikeCommentReducer({commentId, userId:visitor._id}))
   }
   function reply({e}) {
     e.preventDefault();
     const commentId = e.target.parentNode.parentNode.parentNode.parentNode.parentNode.dataset.id;
-    console.log(e, commentId);
-    [...e.target.parentNode.parentNode.childNodes].forEach(node => {
-      if(node.nodeName == 'H5') {//find h5 tag and use its inner text to reply, later this name will be checked on the server
-        console.log(node.offsetTop);
-        setUserReplyTo({commentId, name:node.innerText, cordY:node.offsetTop});
-      }
-    });
+    const h5 = commentAuthorH5.current//<h5></h5>
+    setUserReplyTo({commentId, name:h5.innerText, cordY:h5.offsetTop});
     window.scrollTo({top:messageToolCordY.current.offsetTop-400, behavior:'smooth'})
     setReplyToComment(replyToComment = true)
   }
@@ -130,41 +126,41 @@ console.log(commentLikes);
           <div className={isCommenting? classes.comments : comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
             {comments.map((comment, id) => {
               console.log(comment);
-              const replies = Array.isArray(comment.replies)? comment.replies : [comment.replies]//mongoose returns object instead of array when populating 1 doc
+             // const replies = Array.isArray(comment.replies)? comment.replies : [comment.replies]//mongoose returns object instead of array when populating 1 doc
               return ( 
               <div key={id} className={classes.commentWrapper}>
-                <Comment author={comment.user} visitor={visitor} reply={reply} commentId={comment._id} likes={comment.likes} text={comment.text} 
-                time={trimTime(comment.createdAt)} navigate={navigate} replies={replies} showReplies={showReplies} setShowReplies={setShowReplies}
-                likeComment={likeComment}
+                <Comment comment={comment} author={comment.user} visitor={visitor} reply={reply} commentId={comment._id} likes={comment.likes} text={comment.text} 
+                navigate={navigate} replies={comment.replies} showReplies={showReplies} setShowReplies={setShowReplies}
+                likeComment={likeComment} removeLikeComment={removeLikeComment} replyTo={comment.replyTo} commentAuthorH5={commentAuthorH5} 
                 ></Comment>
               </div>)
             })}
           </div>
           {isCommenting && <MessageTool messageToolCordY={messageToolCordY} type={replyToComment? 'reply' : 'comment'} 
-          setReplyToComment={setReplyToComment} userReplyTo={userReplyTo}/*in case user replying*/ postId={post._id} setComment={setComment}/>}
+          setReplyToComment={setReplyToComment} userReplyTo={userReplyTo}/*in case user replying*/ postId={post._id} setComment={setComments}/>}
         </div>
     )
 }
 
-function Comment({author,visitor,commentId,userReplyTo,text,time,reply,likes,navigate,showReplies,setShowReplies,replies,likeComment}=props) {
-  console.log(author,visitor);
+function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,likeComment,commentAuthorH5,removeLikeComment}=props) {
+  console.log(visitor._id, comment.likes);
   return (
-    <div data-id={commentId} className={classes.commentComponent}>
+    <div data-id={comment._id} className={classes.commentComponent}>
       <div className={classes.comment}>
         <div className={classes.postLeftside}>
-          <img className={classes.profilePicture} src={author.avatarUrl} onClick={()=>navigate(`/${author._id}`)}></img>
+          <img className={classes.profilePicture} src={comment.user.avatarUrl} onClick={()=>navigate(`/${comment.user._id}`)}></img>
           <div className={classes.commentBody}>
             <div className={classes.commentHeader}>
-               <h5 className={author._id===visitor._id?classes.myName:classes.authorName}>{author.fullName}</h5>
-               <p className={classes.time}>{time}</p>
+               <h5 ref={commentAuthorH5} className={comment.user._id===visitor._id?classes.myName:classes.authorName}>{comment.user.fullName}</h5>
+               <p className={classes.time}>{trimTime(comment.createdAt)}</p>
             </div>
-            <p className={classes.text}><span style={{color:"rgb(53, 121, 199);"}}>{userReplyTo} </span>{text}</p>
+            <p className={classes.text}>{comment.replyTo && <span style={{color:"rgb(53, 121, 199)"}}>{comment.replyTo}, </span>}{comment.text}</p>
             <div className={classes.commentInf}>
               <a href='#' className={classes.reply} onClick={(e) => reply({e})}>reply</a>
               <div className={classes.commentReplies}>
-               {replies.length>0 && 
+               {comment.replies.length>0 && 
                   <>
-                     <div>{replies.map((reply,id) => {if(id!==3) return <img className={classes.replyImgCircle} src={reply.user.avatarUrl}></img>})}</div>
+                     <div>{comment.replies.map((reply,id) => {if(id!==3) return <img key={id} className={classes.replyImgCircle} src={reply.user.avatarUrl}></img>})}</div>
                      <a onClick={() => setShowReplies(prev => !prev)}>{showReplies? "hide" : "show"}</a>
                   </>
                 }
@@ -173,22 +169,25 @@ function Comment({author,visitor,commentId,userReplyTo,text,time,reply,likes,nav
           </div>
         </div>
         <div className={classes.postRightside}>
-          <p className={classes.likesNum}>{likes===0? "" : author.likes}</p>
-          <Like className={classes.commentLike} onClick={() => likeComment(commentId)}/>
+          <p className={classes.likesNum}>{comment.likes.length===0? "" : comment.likes.length}</p>
+          <Like className={comment.likes.indexOf(visitor._id)!==-1?classes.myCommentLike : classes.commentLike} onClick={() => comment.likes.indexOf(visitor._id)!==-1? removeLikeComment(comment._id):likeComment(comment._id)}/>
         </div>
       </div>
-      {replies?.length>0 && <CommentReplies showReplies={showReplies} replies={replies} reply={reply} visitor={visitor} navigate={navigate} likeComment={likeComment}/>}
+      {/*С каждым ответом на коментарий будет создаватся этот компоненто, нужно ли мне так? */}
+      {comment.replies?.length>0 && <CommentReplies showReplies={showReplies} replies={comment.replies} reply={reply} visitor={visitor} navigate={navigate} likeComment={likeComment} 
+      commentAuthorH5={commentAuthorH5} removeLikeComment={removeLikeComment}
+      />}
+       {/*С каждым ответом на коментарий будет создаватся этот компоненто, нужно ли мне так? */}
     </div>
   )
 }
-function CommentReplies({showReplies,replies,visitor,navigate,likeComment,reply}=props) {
+function CommentReplies({showReplies,replies,visitor,navigate,likeComment,removeLikeComment,reply}=props) {
   return (
     <div className={classes.repliesWrapper}>
       {showReplies && (
       <div className={classes.replies}>
-        {replies.map((reply,id) => {
-          return <Comment key={id} author={reply.user}  visitor={visitor}  dataset={reply._id} likes={reply.likes} userReplyTo={reply.user.fullName} 
-          time={trimTime(reply.createdAt)} text={reply.text} navigate={navigate} likeComment={likeComment} reply={reply}
+        {replies.map((comment,id) => {
+          return <Comment key={id} comment={comment} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply}
           />
         })}
       </div>)}

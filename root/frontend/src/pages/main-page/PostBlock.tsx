@@ -35,14 +35,12 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let [imagesToAppend, setImagesToAppend] = useState<ImageModel[] | []>([])
     let [textLeng, setTextLeng] = useState(0)
     let dispatch = useAppDispatch()
-    console.log(posts);
+    console.log(posts,user);
     // window.onscroll = () => postToDetect = viewCount(auth, dispatch, currPosts, postToDetect);
     // useEffect(() => {
     //     console.log(currPosts)
 
     // },[currPosts])
-    console.log(user);
-    
     useEffect(() => {
         dispatch(fetchUserPosts({_id:user._id, postLength:currPosts.length, token:"token"}))
             .then((response:any) => setPosts(response.payload.posts))
@@ -70,7 +68,6 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
         const post = {text: textArea.current.value, author:user._id,images: [...imagesToAppend]}
         dispatch(createPost({post, token:"token"}))
           .then(res => {
-            console.log(res);
             if(textArea.current) {
                 const post = res.payload as IPost
                 textArea.current.value = ''

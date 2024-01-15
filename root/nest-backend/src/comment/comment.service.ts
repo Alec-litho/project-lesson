@@ -30,7 +30,7 @@ export class CommentService {
             if(!post) throw new HttpException("something went wrong while pushing comment to the post", HttpStatus.BAD_REQUEST);
             return comment
     }
-    public async updateComment(dto: UpdateCommentDto) {
+    public async updateComment(dto: UpdateCommentDto) { 
         try {
             const commentId = new mongoose.Types.ObjectId(dto._id)
             if(!this.commentModel.findById(dto._id)) throw new NotFoundException(dto, "provided _id is invalid")
@@ -39,22 +39,26 @@ export class CommentService {
             throw new InternalServerErrorException(error)
         }
     }
-    public async likeComment(commentId:string, dto:LikeComment) {
+    public async likeComment(commentId:string, userId:string) {
         try {
-            const authorIdMongoose = new mongoose.Types.ObjectId(dto.toString());
+            
+            const authorIdMongoose = new mongoose.Types.ObjectId(userId);
             const comment = await this.commentModel.findByIdAndUpdate(commentId, {
                 $push: {likes: authorIdMongoose}
             })
+            console.log(commentId,userId,comment);
             if(!comment) throw new HttpException("something went wrong with liking the comment", HttpStatus.BAD_REQUEST);
             return true;
 
         } catch (error) {
-            throw new InternalServerErrorException(error)
+            return new InternalServerErrorException(error)
         }
     }
-    public async removeLike(commentId:string, authorId:string) {
+    public async removeLike(commentId:string, userId:string) {
         try {
-            const authorIdMongoose = new mongoose.Types.ObjectId(authorId);
+            console.log(commentId,userId);
+            
+            const authorIdMongoose = new mongoose.Types.ObjectId(userId);
             const comment = await this.commentModel.findByIdAndUpdate(commentId, {
                 $pull: {likes: authorIdMongoose}
             })
@@ -62,7 +66,7 @@ export class CommentService {
             return true;
 
         } catch (error) {
-            throw new InternalServerErrorException(error)
+            return new InternalServerErrorException(error)
         }
     }
     public async uploadReply(id:string, dto: CreateCommentDto) { 
