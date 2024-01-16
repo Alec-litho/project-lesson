@@ -79,6 +79,18 @@ export const removeLikeCommentReducer = createAsyncThunk('posts/removeLikeCommen
   }
 
 })
+export const deleteCommentReducer = createAsyncThunk('posts/deletePostReducer', async({commentId,token}:{commentId:string,token:string}, {rejectWithValue}) => {
+  try {
+    const response = await axios.delete(`http://localhost:3001/comment/${commentId}`,{headers:{
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }})
+  }catch (err:any) {
+   console.log(err);
+   
+  }
+  
+})
 export const fetchUserPosts = createAsyncThunk('posts/fetchUserPosts', async ({_id, postLength, token}:{_id:string,postLength:number,token:string},{rejectWithValue}):Promise<{posts:IPost[] | [], postLength: number}> => {
     const response = await axios.get(`http://localhost:3001/post/user/${_id}`,{headers: {
       'Content-Type': 'application/json',
@@ -97,9 +109,9 @@ export const createPost = createAsyncThunk('posts/createPost', async ({post, tok
     return data;
 })
 
-export const deletePost = createAsyncThunk('posts/deletePost', async({id,token}:{id:string,token:string}, {rejectWithValue}) => {
+export const deletePostReducer = createAsyncThunk('posts/deletePostReducer', async({postId,token}:{postId:string,token:string}, {rejectWithValue}) => {
   try {
-    let response = await axios.delete(`http://localhost:3001/post/${id}`,{headers: {
+    let response = await axios.delete(`http://localhost:3001/post/${postId}`,{headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`
     }});
@@ -127,11 +139,13 @@ export const removeRecommendation = createAsyncThunk('posts/removeRecommendation
   const response = await axios.post(`http://localhost:3001/post/remove-recommendation/${postId}`,postId)
   return response.data
 })
-export const likePost = createAsyncThunk('posts/like', async function({id,userId}:{id:string,userId:string}):Promise<boolean> {
+export const uploadLikePost = createAsyncThunk('posts/like', async function({id,userId}:{id:string,userId:string}):Promise<boolean> {
+  console.log(userId);
+  
   const response = await axios.post(`http://localhost:3001/post/liked/${id}`, {userId})
   return response.data
 })
-export const removeLike = createAsyncThunk('posts/removeLike', async function({id,userId}:{id:string,userId:string}):Promise<boolean> {
+export const removeLikePost = createAsyncThunk('posts/removeLikePost', async function({id,userId}:{id:string,userId:string}):Promise<boolean> {
   const response:AxiosResponse<boolean> = await axios.post(`http://localhost:3001/post/remove-like/${id}`, {userId})
   return response.data
 })
@@ -181,13 +195,13 @@ const postSlice = createSlice({
         state.status = 'error'
         state.error = action.payload
       })
-      .addCase(deletePost.fulfilled, (state,action) => {
+      .addCase(deletePostReducer.fulfilled, (state,action) => {
         console.log(action.payload);
         state.status = 'fulfilled';
         state.error = null;
         state.myPosts = [...state.myPosts].filter(post => post._id !== action.payload._id);
       })
-      .addCase(deletePost.rejected, (state,action:any) => {
+      .addCase(deletePostReducer.rejected, (state,action:any) => {
         state.status = 'error'
         state.error = action.payload
       })

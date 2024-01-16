@@ -12,9 +12,10 @@ import classes from '../styles/post.module.css';
 import Slider from './Slider';
 import { useEffect, useRef, useState } from 'react';
 import MessageTool from './MessageTool';
+import ComponentMenu from './ComponentMenu'
 import trimTime from '../helper_functions/trimTime';
 import { useDispatch, useSelector } from 'react-redux';
-import { deletePost, likePost, likePostComment, removeLikeCommentReducer, removeLike} from '../features/postSlice';
+import { deletePostReducer, likePostComment, removeLikeCommentReducer, removeLikePost, uploadLikePost, deleteCommentReducer} from '../features/postSlice';
 import { useNavigate } from "react-router-dom";
 
 
@@ -24,44 +25,56 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   const auth = useSelector(state => state.auth);
   // let [sliderTrue, setSliderTrue] = useState(false);
   let [editPost, setEditPost] = useState(false);
+  let [editComment, setEditComment] = useState(false);
   let [replyToComment, setReplyToComment] = useState(false);
   let [showCross, setShowCross] = useState(false);
   let [textArea, setTextArea] = useState(post.text);
   // let [currPictureId, setCurrPictureId] = useState(false);
   let [showMenu, setShowMenu] = useState(false);
-  let [postLike, setPostLike] = useState(post.likes.filter(user => user === visitor._id));
+  let [visitorLike, setVisitorLikes] = useState(post.likes.filter(user => user === visitor._id));
   let postY = useRef(null);
   let [userReplyTo, setUserReplyTo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
   let [comments, setComments] = useState([]);
-  let [commentLikes, setCommentLike] = useState(countCommentsLikes(post.comments))
+  // let [commentLikes, setCommentLike] = useState(countCommentsLikes(post.comments))
   let [isCommenting, setCommentStatus] = useState(false)
-  let [showReplies, setShowReplies] = useState(false)
+  let [showReplies, setShowReplies] = useState([])
   let messageToolCordY = useRef()
   let commentAuthorH5 = useRef()
 
-// console.log("visitor -->",visitor,"author -->", author, comments);
-console.log(commentLikes);
+console.log(showReplies);
   useEffect(_ => {
     setComments(post.comments)
     setCurrPosts((prevState) => [...prevState, {postId:post._id, watched:false, positionY:postY.current.getBoundingClientRect().top}])
   },[post])
-  function countCommentsLikes(comment) {//counts likes that were put by visitor
-    console.log(comment);
-    return comment.map(comment => {
-      if(comment.replies.length>0){
-        return [comment.likes.indexOf(visitor._id)===-1?'':comment._id,...countCommentsLikes(comment.replies) ]
-      } else {
-        return comment.likes.indexOf(visitor._id)===-1?'':comment._id
-      }
-    })
+  function countComments(comments) {//counts likes that were put by visitor
+    console.log(comments);
+    return comments.reduce((prev,comment) => {
+      let commentRepliesLeng = 0;
+      comment.replies.length===0? commentRepliesLeng += 1 : commentRepliesLeng += (countComments(comment.replies)+1)
+      console.log(prev, comment);
+      return prev += commentRepliesLeng
+    },0)
+    // return comment.map(comment => {
+    //   if(comment.replies.length>0){
+    //     return [comment.likes.indexOf(visitor._id)===-1?'':comment._id,...countComments(comment.replies) ]
+    //   } else {
+    //     return comment.likes.indexOf(visitor._id)===-1?'':comment._id
+    //   }
+    // })
+  }
+  function deletePost(componentId){
+    dispatch(deletePostReducer({postId:componentId, token}))
+  }
+  function deleteComment(componentId) {
+    dispatch(deleteCommentReducer({commentId:componentId, token}))
   }
   function likePost() {
-    setPostLike([author._id]);
-    dispatch(likePost({id:post._id, userId:author._id}));
+    setVisitorLikes([author._id]);
+    dispatch(uploadLikePost({id:post._id, userId:visitor._id}));
   }
   function removeLike() {
-    setPostLike([])
-    dispatch(removeLike({id:post._id, userId:author._id}))
+    setVisitorLikes([])
+    dispatch(removeLikePost({id:post._id, userId:author._id}))
   }
   function likeComment(commentId) {
     // setCommentLike(prev => [...prev,commentId])
@@ -85,20 +98,9 @@ console.log(commentLikes);
           <div className={classes.date}>{`published on ${trimTime(post.createdAt)}`}</div>
           <div className={classes.postTools}>
             <Menu className={classes.postMenu} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}/>
-            <div className={showMenu? classes.menuTools : classes.menuToolsHide} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}>
-              {auth.userId === author._id?
-              <>
-                <a onClick={() => dispatch(deletePost({postId:post._id, token}))}>Delete</a>
-                <a onClick={() => setEditPost(true)}>Edit</a>
-                <a>Report</a>
-              </> :
-              <>
-                <a onClick={() => console.log(report)}>Report</a>
-                <a onClick={() => removeFromRecommendations(post._id)}>Hide from recom...</a>
-              </>
-              }
-             
-            </div>
+            <ComponentMenu type={"post"} showMenu={showMenu} setShowMenu={setShowMenu} visitor={visitor} author={author} deletePost={deletePost}
+            setEditPost={setEditPost} post={post}
+            />
           </div>
         </div>
         {editPost? <PostBodyEdit images={post.images} textArea={textArea} setTextArea={setTextArea} setCurrPictureId={setCurrPictureId} setEditPost={setEditPost} setSliderTrue={setSliderTrue} setShowCross={setShowCross} showCross={showCross}/> :
@@ -106,11 +108,11 @@ console.log(commentLikes);
           <div className={classes.tools}>
           <div className={classes.rightBlock}>
               <div className={classes.tool}>
-                <p>{postLike.length>0? [postLike].length : ""}</p>
-                <Like className={postLike.length>0? classes.iconBlue : classes.icon} onClick={postLike.length>0? removeLike : likePost}/>
+                <p>{visitorLike.length>0? visitorLike.length : ""}</p>
+                <Like className={visitorLike.length>0? classes.iconBlue : classes.icon} onClick={visitorLike.length>0? removeLike : likePost}/>
               </div>
               <div className={classes.tool}>
-                <p>{comments.length===0? "" : post.comments.length}</p>
+                <p>{comments.length===0? "" : countComments(comments)}</p>
                 <Comments className={classes.icon} onClick={_ => setCommentStatus(prev => !prev)}/>
               </div>
               <div className={classes.tool}>
@@ -129,10 +131,14 @@ console.log(commentLikes);
              // const replies = Array.isArray(comment.replies)? comment.replies : [comment.replies]//mongoose returns object instead of array when populating 1 doc
               return ( 
               <div key={id} className={classes.commentWrapper}>
-                <Comment comment={comment} author={comment.user} visitor={visitor} reply={reply} commentId={comment._id} likes={comment.likes} text={comment.text} 
-                navigate={navigate} replies={comment.replies} showReplies={showReplies} setShowReplies={setShowReplies}
-                likeComment={likeComment} removeLikeComment={removeLikeComment} replyTo={comment.replyTo} commentAuthorH5={commentAuthorH5} 
+                {editComment && editComment===comment._id?
+                <CommentEdit  comment={comment} visitor={visitor}></CommentEdit>
+                :
+                <Comment comment={comment} visitor={visitor} reply={reply} navigate={navigate} showReplies={showReplies} setShowReplies={setShowReplies} author={author}
+                  likeComment={likeComment}removeLikeComment={removeLikeComment}commentAuthorH5={commentAuthorH5}deleteComment={deleteComment}setEditComment={setEditComment}
+                  setShowMenu={setShowMenu}
                 ></Comment>
+                }
               </div>)
             })}
           </div>
@@ -142,8 +148,10 @@ console.log(commentLikes);
     )
 }
 
-function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,likeComment,commentAuthorH5,removeLikeComment}=props) {
-  console.log(visitor._id, comment.likes);
+function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,likeComment,commentAuthorH5,removeLikeComment,
+  showMenu,setShowMenu,deleteComment,setEditComment, author
+}=props) {
+  console.log(showReplies);
   return (
     <div data-id={comment._id} className={classes.commentComponent}>
       <div className={classes.comment}>
@@ -161,7 +169,8 @@ function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,like
                {comment.replies.length>0 && 
                   <>
                      <div>{comment.replies.map((reply,id) => {if(id!==3) return <img key={id} className={classes.replyImgCircle} src={reply.user.avatarUrl}></img>})}</div>
-                     <a onClick={() => setShowReplies(prev => !prev)}>{showReplies? "hide" : "show"}</a>
+                     <a onClick={() => {setShowReplies(prev => prev.indexOf(comment._id)===-1? prev = [...prev, comment._id] : prev.splice(prev.indexOf(comment._id),1))}}
+                     >{showReplies.indexOf(comment._id)!==-1? "hide" : "show"}</a>
                   </>
                 }
               </div>
@@ -170,28 +179,57 @@ function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,like
         </div>
         <div className={classes.postRightside}>
           <p className={classes.likesNum}>{comment.likes.length===0? "" : comment.likes.length}</p>
-          <Like className={comment.likes.indexOf(visitor._id)!==-1?classes.myCommentLike : classes.commentLike} onClick={() => comment.likes.indexOf(visitor._id)!==-1? removeLikeComment(comment._id):likeComment(comment._id)}/>
+          <div>
+            <Menu className={classes.postMenu} onMouseEnter={_ => setShowMenu(true)} onMouseLeave={_ => setShowMenu(false)}/>
+            <ComponentMenu type={"comment"}showMenu={showMenu} setShowMenu={setShowMenu} visitor={visitor} author={author} deleteComment={deleteComment}
+            setEditComment={setEditComment} comment={comment} 
+            />
+            <Like className={comment.likes.indexOf(visitor._id)!==-1?classes.myCommentLike : classes.commentLike} onClick={() => comment.likes.indexOf(visitor._id)!==-1? removeLikeComment(comment._id):likeComment(comment._id)}/>
+          </div>
         </div>
       </div>
       {/*С каждым ответом на коментарий будет создаватся этот компоненто, нужно ли мне так? */}
       {comment.replies?.length>0 && <CommentReplies showReplies={showReplies} replies={comment.replies} reply={reply} visitor={visitor} navigate={navigate} likeComment={likeComment} 
-      commentAuthorH5={commentAuthorH5} removeLikeComment={removeLikeComment}
+      commentAuthorH5={commentAuthorH5} removeLikeComment={removeLikeComment} commentId={comment._id} showMenu={showMenu} setShowMenu={setShowMenu}
+
       />}
        {/*С каждым ответом на коментарий будет создаватся этот компоненто, нужно ли мне так? */}
     </div>
   )
 }
-function CommentReplies({showReplies,replies,visitor,navigate,likeComment,removeLikeComment,reply}=props) {
+function CommentReplies({showReplies,replies,visitor,navigate,likeComment,removeLikeComment,reply,commentId}=props) {
   return (
     <div className={classes.repliesWrapper}>
-      {showReplies && (
+      {showReplies.indexOf(commentId)!==-1 && (
       <div className={classes.replies}>
         {replies.map((comment,id) => {
-          return <Comment key={id} comment={comment} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply}
+          return <Comment key={id} comment={comment} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply} showReplies={showReplies}
           />
         })}
       </div>)}
     </div>
+  )
+}
+function CommentEdit(comment,visitor) {
+  return (
+    <div className={classes.comment}>
+        <div className={classes.postLeftside}>
+          <img className={classes.profilePicture} src={comment.user.avatarUrl} onClick={()=>navigate(`/${comment.user._id}`)}></img>
+          <div className={classes.commentBody}>
+            <div className={classes.commentHeader}>
+               <h5 ref={commentAuthorH5} className={comment.user._id===visitor._id?classes.myName:classes.authorName}>{comment.user.fullName}</h5>
+               <p className={classes.time}>{trimTime(comment.createdAt)}</p>
+            </div>
+            <p className={classes.text}>{comment.replyTo && <span style={{color:"rgb(53, 121, 199)"}}>{comment.replyTo}, </span>}{comment.text}</p>
+          </div>
+        </div>
+        <div className={classes.postRightside}>
+          <p className={classes.likesNum}>{comment.likes.length===0? "" : comment.likes.length}</p>
+          <div>
+            <Like className={comment.likes.indexOf(visitor._id)!==-1?classes.myCommentLike : classes.commentLike} onClick={() => comment.likes.indexOf(visitor._id)!==-1? removeLikeComment(comment._id):likeComment(comment._id)}/>
+          </div>
+        </div>
+      </div>
   )
 }
 function PostBody({images, text, setCurrPictureId, setSliderTrue}) {

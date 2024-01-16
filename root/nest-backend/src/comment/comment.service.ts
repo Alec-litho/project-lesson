@@ -4,8 +4,7 @@ import mongoose, { Model } from 'mongoose';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { PostModel } from 'src/post/entities/post-entity';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { LikeComment } from './dto/like-comment.dto';
-import { CommentDocument } from './entities/comment';
+
 
 
 @Injectable()
@@ -16,13 +15,13 @@ export class CommentService {
     ){}
 
     public async uploadComment(dto:CreateCommentDto) {
-            const userId = new mongoose.Types.ObjectId(dto.user);
-            const postId = new mongoose.Types.ObjectId(dto.post);
+            const userId:mongoose.Types.ObjectId = new mongoose.Types.ObjectId(dto.user);
+            const postId:mongoose.Types.ObjectId = new mongoose.Types.ObjectId(dto.post);
             let comment;
             if(dto.replyTo) {
-                comment = new this.commentModel({...dto, userId, postId, replyTo:new mongoose.Types.ObjectId(dto.replyTo as string)});
+                comment = new this.commentModel({text:dto.text, user:userId, post:postId, replyTo:new mongoose.Types.ObjectId(dto.replyTo.toString())});
             } else {
-                comment = new this.commentModel({...dto, userId, postId, replyTo:dto.replyTo});
+                comment = new this.commentModel({text:dto.text, user:userId, post:postId, replyTo:false});
             }
             if(!comment) throw new HttpException("something went wrong while creating comment", HttpStatus.BAD_REQUEST);
             comment.save()
@@ -33,10 +32,10 @@ export class CommentService {
     public async updateComment(dto: UpdateCommentDto) { 
         try {
             const commentId = new mongoose.Types.ObjectId(dto._id)
-            if(!this.commentModel.findById(dto._id)) throw new NotFoundException(dto, "provided _id is invalid")
+            if(!this.commentModel.findById(dto._id)) return new NotFoundException(dto, "provided _id is invalid")
             return await this.commentModel.findByIdAndUpdate(commentId, {...dto, commentId});
         } catch (error) {
-            throw new InternalServerErrorException(error)
+            return new InternalServerErrorException(error)
         }
     }
     public async likeComment(commentId:string, userId:string) {

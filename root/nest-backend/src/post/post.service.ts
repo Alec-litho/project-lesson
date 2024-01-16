@@ -4,6 +4,7 @@ import mongoose, { Model } from 'mongoose';
 import { PostModel, PostDocument } from './entities/post-entity';
 import { Image, ImageDocument } from '../image/entities/image.entity';
 import { User } from 'src/user/entities/user.entity';
+import { Comment } from 'src/comment/entities/comment';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ImageService } from '../image/image.service';
@@ -19,6 +20,7 @@ export class PostService {
         @InjectModel('Post') private readonly postModel:Model<PostModel>,
         @InjectModel('Image') private readonly imageModel:Model<Image>,
         @InjectModel('User') private readonly userModel:Model<User>,
+        @InjectModel('Comment') private readonly commentModel:Model<Comment>,
         private readonly imageService:ImageService
     ){}
     async createPost(dto:CreatePostDto) {
@@ -133,11 +135,12 @@ export class PostService {
                     await this.imageModel.findByIdAndDelete(img._id)
                 })
             }
+            this.commentModel.deleteMany({post: isDeleted._id})
             if(!isDeleted) throw new NotFoundException({message:"Post wasn't deleted successfully, probably provided id is invalid"});
             return isDeleted._id;
 
         } catch (error) {
-            throw new InternalServerErrorException({message:error})
+            return new InternalServerErrorException({message:error})
         }
     }
     async updatePost(id:string, dto:UpdatePostDto) {
@@ -179,13 +182,13 @@ export class PostService {
         }
     };
     async likePost(id:string, userId:string) {
-        console.log(id, userId);
+        console.log("likepost",id, userId);
         
         const userMongoId = new mongoose.Types.ObjectId(userId)
         const postId = new mongoose.Types.ObjectId(id)
         const user = await this.userModel.findById(userMongoId);
         const post = await this.postModel.findById(postId);
-        const recomm:any = {}
+        const recomm:any = {} 
         let oldWords:string[] = user.recommendations.oldKeyWords
         
         if(oldWords.length===0) {
@@ -233,7 +236,8 @@ export class PostService {
         }
         user.age = user.age//somehow its giving me error if i don't set same age as it was before
         user.save()
-        post.likes = [...post.likes, userMongoId];
+        const oldLikesArr = [...post.likes]
+        post.likes = [...oldLikesArr, userMongoId]
         post.save()
         return post? true : false;
     }

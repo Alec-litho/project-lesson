@@ -56,12 +56,14 @@ export class PostController {
   @Get("watched/:id")
   async postWatched(@Param("id") id: string, @Res() res: Response) {
     const postId = await this.postService.postWatched(id);
-    res.json(postId);
+    res.json(postId); 
   }
   @ApiOperation({summary:"like the post"})
   @ApiResponse({status:200,type:Boolean})
   @Post("liked/:id")
   async likePost(@Param("id") id:string, @Body() {userId}:{userId:string}, @Res() res: Response) {
+    console.log(userId);
+    
     const postId = await this.postService.likePost(id,userId);
     res.json(postId);
   }
