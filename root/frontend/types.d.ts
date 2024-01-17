@@ -125,7 +125,7 @@ interface IPost {
     viewCount: number
     author: IUser | string
     images: ImageModel[] | []
-    comments: IComment[] | []
+    comments: CommentModel[] | []
     likes: string[]
     shares: string[]
     _id: string

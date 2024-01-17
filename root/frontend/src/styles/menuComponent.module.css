@@ -1,0 +1,57 @@
+
+
+.postMenu {
+    position: relative;
+}
+
+.postMenuIcon {
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+  }
+  .visitorMenu, .authorMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+}
+.menuTools {
+    display: flex;
+    z-index: 100;}
+.menuTools .authorMenu,.menuTools .visitorMenu {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+    background-color: white;
+    position: absolute;
+    padding: 5px;
+    box-shadow: 0px 2px 3px 2px rgb(182, 182, 182);
+}
+.menuTools .visitorMenu {
+    left: 10px;
+    top: -80px;
+}
+.menuTools .authorMenu {
+    left: 10px;
+    top: -60px;
+}
+.menuToolsHide {
+display: none;
+}
+.menuTools a {
+    width: 100%;
+  color: rgb(53, 121, 199);
+  font-size: 14px;
+   font-weight: 600;
+ padding-left: 5px;
+ transition: .2s;
+ cursor: pointer;
+ margin-bottom: 5px;
+ }
+ .menuTools a:hover {
+ background-color: #ececec;
+ color: rgb(48, 110, 180);
+ }

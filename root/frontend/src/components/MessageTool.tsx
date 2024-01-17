@@ -15,9 +15,10 @@ type ReplyType = {
     messageToolCordY: Ref<HTMLDivElement>,
     userReplyTo: {commentId: string,name:string, cordY:number}
     setComment: Dispatch<SetStateAction<(prev:CommentModel[])=>CommentModel[]>>,
+    setCommentsLeng: Dispatch<SetStateAction<(prev:number)=>number>>
 }
 
-export default function MessageTool({type,setReplyToComment,messageToolCordY,postId,userReplyTo,setComment}:ReplyType) {
+export default function MessageTool({type,setReplyToComment,messageToolCordY,postId,userReplyTo,setComment, setCommentsLeng}:ReplyType) {
     let message = useRef<HTMLInputElement>(null);
     let [inputNum, setInputNum] = useState(0);
 
@@ -47,6 +48,7 @@ export default function MessageTool({type,setReplyToComment,messageToolCordY,pos
                         const payload = response.payload as CommentModel 
                         const comment = {...payload,user:user.userInfo} as CommentModel 
                         setComment((prev:CommentModel[]) => [...prev, comment])
+                        setCommentsLeng((prev:number) => prev+1)
                     }
                     if(type === 'reply') {
                         console.log(userReplyTo);
@@ -54,6 +56,7 @@ export default function MessageTool({type,setReplyToComment,messageToolCordY,pos
                         const comment = {text, user:user.userInfo._id, authorName:user.userInfo.fullName,authorPicture:user.userInfo.avatarUrl, commentId:userReplyTo.commentId, replyTo: userReplyTo.name, post:postId}
                         dispatch(uploadReply({comment, id:userReplyTo.commentId, token:user.userToken}))
                         setReplyToComment(false)
+                        setCommentsLeng((prev:number) => prev+1)
                     }
                     else if(type === 'message') {
                         console.log('message')/*dispatch(message)*/

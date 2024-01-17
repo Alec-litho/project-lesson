@@ -21,43 +21,7 @@
 .postTools {
 position: relative;
 }
-.postMenu {
-  cursor: pointer;
-  width: 25px;
-  height: 25px;
-}
 
-.menuTools {
-box-sizing: border-box;
-display: flex;
-flex-direction: column;
-width: 100px;
-height: auto;
-border-radius: 5px;
-background-color: white;
-position: absolute;
-padding: 5px;
-left: 10px;
-top: -80px;
-box-shadow: 0px 2px 3px 2px rgb(182, 182, 182);
-}
-
-.menuToolsHide {
-display: none;
-}
-.menuTools a {
-  color: rgb(53, 121, 199);
-  font-size: 14px;
-  font-weight: 600;
-padding-left: 5px;
-transition: .2s;
-cursor: pointer;
-margin-bottom: 5px;
-}
-.menuTools a:hover {
-background-color: #ececec;
-color: rgb(48, 110, 180);
-}
 .views {
 width: 20px;
 height: 20px;
@@ -201,6 +165,13 @@ gap: 10px;
 display: flex;
 align-items: flex-end;
 gap: 5px;
+}
+.postRightsideMenu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 .authorName, .myName {
   font-size: 16px;
