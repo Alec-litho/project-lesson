@@ -7,22 +7,29 @@
 .keyboardReply {
     display: flex;
     align-items: center;
+    
 }
 .cross {
-    margin-left: 10px;
+    margin-left: 5px;
+    padding-bottom: 2px;
     fill: rgb(152, 154, 161);
     cursor: pointer;
     width: 20px;
     height: 20px;
+    transition: .2s;
+}
+.cross:hover {
+    fill: rgb(129, 131, 138);
+    padding-bottom: 0px;
 }
 .emoji {
     fill: rgb(152, 154, 161);
     cursor: pointer;
     position: absolute;
-    left: 730px;
-    top: 15px;
-    width: 30px;
-    height: 30px;
+    left: 65px;
+    top: 31%;
+    width: 25px;
+    height: 25px;
 }
 .append {
     fill: rgb(90, 91, 99);
@@ -40,7 +47,7 @@
     
 }
 .keyboardInput {
-    padding-left: 25px;
+    padding-left: 35px;
     -webkit-box-sizing: border-box; 
     margin: 10px 10px 5px 10px;
     width: 710px;
@@ -65,11 +72,7 @@
     height: 30px;
 }
 
-.sendIconHide, .sendIcon {
-    content: "";
-    background-color: blue;
-}
-.sendIcon {
+.sendIcon, .append {
     width: 30px;
     height: 30px;
 }

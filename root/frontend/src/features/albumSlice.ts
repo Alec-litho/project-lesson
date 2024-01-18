@@ -21,7 +21,9 @@ const initialState:InitialState = {
 }
 
 export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', async function({_id,token}:DefaultReduxThunkDto):Promise<IAlbumModel[] | []> {
-    let result = await axios.get(`http://localhost:3001/albums/user/${_id}`, {headers: {
+    console.log(_id);
+    
+  let result = await axios.get(`http://localhost:3001/albums/user/${_id}`, {headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`,
     }})
