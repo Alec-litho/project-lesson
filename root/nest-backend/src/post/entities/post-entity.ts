@@ -20,7 +20,7 @@ export class PostModel {
     tags:[]
   @ApiProperty({example: "[656395f24db3c1a422c2e8c9]",description:"post's views"})
     @Prop({default: []})
-    viewCount: mongoose.Types.ObjectId[] | [] 
+    views: mongoose.Types.ObjectId[] | [] 
   @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"post's author"})
     @Prop({required: true, ref:'User'})
     author:mongoose.Schema.Types.ObjectId

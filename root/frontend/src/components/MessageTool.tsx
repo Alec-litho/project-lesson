@@ -1,7 +1,7 @@
-// import { ReactComponent as Emoji } from '../assets/icons/smile.svg';
-// import { ReactComponent as Clip } from '../assets/icons/clip.svg';
-// import { ReactComponent as Send } from '../assets/icons/send.svg';
-// import { ReactComponent as Cross } from '../assets/icons/cross.svg';
+import { ReactComponent as Emoji } from '../assets/icons/smile.svg';
+import { ReactComponent as Clip } from '../assets/icons/clip.svg';
+import { ReactComponent as Send } from '../assets/icons/send.svg';
+import { ReactComponent as Cross } from '../assets/icons/cross.svg';
 import classes from '../styles/messageTool.module.css'
 import { useRef, useState } from 'react';
 import { uploadComment, uploadReply } from '../features/postSlice';
@@ -30,17 +30,17 @@ export default function MessageTool({type,setReplyToComment,messageToolCordY,pos
         {type === 'reply' && 
         <div className={classes.keyboardReply}>
             <h5>You're replying to <span className={classes.userName} onClick={()=>window.scrollTo({top:userReplyTo.cordY-350, behavior:'smooth'})}>{userReplyTo.name}</span></h5>
-            <div className={classes.cross} onClick={() => setReplyToComment(false)}/>
+            <Cross className={classes.cross} onClick={() => setReplyToComment(false)}/>
         </div>}
         <div className={classes.keyboardBody}>
-        {/* <Clip className={classes.append}/>
-        <Emoji className={classes.emoji}/> */}
+        <Clip className={classes.append}/>
+        <Emoji className={classes.emoji}/>
         <input ref={message} className={classes.keyboardInput} onInput={(e) => {
             let target=e.target as HTMLInputElement;
             setInputNum(target.value.length)
         }} placeholder='Type'/>
         <div className={classes.send}>
-            <div /*Send*/ className={inputNum>0? classes.sendIcon : classes.sendIconHide} onClick={async() => {
+            <Send className={inputNum>0? classes.sendIcon : classes.sendIconHide} onClick={async() => {
                 if(inputNum>0) {
                     if(type === 'comment')  {
                         const text = message.current? message.current.value : "";

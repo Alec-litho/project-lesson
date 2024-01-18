@@ -44,10 +44,10 @@ export class PostService {
             return post.populate("images");
       
     }
-    async getUserPosts(id: string) {
+    async getUserPosts(id:string, count:number) {
         const authorId = new mongoose.Types.ObjectId(id);
         const userPosts:PostDocument[] = await this.postModel.find({author: authorId})
-        .populate([{//--------------------------i need to populate replies recursive until replies array is empty
+        .populate([{//--------------------------i need to populate replies recursive until replies array in every comment is empty
             path: "comments",
             model: "Comment",
             select: "text user createdAt likes post replies replyTo",
@@ -75,9 +75,9 @@ export class PostService {
             model: "User"
         }
     ])
-        
+        const postsByCount = userPosts.slice(count,count+10)
         if(!userPosts) return []
-        return userPosts
+        return postsByCount
     }
     async getUserRecommendations(id:string) {
         //1 - Friends posts (friendsPosts)
@@ -90,7 +90,7 @@ export class PostService {
         const friendsPosts = await Promise.all(user.friends.map(async(friend) => {
             const userPosts = await this.postModel.find({author:friend._id});
             const posts = userPosts.filter(post => {
-                if(!post.likes.some(userLike => userLike===user._id) || !post.viewCount.some(userLike => userLike===user._id)) {//if post was liked by user or user already have seen this post don't return it
+                if(!post.likes.some(userLike => userLike===user._id) || !post.views.some(userLike => userLike===user._id)) {//if post was liked by user or user already have seen this post don't return it
                     filterOldData(14, post)? true : false
                 } else {
                     return false
@@ -103,7 +103,7 @@ export class PostService {
         user.friends.forEach(async(friend) => {
             const posts = await this.postModel.find({likes:{$in:[friend._id]}})//get posts that your friend liked
             posts.map(post => {//filter these post so user doesn't receive old posts
-                if((!post.likes.some(userLike => userLike===user._id) || !post.viewCount.some(userLike => userLike===user._id)) && filterOldData(14, post)) friendsLikes.push(post)
+                if((!post.likes.some(userLike => userLike===user._id) || !post.views.some(userLike => userLike===user._id)) && filterOldData(14, post)) friendsLikes.push(post)
             })
         })
         const posts = [];
@@ -174,7 +174,10 @@ export class PostService {
     };
     async postWatched(id:string) {
         try {
-            const updatedPost = await this.postModel.findByIdAndUpdate(id, {$inc: {viewsCount:1}});
+            const userId = new mongoose.Types.ObjectId(id)
+            const updatedPost = await this.postModel.findByIdAndUpdate(id, {$push: {views:userId}});
+            console.log(id, updatedPost);
+            
             if(!updatedPost) throw new NotFoundException({message:"Post wasn't updated successfully, probably provided id is invalid"});
             return updatedPost._id
         } catch (error) {

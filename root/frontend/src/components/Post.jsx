@@ -18,7 +18,7 @@ import { deletePostReducer, likePostComment, removeLikeCommentReducer, removeLik
 import { useNavigate } from "react-router-dom";
 import countComments from '../helper_functions/countComments'
 
-export default function Post({author, visitor, post, setCurrPictureId, setSliderTrue, setCurrPosts, token, removeFromRecommendations}=props) {
+export default function Post({author, visitor, post, setCurrPictureId, setSliderTrue, setCurrPosts, token, removeFromRecommendations, setPosts}=props) {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const auth = useSelector(state => state.auth);
@@ -29,7 +29,7 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   let [replyToComment, setReplyToComment] = useState(false);
   let [showCross, setShowCross] = useState(false);
   let [textArea, setTextArea] = useState(post.text);
-  let [visitorLike, setVisitorLikes] = useState(post.likes.filter(user => user === visitor._id));
+  let [postLikes, setPostLikes] = useState(post.likes);
   let [userReplyTo, setUserReplyTo] = useState({commentId:null, name:null, cordY:null});/*person another user wants to reply to*/
   let [comments, setComments] = useState([]);
   let [isCommenting, setCommentStatus] = useState(false)
@@ -38,7 +38,6 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   let commentAuthorH5 = useRef()
   let postY = useRef(null);
   let [commentsLeng,setCommentsLeng] = useState()
-  console.log(commentsLeng);
 
   useEffect(_ => {
     setComments(post.comments)
@@ -47,25 +46,23 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   },[])
 
   function deletePost(componentId){
+    setPosts(prev => prev.filter(el => el._id!==post._id))
     dispatch(deletePostReducer({postId:componentId, token}))
   }
   function deleteComment(componentId) {
     dispatch(deleteCommentReducer({commentId:componentId, token}))
+
   }
   function likePost() {
-    setVisitorLikes([author._id]);
+    setPostLikes(prev => [...prev,auth.userId]);
     dispatch(uploadLikePost({id:post._id, userId:visitor._id}));
   }
   function removeLike() {
-    setVisitorLikes([])
+    const likes = postLikes.filter(userId => userId!==auth.userId)
+    setPostLikes(likes)
     dispatch(removeLikePost({id:post._id, userId:author._id}))
   }
   function likeComment(e,comment) {
-    // const commentIds = comments.map(comment => comment._id)
-    // const commentIndx = commentIds.indexOf(comment._id);
-    // console.log(comments[commentIndx].likes,commentIndx);
-    // comments[commentIndx].likes.push(auth.userId)
-    // setComments(comments)
     e.target.style.fill = "rgb(87, 149, 230)"
     dispatch(likePostComment({commentId:comment._id, userId:auth.userId}))
   }
@@ -97,8 +94,8 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
           <div className={classes.tools}>
           <div className={classes.rightBlock}>
               <div className={classes.tool}>
-                <p>{visitorLike.length>0? visitorLike.length : ""}</p>
-                <Like className={visitorLike.length>0? classes.iconBlue : classes.icon} onClick={visitorLike.length>0? removeLike : likePost}/>
+                <p>{postLikes.length>0? postLikes.length : ""}</p>
+                <Like className={postLikes.indexOf(auth.userId)!==-1? classes.iconBlue : classes.icon} onClick={postLikes.indexOf(auth.userId)!==-1? removeLike : likePost}/>
               </div>
               <div className={classes.tool}>
                 <p>{comments.length===0? "" : commentsLeng}</p>
@@ -110,14 +107,12 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
               </div>
           </div>
           <div className={classes.tool}>
-               <p>{post.views}</p>
+               <p>{post.views.length}</p>
                <Views className={classes.icon}/>
           </div>
           </div>
           <div className={isCommenting? classes.comments : comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
             {comments.map((comment, id) => {
-              console.log(comment);
-             // const replies = Array.isArray(comment.replies)? comment.replies : [comment.replies]//mongoose returns object instead of array when populating 1 doc
               return ( 
               <div key={id} className={classes.commentWrapper}>
                 {editComment && editComment===comment._id?
@@ -137,7 +132,6 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
 }
 
 function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,likeComment,commentAuthorH5,removeLikeComment,deleteComment,setEditComment, author}=props) {
-  console.log(showReplies);
   return (
     <div data-id={comment._id} className={classes.commentComponent}>
       <div className={classes.comment}>
@@ -232,7 +226,6 @@ function PostBody({images, text, setCurrPictureId, setSliderTrue}) {
 }
 function PostBodyEdit({images, textArea, setTextArea, setCurrPictureId, setEditPost, setSliderTrue, setShowCross, showCross}) {
   let textToChange = '';
-  console.log(showCross);
   return <div className={classes.postEdit}>
     <textarea defaultValue={textArea? textArea:'enter text'} onChange={(e) => textToChange = e.target.value}></textarea>
     <div className={classes.images}>

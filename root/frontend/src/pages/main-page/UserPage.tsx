@@ -35,9 +35,9 @@ export default function User() {
         if(photos.length===0 || user._id !== '656395f24db3c1a422c2e8c9'/*initial empty user*/){
             if(albums.length!==0) {setPhotos([...albums])}
             else {
-                const data = {_id: id === auth.userId? auth.userId : user._id, token:auth.userToken}
+                const data = {_id: id === auth.userId || !id? auth.userId : user._id, token:auth.userToken}
                 dispatch(fetchMyAlbums(data)).then((res:any) => {
-                    console.log(res);
+                    console.log(res); 
                     res.error? setPhotos([]) : setPhotos(res.payload);
                 })
             }

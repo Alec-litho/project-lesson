@@ -1,6 +1,6 @@
 
 
-export default function countComments(comments:CommentModel[]) {//counts likes that were put by visitor
+export default function countComments(comments:CommentModel[]) {
     return comments.reduce((prev,comment) => {
       let commentRepliesLeng = 0;
       const replies = comment.replies as CommentModel[]

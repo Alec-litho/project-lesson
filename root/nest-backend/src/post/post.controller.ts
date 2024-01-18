@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Post, Res, Param, Delete, Patch} from '@nestjs/common';
+import { Controller, Get, Body, Post, Res, Param, Delete, Patch, Query} from '@nestjs/common';
 import { PostService } from './post.service';
 import {CreatePostDto} from './dto/create-post.dto'
 import { Response } from 'express';
@@ -25,15 +25,15 @@ export class PostController {
   }
   @ApiOperation({summary:"Get all user's posts"})
   @ApiResponse({status:200,type:[PostModel]})
-  @Get("user/:id")
-  async getUserPosts(@Param("id") id:string, @Res() res:Response) {
-    const posts = await this.postService.getUserPosts(id);
+  @Get("user/:id/params?")
+  async getUserPosts(@Param("id") id:string, @Query("count") count:number, @Res() res:Response) {
+    const posts = await this.postService.getUserPosts(id,!count? 0: count);
     res.json(posts);
   }
   @ApiOperation({summary:"Get user post"})
   @ApiResponse({status:200,type:PostModel})
   @Get(":id")
-  async getOnePost(@Param("id") id: string, @Res() res: Response) {
+  async getOnePost(@Param("id") id: string,@Res() res: Response) {
     const post = await this.postService.getOnePost(id);
     res.json(post);
   }

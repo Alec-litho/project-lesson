@@ -5,11 +5,11 @@ import Post from '../../components/Post.jsx';
 import classes from './style/userPage.module.css'
 import {fetchUserPosts, createPost, removeRecommendation} from '../../features/postSlice'
 import {uploadImage} from '../../features/albumSlice';
+import { ReactComponent as Append } from '../../assets/icons/append.svg';
 // import { ReactComponent as Append } from '../../assets/icons/append.svg'
 // import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
-import viewCount from '../../helper_functions/viewCount.js'
+import viewCount from '../../helper_functions/viewCount'
 import axios from "axios";
-import trimTime from "../../helper_functions/trimTime.js";
 import { Dispatch, SetStateAction } from "react";
 
 type PostBlock = {
@@ -18,7 +18,11 @@ type PostBlock = {
     currPictureId: string | null;
     user: IUser;
 }
-
+type currPostType = {
+    postId:string,
+    watched:boolean,
+    positionY:number
+}
 export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,user}:PostBlock) {
     let userPosts = useAppSelector(state => state.userPosts.myPosts)
     let auth = useAppSelector(state => state.auth)
@@ -26,23 +30,20 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let append = useRef(null)
     let textArea = useRef<HTMLTextAreaElement>(null)
     let [posts, setPosts] = useState<IPost[] | []>([])
-    let [currPosts, setCurrPosts] = useState([])
-    let postToDetect = 0;
-    //---------------------------------------
-    let [update, setUpdate] = useState(false) // useless, need to get rid of this
-    //---------------------------------------
+    let [currPosts, setCurrPosts] = useState<currPostType[] | []>([])
+    let viewedPosts = 0;
     let [focus, setFocus] = useState(false)
     let [imagesToAppend, setImagesToAppend] = useState<ImageModel[] | []>([])
-    let [textLeng, setTextLeng] = useState(0)
     let dispatch = useAppDispatch()
-    console.log(posts,user);
-    // window.onscroll = () => postToDetect = viewCount(auth, dispatch, currPosts, postToDetect);
-    // useEffect(() => {
-    //     console.log(currPosts)
-
-    // },[currPosts])
+    console.log(posts, currPosts);
+    
+    window.onscroll = () => viewedPosts = viewCount(auth.userInfo, dispatch, currPosts, viewedPosts);
     useEffect(() => {
-        dispatch(fetchUserPosts({_id:user._id, postLength:currPosts.length, token:"token"}))
+        console.log(currPosts)
+
+    },[currPosts])
+    useEffect(() => {
+        dispatch(fetchUserPosts({_id:user._id, token:"token",count:currPosts.length}))
             .then((response:any) => setPosts(response.payload.posts))
     }, [user])
 
@@ -107,15 +108,17 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
                 </div>
                 <div className={classes.tools} ref={tools}>
                    <button className={classes.publish} onClick={loadImages/*first, images should be updated*/}>Publish</button>
-                   <input className={classes.append} id="image-append" ref={append} type="file" onInput={e => appendImage(e.target)}></input>
+                   <div  className={classes.appendWrapper}>
+                      <Append className={classes.icon} />
+                      <input className={classes.append} id="image-append" ref={append} type="file" onInput={e => appendImage(e.target)}></input>
+                   </div>
+                  
                 </div>
             </div>}
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
                     return <Post key={id} author={user} visitor={auth.userInfo} post={post}setCurrPosts={setCurrPosts}setSliderTrue={setSliderTrue}token={"token"} 
-                    setCurrPictureId={setCurrPictureId} 
-                    currPictureId={currPictureId} 
-                    removeFromRecommendations={removeFromRecommendations}
+                    setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} removeFromRecommendations={removeFromRecommendations} setPosts={setPosts}
                     />
                 })
             }

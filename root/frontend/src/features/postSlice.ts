@@ -91,13 +91,14 @@ export const deleteCommentReducer = createAsyncThunk('posts/deletePostReducer', 
   }
   
 })
-export const fetchUserPosts = createAsyncThunk('posts/fetchUserPosts', async ({_id, postLength, token}:{_id:string,postLength:number,token:string},{rejectWithValue}):Promise<{posts:IPost[] | [], postLength: number}> => {
-    const response = await axios.get(`http://localhost:3001/post/user/${_id}`,{headers: {
+export const fetchUserPosts = createAsyncThunk('posts/fetchUserPosts', async ({_id,token,count}:{_id:string,token:string,count?:number},{rejectWithValue}):Promise<{posts:IPost[] | []}> => {
+  const path = count? `http://localhost:3001/post/user/${_id}/params?count=${count}` : `http://localhost:3001/post/user/${_id}/params?`
+  const response = await axios.get(path,{headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`
     }})
     console.log(_id,response);
-    return {posts:[...response.data].reverse(), postLength};
+    return {posts:[...response.data].reverse()};
 })
 
 export const createPost = createAsyncThunk('posts/createPost', async ({post, token}:{post:CreatePostDto,token:string},{rejectWithValue}) => {
@@ -163,10 +164,8 @@ const postSlice = createSlice({
         console.log('w');
         state.status = 'fulfilled'
         let posts = [...action.payload.posts]
-        let postLength = action.payload.postLength 
-        let slicedPosts = posts.slice(postLength, postLength+10)
         console.log(posts);
-        state.myPosts = [...state.myPosts, ...slicedPosts]
+        state.myPosts = [...state.myPosts, ...posts]
       })
       .addCase(fetchUserPosts.rejected, (state, action:any) => {
         state.status = 'error'
