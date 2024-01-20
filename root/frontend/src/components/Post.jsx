@@ -40,6 +40,7 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   let [commentsLeng,setCommentsLeng] = useState()
 
   useEffect(_ => {
+    console.log(postY.current.getBoundingClientRect().top);
     setComments(post.comments)
     setCommentsLeng(countComments(post.comments))
     setCurrPosts((prevState) => [...prevState, {postId:post._id, watched:false, positionY:postY.current.getBoundingClientRect().top}])
@@ -107,7 +108,7 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
               </div>
           </div>
           <div className={classes.tool}>
-               <p>{post.views.length}</p>
+               <p>{post.views.length===0? "" : post.views.length}</p>
                <Views className={classes.icon}/>
           </div>
           </div>

@@ -24,7 +24,7 @@ type currPostType = {
     positionY:number
 }
 export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,user}:PostBlock) {
-    let userPosts = useAppSelector(state => state.userPosts.myPosts)
+    let userPosts = useAppSelector(state => state.userPosts)
     let auth = useAppSelector(state => state.auth)
     let tools = useRef<HTMLDivElement>(null)
     let append = useRef(null)
@@ -37,11 +37,8 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let dispatch = useAppDispatch()
     console.log(posts, currPosts);
     
-    window.onscroll = () => viewedPosts = viewCount(auth.userInfo, dispatch, currPosts, viewedPosts);
-    useEffect(() => {
-        console.log(currPosts)
+    window.onscroll = () => viewedPosts = viewCount(auth.userInfo, dispatch, currPosts, viewedPosts, setPosts);
 
-    },[currPosts])
     useEffect(() => {
         dispatch(fetchUserPosts({_id:user._id, token:"token",count:currPosts.length}))
             .then((response:any) => setPosts(response.payload.posts))

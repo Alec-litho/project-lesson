@@ -4,10 +4,10 @@ import { fetchUserPosts, watched } from "../features/postSlice";
 type currPostType = {
     postId:string,
     watched:boolean,
-    positionY:number
+    positionY:number,
 }
 
-export default function viewCount(auth:IUser, dispatch:any, currPosts:currPostType[], viewedPosts:number):number {
+export default function viewCount(auth:IUser, dispatch:any, currPosts:currPostType[], viewedPosts:number, setPosts: (callback:(prev: IPost[]) => IPost[]) => void):number {
     if(currPosts.length===0 || !currPosts[viewedPosts]) return viewedPosts
     let post = currPosts[viewedPosts] 
     if(window.scrollY >= post.positionY && !currPosts[viewedPosts].watched) {
@@ -17,9 +17,13 @@ export default function viewCount(auth:IUser, dispatch:any, currPosts:currPostTy
         viewedPosts += 1;
     }
     if(currPosts.length === viewedPosts) {//if last post of current posts list is watched 
-        dispatch(fetchUserPosts({_id:auth._id,token:'token',count: currPosts.length}))//load another 10 posts
+        dispatch(fetchUserPosts({_id:auth._id,token:'token',count: currPosts.length}))
+          .then(({payload}:{payload:{posts:IPost[]}}) => {
+            console.log(payload.posts);
+            setPosts((prev:IPost[]) => [...prev,...payload.posts])
+            console.log(payload.posts);
+          })
         viewedPosts -= 1;
-        console.log('10 posts watched');
     }
     return viewedPosts
 }
