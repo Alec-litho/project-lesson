@@ -27,5 +27,5 @@ async function bootstrap() {
   SwaggerModule.setup('/app/docs', app, document)
   await app.listen(3001);
   
-}
+} 
 bootstrap();

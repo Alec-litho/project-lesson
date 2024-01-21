@@ -36,13 +36,12 @@ export default function Slider({setSliderTrue, currPictureId, sliderTrue,setCurr
                 console.log(data);
                 if(Array.isArray(data.value.album)&& !data.value.post) setPictures([data.value]);//if image is not stored in the post and album
                 else if(data.value.album) setPictures(data.value.album.images);//if image is stored in the album
-                // else if(res.data.post) { //if image is stored in the post
-                //     axios.post(`http://localhost:3001/posts/images`,{imgId:currPictureId},headers).then(res => {
-                //         console.log(res);
-                //         setPictures(res.data[0].images)
-                //     })
-                // }
-                //if image is stored in the album
+                else if(data.value.postId) { //if image is stored in the post
+                    axios.get(`http://localhost:3001/image/postImgs/${data.value.postId}`).then(res => {
+                        console.log(res);
+                        setPictures(res.data[0].images)
+                    })
+                }
             })
     }, [sliderTrue])
     function hideSlider(e:React.SyntheticEvent<HTMLElement>) {

@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import postImage from '../../helper_functions/postImage.js'
 import Post from '../../components/Post.jsx';
 import classes from './style/userPage.module.css'
-import {fetchUserPosts, createPost, removeRecommendation} from '../../features/postSlice'
+import {fetchUserPosts, createPost, removeRecommendation,setViewedPostsCount} from '../../features/postSlice'
 import {uploadImage} from '../../features/albumSlice';
 import { ReactComponent as Append } from '../../assets/icons/append.svg';
 // import { ReactComponent as Append } from '../../assets/icons/append.svg'
@@ -11,6 +11,8 @@ import { ReactComponent as Append } from '../../assets/icons/append.svg';
 import viewCount from '../../helper_functions/viewCount'
 import axios from "axios";
 import { Dispatch, SetStateAction } from "react";
+import Loader from "../../components/Loader";
+import { set } from "react-hook-form";
 
 type PostBlock = {
     setSliderTrue: Dispatch<SetStateAction<boolean>>;
@@ -31,30 +33,37 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let textArea = useRef<HTMLTextAreaElement>(null)
     let [posts, setPosts] = useState<IPost[] | []>([])
     let [currPosts, setCurrPosts] = useState<currPostType[] | []>([])
-    let viewedPosts = 0;
     let [focus, setFocus] = useState(false)
+    let [loader, setLoader] = useState(true)
     let [imagesToAppend, setImagesToAppend] = useState<ImageModel[] | []>([])
     let dispatch = useAppDispatch()
-    console.log(posts, currPosts);
-    
-    window.onscroll = () => viewedPosts = viewCount(auth.userInfo, dispatch, currPosts, viewedPosts, setPosts);
+    let viewedPosts = userPosts.lastViewedPosts//number of posts that were viewed to user after loading another new posts (initially its 0)
+    window.onscroll = () => viewedPosts = viewCount({auth:auth.userInfo, dispatch, currPosts, viewedPosts, setPosts, setViewedPostsCount, setLoader});
 
     useEffect(() => {
-        dispatch(fetchUserPosts({_id:user._id, token:"token",count:currPosts.length}))
-            .then((response:any) => setPosts(response.payload.posts))
-    }, [user])
+        console.log('update',posts);
+        if(posts.length===0) {
+            dispatch(fetchUserPosts({_id:user._id, token:"token",count:currPosts.length}))
+            .then((response:any) => {
+              setPosts(response.payload.posts)
+              setLoader(false)
+            })
+        } 
+    }, [posts])
 
     
     function appendImage(target:EventTarget) {
         postImage(target,false/*album*/,false/*postId*/).then(res => {//saves image to 'imgbb.com' server
             dispatch(uploadImage({image:{...res, user: user._id,description:""}, token:"token"}))//saves information about image to mongodb 
-            .then(({payload}:{payload:any}) => setImagesToAppend(prev => [...prev, payload]))
+            .then(({payload}:{payload:any}) => {
+                setImagesToAppend(prev => [...prev, payload])
+            })
         })
     }
     function loadImages() {
         if(imagesToAppend.length===0) savePost()
         else {
-            imagesToAppend.forEach((img, indx) => {
+            imagesToAppend.forEach((img) => {
                 let id = img._id 
                 axios.patch(`http://localhost:3001/image/${id}`)
             })
@@ -120,6 +129,7 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
                 })
             }
             </div>
+            {loader? <Loader></Loader> : <div style={{"height":"100px"}}/*without this user cant scroll last post to the top of the screen to make it viewed*//>}
         </div>
     )
 }

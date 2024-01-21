@@ -20,7 +20,16 @@ export class ImageController {
   @ApiResponse({status:200,type:Image}) 
   @Get(':id/:populated') 
   async getOneImage(@Param('id') id:string, @Param('populated') populated: boolean, @Res() res: Response) {
+    console.log(id, populated);
+    
     const result = await this.imageService.getOneImage(id, populated);
+    res.send(result)
+  }
+  @ApiOperation({summary:"Get posts' images"})
+  @ApiResponse({status:200,type:[Image]})
+  @Get('postImgs/:id')
+  async getPostsImages(@Param('id') postId: string, @Res() res: Response) {
+    const result = await this.imageService.getPostsImages(postId);
     res.send(result)
   }
   @ApiOperation({summary:"Delete an image"})

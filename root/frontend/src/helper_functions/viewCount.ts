@@ -6,9 +6,18 @@ type currPostType = {
     watched:boolean,
     positionY:number,
 }
+interface viewCountProps {
+  auth: IUser
+  dispatch:any
+  currPosts:currPostType[]
+  viewedPosts:number
+  setPosts: (callback:(prev: IPost[]) => IPost[]) => void
+  setViewedPostsCount:(viewedPosts:number)=>void
+  setLoader:(viewedPosts:boolean)=>void
+}
 
-export default function viewCount(auth:IUser, dispatch:any, currPosts:currPostType[], viewedPosts:number, setPosts: (callback:(prev: IPost[]) => IPost[]) => void):number {
-    if(currPosts.length===0 || !currPosts[viewedPosts]) return viewedPosts
+export default function viewCount({auth, dispatch, currPosts, viewedPosts, setPosts,setViewedPostsCount, setLoader}:viewCountProps):number {
+  if(currPosts.length===0 || !currPosts[viewedPosts]) return viewedPosts
     let post = currPosts[viewedPosts] 
     if(window.scrollY >= post.positionY && !currPosts[viewedPosts].watched) {
         console.log(post.postId, 'is watched', viewedPosts, currPosts[viewedPosts]);
@@ -19,9 +28,10 @@ export default function viewCount(auth:IUser, dispatch:any, currPosts:currPostTy
     if(currPosts.length === viewedPosts) {//if last post of current posts list is watched 
         dispatch(fetchUserPosts({_id:auth._id,token:'token',count: currPosts.length}))
           .then(({payload}:{payload:{posts:IPost[]}}) => {
-            console.log(payload.posts);
             setPosts((prev:IPost[]) => [...prev,...payload.posts])
             console.log(payload.posts);
+            dispatch(setViewedPostsCount(currPosts.length))
+            setLoader(false)
           })
         viewedPosts -= 1;
     }

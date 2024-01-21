@@ -22,8 +22,6 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const auth = useSelector(state => state.auth);
-  // let [sliderTrue, setSliderTrue] = useState(false);
-  // let [currPictureId, setCurrPictureId] = useState(false);
   let [editPost, setEditPost] = useState(false);
   let [editComment, setEditComment] = useState(false);
   let [replyToComment, setReplyToComment] = useState(false);
@@ -40,10 +38,10 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   let [commentsLeng,setCommentsLeng] = useState()
 
   useEffect(_ => {
-    console.log(postY.current.getBoundingClientRect().top);
+    console.log(postY.current.offsetTop);
     setComments(post.comments)
     setCommentsLeng(countComments(post.comments))
-    setCurrPosts((prevState) => [...prevState, {postId:post._id, watched:false, positionY:postY.current.getBoundingClientRect().top}])
+    setCurrPosts((prevState) => [...prevState, {postId:post._id, watched:false, positionY:postY.current.offsetTop}])
   },[])
 
   function deletePost(componentId){

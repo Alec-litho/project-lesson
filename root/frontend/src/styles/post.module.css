@@ -2,7 +2,7 @@
   margin-bottom: 30px;
   border-radius: 10px;
   width: 100%;
-  max-height: auto;
+  min-height: 800;
   background-color: white;
 }
 .post .profileCircle {
@@ -65,7 +65,7 @@ height: 25px;
 .images {
 box-sizing: border-box;
 padding: 20px 10px 0 10px;
-width: 100%;
+width: 500px;
 height: auto;
 display: grid;
 grid-template-columns: repeat(3, auto);
@@ -124,7 +124,7 @@ padding: 0 20px;
 display: flex;
 flex-direction: column;
 padding: 0 20px;
-height: 70px;
+height: 88px;
 overflow: hidden;
 }
 .commentsHideAll {

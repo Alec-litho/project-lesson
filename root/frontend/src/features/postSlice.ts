@@ -5,6 +5,7 @@ interface InitialState {
   userToken: string
   posts: IPost[]
   myPosts: IPost[]
+  lastViewedPosts: number
   status: string
   error: string | null
 }
@@ -12,6 +13,7 @@ const initialState:InitialState = {
   userToken: "",
   posts: [],
   myPosts: [],
+  lastViewedPosts: 0,
   status: 'idle',
   error: null
 }
@@ -98,7 +100,7 @@ export const fetchUserPosts = createAsyncThunk('posts/fetchUserPosts', async ({_
        Authorization: `Bearer ${token}`
     }})
     console.log(_id,response);
-    return {posts:[...response.data].reverse()};
+    return {posts:[...response.data]};
 })
 
 export const createPost = createAsyncThunk('posts/createPost', async ({post, token}:{post:CreatePostDto,token:string},{rejectWithValue}) => {
@@ -156,12 +158,14 @@ const postSlice = createSlice({
   reducers: {
     getInitialState: (state:InitialState, action) => {
       state.userToken = action.payload.token
+    },
+    setViewedPostsCount: (state:InitialState, action) => {
+      state.lastViewedPosts = action.payload
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserPosts.fulfilled, (state, action) => {
-        console.log('w');
         state.status = 'fulfilled'
         let posts = [...action.payload.posts]
         console.log(posts);
@@ -207,5 +211,5 @@ const postSlice = createSlice({
   }
 })
 
-
+export const {setViewedPostsCount} = postSlice.actions
 export default postSlice.reducer

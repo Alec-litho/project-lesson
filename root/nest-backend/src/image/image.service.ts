@@ -39,15 +39,30 @@ export class ImageService {
   findAll() {
     return `This action returns all image`;
   }
+  async getPostsImages(postId:string) {
+    try {
+      console.log(postId);
+      const postIdMongoose = new mongoose.Types.ObjectId(postId)
+      console.log(postIdMongoose);
+      
+      const posts = await this.imageModel.find({postId:postIdMongoose})
+      console.log(posts);
+      return posts? [] : posts
+    } catch (error) {
+      console.log(error);
+      
+      return error
+    }
 
+  }
   async getOneImage(id:string, populated:boolean) {
     try {
-      console.log(populated);
-      
+      const imageId = new mongoose.Types.ObjectId(id)
       if(!mongoose.Types.ObjectId.isValid(id)) throw new BadRequestException({message:"id is not valid"});
-      let result = populated? await this.imageModel.findById(id).populate({path:"album",populate:{path:"images"}}) : await this.imageModel.findById(id);
+      let result = populated? await this.imageModel.findById(imageId) : await this.imageModel.findById(imageId);
+      console.log(result);
       if(result!==null) {
-        return {message: 'success', value: result}
+        return {message: 'success', value: result.postId? result : result.populate({path:"album",populate:[{path:"images"}]})}
       } else {
         throw new NotFoundException();
       }
