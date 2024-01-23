@@ -17,48 +17,85 @@
     align-items: center;
     margin: 0 auto;
 }
-.img-slider {
-    max-height: 600px;
-    max-width: 1000px;
-    
-}
-.img-cont-slider.show {
-    display: flex;
-}
+
 .image-slider-header {
+    width: 700px;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
-    background-color: rgba(63, 63, 63, 0.5);
+    background-color: rgb(29, 29, 29);
 }
 .img-cont-slider {
-    display: none;
+    display: flex;
     justify-content: center;
     gap: 15px;
-    width: 70%;
+    width: 1024px;
     max-height: auto;
 }
-.arrowRight, .arrowLeft {
-    fill: white;
-    cursor: pointer;
-    display: block;
+.img-slider {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+.img {
+    display: none;
+    user-select: none;
+    object-fit: contain;
+    max-height: 500px;
+    max-width: 700px;
+    min-height: 400px;
+    min-width: 400px;
+}
+.img.show {
+    display: flex;
+}
+
+.right-arrow, .left-arrow {
+    opacity: 0;
+    z-index: 10;
     position: absolute;
-    width: 30px;
-    height: 30px;
-    top: 50%;
-} 
-.arrowRight {
-    left: 100%;
+    width: 10%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.459);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.arrowLeft{
-    transform: rotate(180deg);
-    left: -5%;
+.right-arrow {right: 0;}
+.left-arrow{left: 0;}
+
+.arrow-icon {
+    display: none;
+    width: 50px;
+    height: 50%;
+    color: white;
 }
+
+.left-arrow .arrow-icon {transform: rotate(180deg);}
 .comments-slider {
     width: 30%;
     padding: 5px;
     border-radius: 10px;
     background-color: white;
 }
+.description-header {
+    display: flex;
+    align-items: center;
+}
+.description-profilePicture {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
 .icon {
     width: 20px;
     height: 20px;
 }
+.right-arrow.show {opacity: 100%}
+.left-arrow.show {opacity: 100%}
+.right-arrow.show .arrow-icon{display: flex;}
+.left-arrow.show .arrow-icon{display: flex;}
