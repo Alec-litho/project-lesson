@@ -93,12 +93,13 @@ interface IUpdatePostDto {
 //------------Image---------------//
 interface ImageModel {
     title: string; 
-    user: string; 
+    user: string | IUser;  
     description: string;
     album: string | Boolean;
     imageURL: string;
     postId: string | Boolean;
-    _id: string
+    _id: string;
+    createdAt: string
 }
 //------------Album---------------//
 interface IAlbumModel {
