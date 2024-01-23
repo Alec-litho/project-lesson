@@ -41,16 +41,11 @@ export class ImageService {
   }
   async getPostsImages(postId:string) {
     try {
-      console.log(postId);
       const postIdMongoose = new mongoose.Types.ObjectId(postId)
-      console.log(postIdMongoose);
-      
-      const posts = await this.imageModel.find({postId:postIdMongoose})
+      const posts = await this.imageModel.find({postId:postIdMongoose}).populate({path:'user', model:'User', select:'fullName _id avatarUrl'})
       console.log(posts);
-      return posts? [] : posts
+      return posts
     } catch (error) {
-      console.log(error);
-      
       return error
     }
 

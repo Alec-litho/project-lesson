@@ -16,20 +16,18 @@ export class ImageController {
     const result = await this.imageService.uploadImage(image);
     res.send(result)
   }
+  @ApiOperation({summary:"Get posts' images"})
+  @ApiResponse({status:200,type:[Image]})
+  @Get('postImgs/:postId') 
+  async getPostsImages(@Param('postId') postId: string, @Res() res: Response) {
+    const result = await this.imageService.getPostsImages(postId);
+    res.send(result)
+  }
   @ApiOperation({summary:"Get an image, 'populated' parameter is required to specify if you want to receive detailed information about image or not"})
   @ApiResponse({status:200,type:Image}) 
   @Get(':id/:populated') 
   async getOneImage(@Param('id') id:string, @Param('populated') populated: boolean, @Res() res: Response) {
-    console.log(id, populated);
-    
     const result = await this.imageService.getOneImage(id, populated);
-    res.send(result)
-  }
-  @ApiOperation({summary:"Get posts' images"})
-  @ApiResponse({status:200,type:[Image]})
-  @Get('postImgs/:id')
-  async getPostsImages(@Param('id') postId: string, @Res() res: Response) {
-    const result = await this.imageService.getPostsImages(postId);
     res.send(result)
   }
   @ApiOperation({summary:"Delete an image"})
