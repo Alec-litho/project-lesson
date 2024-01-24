@@ -31,7 +31,7 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let tools = useRef<HTMLDivElement>(null)
     let append = useRef(null)
     let textArea = useRef<HTMLTextAreaElement>(null)
-    let [posts, setPosts] = useState<IPost[] | []>([])
+    let [posts, setPosts] = useState<IPost[] | [] | null>(null)
     let [currPosts, setCurrPosts] = useState<currPostType[] | []>([])
     let [focus, setFocus] = useState(false)
     let [loader, setLoader] = useState(true)
@@ -41,8 +41,9 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     window.onscroll = () => viewedPosts = viewCount({auth:auth.userInfo, dispatch, currPosts, viewedPosts, setPosts, setViewedPostsCount, setLoader});
 
     useEffect(() => {
-        console.log('update',posts);
-        if(posts.length===0) {
+        console.log(posts);
+        
+        if(posts===null) {
             dispatch(fetchUserPosts({_id:user._id, token:"token",count:currPosts.length}))
             .then((response:any) => {
               setPosts(response.payload.posts)
@@ -80,12 +81,13 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
                 textArea.current.value = ''
                 textArea.current.style.height = 50 + 'px'
                 setImagesToAppend([])
-                setPosts([post,...posts]);
+                const val = posts!==null? [post,...posts] : []
+                setPosts(val);
             }
           })
     }
     function removeFromRecommendations(postId:string) {
-        const filteredPosts = posts.filter(post => post._id !== postId);
+        const filteredPosts = posts?.filter(post => post._id !== postId) as IPost[];
         setPosts(filteredPosts);
         dispatch(removeRecommendation({postId, userId:user._id}))
     }
@@ -122,7 +124,7 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
                 </div>
             </div>}
             <div className={classes.postsList}>{
-                posts.map((post,id) => {
+                posts?.map((post,id) => {
                     return <Post key={id} author={user} visitor={auth.userInfo} post={post}setCurrPosts={setCurrPosts}setSliderTrue={setSliderTrue}token={"token"} 
                     setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} removeFromRecommendations={removeFromRecommendations} setPosts={setPosts}
                     />
