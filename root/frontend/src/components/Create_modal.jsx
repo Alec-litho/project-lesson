@@ -4,22 +4,26 @@ import classes from "../styles/create_modal.module.css";
 import { ReactComponent as Cross } from "../assets/icons/cross.svg";
 import { uploadAlbum } from "../features/albumSlice";
 
-export default function CreateModal({userId,update,token,setModal,closeModal,}) {
+export default function CreateModal({userId,update,token,setModal,closeModal,setAlbums}) {
   const [limit, setLimit] = useState(true);
   const [num, setNum] = useState(0);
   const dispatch = useDispatch();
   const descriptionTarget = useRef(null);
   const albumName = useRef(null);
+
   function createAlbum(e) {
     console.log(userId, albumName.current.value, descriptionTarget.current.value, token);
     const album = {user: userId, name: albumName.current.value, description: descriptionTarget.current.value? descriptionTarget.current.value : ''}
     if (limit) {
-      dispatch(uploadAlbum({album, token}));
-      descriptionTarget.current.value = "";
-      albumName.current.value = "";
-      setModal((prev) => {
-        prev = !closeModal;
-      });
+      dispatch(uploadAlbum({album, token}))
+        .then(({payload}) => {
+          console.log(payload);
+          setAlbums(prev => [...prev,payload])
+          descriptionTarget.current.value = "";
+          albumName.current.value = "";
+          setModal(prev => !prev);
+        })
+
     }
   }
   function checkLimit(e) {
