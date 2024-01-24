@@ -46,7 +46,7 @@ export class ImageService {
       console.log(posts);
       return posts
     } catch (error) {
-      return error
+      return error 
     }
 
   }
@@ -54,10 +54,15 @@ export class ImageService {
     try {
       const imageId = new mongoose.Types.ObjectId(id)
       if(!mongoose.Types.ObjectId.isValid(id)) throw new BadRequestException({message:"id is not valid"});
-      let result = populated? await this.imageModel.findById(imageId) : await this.imageModel.findById(imageId);
-      console.log(result);
-      if(result!==null) {
-        return {message: 'success', value: result.postId? result : result.populate({path:"album",populate:[{path:"images"}]})}
+      let image:ImageDocument;
+      if(populated) {
+        image = await this.imageModel.findById(imageId).populate([{path:'user', model:'User', select:'fullName _id avatarUrl'},{path:"album",populate:[{path:"images"}]}]) 
+      } else {
+        image = await this.imageModel.findById(imageId).populate({path:'user', model:'User', select:'fullName _id avatarUrl'});
+      }
+      console.log("result",image);
+      if(image!==null) {
+        return {message: 'success', value: image}
       } else {
         throw new NotFoundException();
       }

@@ -58,9 +58,9 @@
     opacity: 0;
     z-index: 10;
     position: absolute;
-    width: 10%;
+    width: 8%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.459);
+    background-color: rgba(0, 0, 0, 0.267);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,7 +72,7 @@
     display: none;
     width: 50px;
     height: 50%;
-    color: white;
+    color: rgba(255, 255, 255, 0.521);
 }
 
 .left-arrow .arrow-icon {transform: rotate(180deg);}

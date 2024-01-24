@@ -57,12 +57,11 @@ export const fetchImg = createAsyncThunk('albums/fetchImg', async function({_id,
 export const uploadImage = createAsyncThunk('albums/uploadImage', async ({image,token}:{image:CreateImageDto,token:string},api):Promise<ImageModel> => {
     const globalState:any = api.getState();
     const albumState = globalState.albums as InitialState
-    console.log(image,albumState);
     const {data} = await axios.post('http://localhost:3001/image', JSON.stringify(image), {headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`
     }})
-
+    console.log(data);
     return data
 
 })
@@ -79,11 +78,11 @@ export const deletePicture = createAsyncThunk('albums/deletePicture', async({_id
 export const uploadAlbum = createAsyncThunk('albums/createAlbum', async ({album,token}:{album:CreateAlbumDto,token:string}):Promise<IAlbumModel> => {
   try {
     console.log(album)
-    const response = await axios.post('http://localhost:3001/albums', album, {headers: {
+    const {data} = await axios.post('http://localhost:3001/albums', album, {headers: {
       'Content-Type': 'application/json',
        Authorization: `Bearer ${token}`,
     }});
-    return response.data;
+    return data;
   } catch(err:any) {
     return err
   }

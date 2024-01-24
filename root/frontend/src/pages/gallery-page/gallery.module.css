@@ -1,6 +1,6 @@
 .gallery {
   background-color: white;
-    width: 100vw;
+    width: 1500px;
   
     height: auto;
     display: flex;
@@ -12,7 +12,7 @@
   background-color: white;
 }
 
-.rightPanel {
+.leftPanel { 
   position: absolute;
   left: 0;
   right: 0;
@@ -23,6 +23,7 @@
     height: 600px;
     background-color: rgba(228, 232, 243, 0.822);
     border-right: 2px solid rgb(206, 215, 228);
+    padding: 10px 15px;
 }
 .galleryBody {
     margin-left: 275px;
@@ -92,7 +93,7 @@
     flex-direction: column;
     align-items: flex-start;
     width: calc(100% - 1px);
-    height: 50px;
+    height: 30px;
 }
 .album:hover p{
     padding-left: 25px;
@@ -103,18 +104,14 @@
 .album .underline {
     transition: .5s;
     display: block;
-    margin-left: 20px;
     height: 2px;
     width: 100px;
     background-color: rgb(53, 121, 199);
 }
-.albums h1 {
-    padding-left: 20px;
-}
+
 .album p {
     width: 250px;
     transition: .2s;
-    padding-left: 20px;
     color:   rgb(53, 121, 199);
     font-size: 16px;
 }
@@ -145,6 +142,6 @@
   height: 40px;
   fill: rgb(163, 163, 163);
   cursor: pointer;
-  padding: 10px 0 0 200px;
+
 }
 

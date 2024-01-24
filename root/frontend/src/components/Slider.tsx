@@ -27,17 +27,17 @@ export default function Slider({setSliderTrue, currPictureId, sliderTrue,setCurr
         dispatch(deletePicture({_id,token}))
         setSliderTrue(!sliderTrue)
     }
-    console.log(pictures,imgIndx);
     useEffect(() => {
         if(!currPictureId) return
         let headers = {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${token}`}}
         axios.get(`http://localhost:3001/image/${currPictureId}/true`,headers)//get info of selected image and thus find out if it has album
             .then(({data}) => {
-                if(Array.isArray(data.value.album)&& !data.value.post) setPictures([data.value]);//if image is not stored in the post and album
+                console.log(data,currPictureId);
+                
+                if(data.value.album === false && data.value.postId === false) setPictures([data.value]);//if image is not stored in the post and album
                 else if(data.value.album) setPictures(data.value.album.images);//if image is stored in the album
                 else if(data.value.postId) { //if image is stored in the post
                     axios.get(`http://localhost:3001/image/postImgs/${data.value.postId}`).then(res => {
-                        console.log(res);
                         setPictures(res.data)
                         setImgIndx(res.data.length===0? 0 : currPictureId!==null?res.data.map((img:any)=>img._id).indexOf(currPictureId) : 0)
                     })
@@ -45,6 +45,7 @@ export default function Slider({setSliderTrue, currPictureId, sliderTrue,setCurr
             })
         return () => setImgIndx(0)
     }, [sliderTrue])
+
     function hideSlider(e:React.SyntheticEvent<HTMLElement>) {
         if(e.target instanceof Element === false) return 
         if(e.target.className === 'imageContainer') {
@@ -95,11 +96,11 @@ export default function Slider({setSliderTrue, currPictureId, sliderTrue,setCurr
                             <Arrow className="arrow-icon"/>
                         </div>
                         <div className="img-slider" ref={sliderContainer}>
-                            {pictures.map((photo, indx) => {
-                                console.log(pictures,indx,imgIndx);
-                                
+                            {pictures.length!==0?pictures.map((photo, indx) => {
                                 return <img key={indx} className={indx===imgIndx? 'img show' : 'img'} src={photo.imageURL} onClick={sliderMoveForward}></img>
                                 })
+                             :
+                              <Loader></Loader>
                             }
                         </div>
                         <div className="right-arrow" onMouseOver={(e) => showArrow(e)} onMouseLeave={(e) => removeArrow(e)} onClick={sliderMoveForward}>
