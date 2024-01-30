@@ -20,15 +20,10 @@ export default function App() {
   dispatch(getCookie())
   const {isAuth, userToken, userId, status, error, userInfo} = useSelector((state) => state.auth);
   useEffect(() => {
-    console.log(status, error);
     if(!isAuth) {
-      console.log(userId,userToken);
       if(status !== 'error') dispatch(getMe({_id:userId, token:userToken}));
     }
-    if(error) {
-      console.log('redirect');
-      redirect("/error")//not working
-    }
+  if(error) {redirect("/error")/*not working*/}
   },[error])
   return (
     <div>

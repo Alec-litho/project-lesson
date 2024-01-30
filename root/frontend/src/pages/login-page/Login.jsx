@@ -3,7 +3,7 @@ import { Link,useNavigate } from "react-router-dom";
 import "./login.css";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, getInitialState, getMe } from "../../features/authSlice";
+import { loginUser, getMe } from "../../features/authSlice";
 import Register from "../register-page/Register";
 
 

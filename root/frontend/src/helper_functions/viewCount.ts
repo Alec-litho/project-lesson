@@ -7,7 +7,7 @@ type currPostType = {
     positionY:number,
 }
 interface viewCountProps {
-  auth: IUser
+  user: IUser
   dispatch:any
   currPosts:currPostType[]
   viewedPosts:number
@@ -16,7 +16,7 @@ interface viewCountProps {
   setLoader:(viewedPosts:boolean)=>void
 }
 
-export default function viewCount({auth, dispatch, currPosts, viewedPosts, setPosts,setViewedPostsCount, setLoader}:viewCountProps):number {
+export default function viewCount({user, dispatch, currPosts, viewedPosts, setPosts,setViewedPostsCount, setLoader}:viewCountProps):number {
   if(currPosts.length===0 || !currPosts[viewedPosts]) return viewedPosts
   console.log(currPosts.length, viewedPosts);
   
@@ -28,7 +28,7 @@ export default function viewCount({auth, dispatch, currPosts, viewedPosts, setPo
         viewedPosts += 1;
     }
     if(currPosts.length-1 === viewedPosts) {//if last post of current posts list is watched 
-        dispatch(fetchUserPosts({_id:auth._id,token:'token',count: currPosts.length}))
+        dispatch(fetchUserPosts({_id:user._id,token:'token',count: currPosts.length}))
           .then(({payload}:{payload:{posts:IPost[]}}) => {
             setPosts((prev:IPost[] | null) =>  prev!==null? [...prev,...payload.posts] : [])
             console.log(payload.posts);

@@ -68,8 +68,10 @@ export class UserService {
     }
   }
   async getUser(id:string) {
+    console.log(id);
+    
     const userId = new mongoose.Types.ObjectId(id)
-    console.log(userId, id);
+    console.log(userId);
     const viewUserFields = "fullName location friends birth age gender avatarUrl _id"
     const user:User = await this.userModel.findById(userId).select(viewUserFields).populate({
       path: 'friends',

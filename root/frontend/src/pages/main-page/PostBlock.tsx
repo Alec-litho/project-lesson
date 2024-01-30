@@ -38,7 +38,7 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let [imagesToAppend, setImagesToAppend] = useState<ImageModel[] | []>([])
     let dispatch = useAppDispatch()
     let viewedPosts = userPosts.lastViewedPosts//number of posts that were viewed to user after loading another new posts (initially its 0)
-    window.onscroll = () => viewedPosts = viewCount({auth:auth.userInfo, dispatch, currPosts, viewedPosts, setPosts, setViewedPostsCount, setLoader});
+    window.onscroll = () => viewedPosts = viewCount({user, dispatch, currPosts, viewedPosts, setPosts, setViewedPostsCount, setLoader});
 
     useEffect(() => {
         console.log(posts);
@@ -120,7 +120,7 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
                       <Append className={classes.icon} />
                       <input className={classes.append} id="image-append" ref={append} type="file" onInput={e => appendImage(e.target)}></input>
                    </div>
-                  
+                   
                 </div>
             </div>}
             <div className={classes.postsList}>{

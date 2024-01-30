@@ -17,54 +17,55 @@ export default function User() {
     const auth = useAppSelector(state => state.auth);
     const albumState = useAppSelector(state => state.albums.albums);
     const dispatch = useAppDispatch();
-    const [user, setUser] = useState<IUser>({fullName:'empty_object',email:'',password:'',location:'',friends:0,age:0,gender:'',_id:'656395f24db3c1a422c2e8c9',avatarUrl: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp"})
-    const [albums, setAlbums] = useState<IAlbumModel[] | []>([])
-    const [isLoaded, setFinish] = useState(false);
-    const [photos, setPhotos] = useState<IAlbumModel[]>([]);
+    const [user, setUser] = useState<IUser>(auth.userInfo)
+    const [album, setAlbum] = useState<IAlbumModel | null>(null)
+    const [isLoaded, setFinishLoading] = useState(false);
     const [sliderTrue, setSliderTrue] = useState<boolean>(false);
     const [currPictureId, setCurrPictureId] = useState<string | null>(null);//current img id to show in slider
-
+    console.log("update outside of useeffect");
+        
     useEffect(() => {
-        if(albums!==undefined && user!==undefined) {
+        console.log("update in useeffect")
+        if(auth.isAuth === false) return
         if(id === auth.userId || id===undefined) {//if user enters his own page
             setUser(auth.userInfo)
-            setAlbums(albumState)
-        } else {//if its page of another user
-            dispatch(getUser({_id:id,token:auth.userToken})).then(res => setUser(res.payload))
+            const mainAlbum = albumState.filter(album => album.name === 'All')
+            mainAlbum.length!==0? setAlbum(mainAlbum[0]) : setUserAlbum()
+        } else {
+            dispatch(getUser({_id:id,token:auth.userToken})).then(({payload}) => {
+                setUser(payload)
+                setUserAlbum()
+            })/*if its page of another user*/
+  
         }
-        if(photos.length===0 || user._id !== '656395f24db3c1a422c2e8c9'/*initial empty user*/){
-            if(albums.length!==0) {setPhotos([...albums])}
-            else {
-                const data = {_id: id === auth.userId || !id? auth.userId : user._id, token:auth.userToken}
-                dispatch(fetchMyAlbums(data)).then((res:any) => {
-                    console.log(res); 
-                    res.error? setPhotos([]) : setPhotos(res.payload);
-                })
-            }
-            
-        };
-        setFinish(true);
+        
+    },[id, auth])
+
+
+    function setUserAlbum():void {
+        const data = {_id: id === auth.userId || !id? auth.userId : user._id, token:auth.userToken}
+        dispatch(fetchMyAlbums(data)).then((res:any) => {
+            console.log(res); 
+            setAlbum(res.payload.filter((album:IAlbumModel) => album.name === 'All')[0]);
+            setFinishLoading(true);
+        })
     }
-    },[id])
-    console.log(user);
-    
-    if(isLoaded === false) return <Loader/> 
     return (
+        <>
+         {isLoaded === false? <Loader/> 
+            :
         <div className={classes.mainpage}>
-           { user!==undefined && 
            <>
            <Profile fullName={user.fullName} age={user.age} friends={user.friends} avatarUrl={user.avatarUrl} location={user.location} user={user}/>
             <div className={classes.mainContent}>
-                <AboutMeBlock galleryPhotos={photos} setSliderTrue={setSliderTrue} isLoadedState={isLoaded}/>
+                <AboutMeBlock galleryPhotos={album?album.images:[]} setSliderTrue={setSliderTrue} isLoadedState={isLoaded}/>
                 <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue} user={user} />
             </div>
             <AdditionalInfoBlock/>
-            {/*sidebar??*/}
             <Slider sliderTrue={sliderTrue} token={auth.userToken} setSliderTrue={setSliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}></Slider></>
-           
-            }
         </div>
-    );
+          }
+        </>);
 }
 
 

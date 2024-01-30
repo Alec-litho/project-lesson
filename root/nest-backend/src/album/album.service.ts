@@ -25,7 +25,7 @@ export class AlbumService {
   }}
 
   async getUserAlbums(id:string) {
-    console.log(id);
+    console.log("28",id);
     
     const userId = new mongoose.Types.ObjectId(id)
     const albums = await this.albumModel.find({user:userId}).populate("images")

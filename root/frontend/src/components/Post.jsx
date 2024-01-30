@@ -1,5 +1,4 @@
 //-----------------------------Icons-----------------------------//
-import { ReactComponent as Delete } from '../assets/icons/delete.tsx';
 import { ReactComponent as Share } from '../assets/icons/share.svg';
 import { ReactComponent as Like } from '../assets/icons/like.svg';
 import { ReactComponent as Views } from '../assets/icons/views.svg';
@@ -8,7 +7,6 @@ import {ReactComponent as Cross} from '../assets/icons/cross.svg';
 import { ReactComponent as Append } from '../assets/icons/append.svg';
 //-----------------------------Icons-----------------------------//
 import classes from '../styles/post.module.css';
-import Slider from './Slider';
 import { useEffect, useRef, useState } from 'react';
 import MessageTool from './MessageTool';
 import ComponentMenu from './ComponentMenu'
@@ -36,9 +34,9 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   let commentAuthorH5 = useRef()
   let postY = useRef(null);
   let [commentsLeng,setCommentsLeng] = useState()
-
+//таких постов может быть и 100, насколько это будет тяжело со всеми фунциями и тп
   useEffect(_ => {
-    console.log(postY.current.offsetTop);
+
     setComments(post.comments)
     setCommentsLeng(countComments(post.comments))
     setCurrPosts((prevState) => [...prevState, {postId:post._id, watched:false, positionY:postY.current.offsetTop}])
@@ -48,10 +46,7 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
     setPosts(prev => prev.filter(el => el._id!==post._id))
     dispatch(deletePostReducer({postId:componentId, token}))
   }
-  function deleteComment(componentId) {
-    dispatch(deleteCommentReducer({commentId:componentId, token}))
-
-  }
+  function deleteComment(componentId) {dispatch(deleteCommentReducer({commentId:componentId, token}))}
   function likePost() {
     setPostLikes(prev => [...prev,auth.userId]);
     dispatch(uploadLikePost({id:post._id, userId:visitor._id}));
@@ -113,11 +108,11 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
           <div className={isCommenting? classes.comments : comments.length>0 ? classes.commentsShowOne : classes.commentsHideAll}>
             {comments.map((comment, id) => {
               return ( 
-              <div key={id} className={classes.commentWrapper}>
+              <div key={id}>
                 {editComment && editComment===comment._id?
                 <CommentEdit  comment={comment} visitor={visitor}></CommentEdit>
                 :
-                <Comment comment={comment} visitor={visitor} reply={reply} navigate={navigate} showReplies={showReplies} setShowReplies={setShowReplies} author={author}
+                <Comment comment={comment} visitor={visitor} reply={reply} navigate={navigate} showReplies={showReplies} setShowReplies={setShowReplies} author={author} type={"comment"}
                   likeComment={likeComment}removeLikeComment={removeLikeComment}commentAuthorH5={commentAuthorH5}deleteComment={deleteComment}setEditComment={setEditComment}
                 ></Comment>
                 }   
@@ -130,9 +125,9 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
     )
 }
 
-function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,likeComment,commentAuthorH5,removeLikeComment,deleteComment,setEditComment, author}=props) {
+function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,likeComment,commentAuthorH5,removeLikeComment,deleteComment,setEditComment, author, type}=props) {
   return (
-    <div data-id={comment._id} className={classes.commentComponent}>
+    <div data-id={comment._id} className={classes.commentWrapper}>
       <div className={classes.comment}>
         <div className={classes.postLeftside}>
           <img className={classes.profilePicture} src={comment.user.avatarUrl} onClick={()=>navigate(`/${comment.user._id}`)}></img>
@@ -164,27 +159,50 @@ function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,like
           </div>
         </div>
       </div>
-      {/*С каждым ответом на коментарий будет создаватся этот компоненто, нужно ли мне так? */}
-      {comment.replies?.length>0 && <CommentReplies showReplies={showReplies} replies={comment.replies}author={author} reply={reply} visitor={visitor} navigate={navigate} likeComment={likeComment} 
-      commentAuthorH5={commentAuthorH5} removeLikeComment={removeLikeComment} commentId={comment._id} 
-      />}
-       {/*С каждым ответом на коментарий будет создаватся этот компоненто, нужно ли мне так? */}
+      {console.log(comment.replies.length)}
+      {comment.replies.length>0 && 
+      <> {
+        comment.type==="comment"? 
+        <div className={classes.repliesWrapper}>
+        {showReplies.indexOf(comment._id)!==-1 && 
+        <div className={classes.replies}>
+          {comment.replies.map((comment,id) => {
+            return <Comment key={id} comment={comment} author={author} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply} showReplies={showReplies} type={"reply"}
+            />
+          })}
+        </div>
+        }
+      </div>
+      :
+      <div>
+        {comment.replies.map((comment,id) => {
+          return <Comment key={id} comment={comment} author={author} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply} showReplies={showReplies}  type={"reply"}
+          />
+        })}
+      </div>
+      }
+      </>
+      }
+
     </div>
   )
 }
+{/* <CommentReplies showReplies={showReplies} replies={comment.replies}author={author} reply={reply} visitor={visitor} navigate={navigate} likeComment={likeComment} 
+commentAuthorH5={commentAuthorH5} removeLikeComment={removeLikeComment} commentId={comment._id}/>
+
 function CommentReplies({showReplies,replies,author,visitor,navigate,likeComment,removeLikeComment,reply,commentId}=props) {
   return (
     <div className={classes.repliesWrapper}>
       {showReplies.indexOf(commentId)!==-1 && (
       <div className={classes.replies}>
         {replies.map((comment,id) => {
-          return <Comment key={id} comment={comment} author={author} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply} showReplies={showReplies}
+          return <Comment key={id} comment={comment} author={author} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply} showReplies={showReplies} 
           />
         })}
       </div>)}
     </div>
   )
-}
+}  */}
 function CommentEdit(comment,visitor) {
   return (
     <div className={classes.comment}>

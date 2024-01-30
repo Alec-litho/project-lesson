@@ -193,6 +193,10 @@ color: #727272;
 color: rgb(53, 94, 172);
 text-decoration: none;
 }
+.repliesWrapper{
+  display: flex;
+  flex-direction: column;
+}
 .commentReplies {
   display: flex;
   align-items: center;
