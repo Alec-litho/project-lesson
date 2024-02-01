@@ -64,6 +64,7 @@ export default function Gallery(props) {
         } 
     }
     function showSlider(e) {
+        console.log(e.target.dataset.id);
         setCurrPictureId(e.target.dataset.id)
         setSliderTrue(!sliderTrue)
     }

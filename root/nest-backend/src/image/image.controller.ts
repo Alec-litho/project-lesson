@@ -23,7 +23,7 @@ export class ImageController {
     const result = await this.imageService.getPostsImages(postId);
     res.send(result)
   }
-  @ApiOperation({summary:"Get an image, 'populated' parameter is required to specify if you want to receive detailed information about image or not"})
+  @ApiOperation({summary:"Get an image, 'populated' parameter is required to specify if you want to receive detailed information about image's album. If album wasn't populated then img doesn't have it"})
   @ApiResponse({status:200,type:Image}) 
   @Get(':id/:populated') 
   async getOneImage(@Param('id') id:string, @Param('populated') populated: boolean, @Res() res: Response) {

@@ -6,13 +6,10 @@ import classes from './style/userPage.module.css'
 import {fetchUserPosts, createPost, removeRecommendation,setViewedPostsCount} from '../../features/postSlice'
 import {uploadImage} from '../../features/albumSlice';
 import { ReactComponent as Append } from '../../assets/icons/append.svg';
-// import { ReactComponent as Append } from '../../assets/icons/append.svg'
-// import { ReactComponent as Tags } from '../../assets/icons/tags.svg'
 import viewCount from '../../helper_functions/viewCount'
 import axios from "axios";
 import { Dispatch, SetStateAction } from "react";
 import Loader from "../../components/Loader";
-import { set } from "react-hook-form";
 
 type PostBlock = {
     setSliderTrue: Dispatch<SetStateAction<boolean>>;
@@ -40,17 +37,17 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let viewedPosts = userPosts.lastViewedPosts//number of posts that were viewed to user after loading another new posts (initially its 0)
     window.onscroll = () => viewedPosts = viewCount({user, dispatch, currPosts, viewedPosts, setPosts, setViewedPostsCount, setLoader});
 
+    console.log(posts, user);
     useEffect(() => {
-        console.log(posts);
-        
-        if(posts===null) {
+
             dispatch(fetchUserPosts({_id:user._id, token:"token",count:currPosts.length}))
             .then((response:any) => {
+              console.log(response.payload.posts);
               setPosts(response.payload.posts)
               setLoader(false)
             })
-        } 
-    }, [posts])
+        
+    }, [user])
 
     
     function appendImage(target:EventTarget) {

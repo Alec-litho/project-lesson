@@ -28,24 +28,27 @@ export default function Slider({setSliderTrue, currPictureId, sliderTrue,setCurr
         setSliderTrue(!sliderTrue)
     }
     useEffect(() => {
-        if(!currPictureId) return
+        if(!currPictureId) return 
         let headers = {headers: {'Content-Type': 'application/json',"Authorization": `Bearer ${token}`}}
         axios.get(`http://localhost:3001/image/${currPictureId}/true`,headers)//get info of selected image and thus find out if it has album
             .then(({data}) => {
                 console.log(data,currPictureId);
                 
                 if(data.value.album === false && data.value.postId === false) setPictures([data.value]);//if image is not stored in the post and album
-                else if(data.value.album) setPictures(data.value.album.images);//if image is stored in the album
-                else if(data.value.postId) { //if image is stored in the post
+                else if(data.value.album) {//if image is stored in the album
+
+                    setPictures(data.value.album.images)
+                    setImgIndx(findIndx(data.value.album.images))
+                }else if(data.value.postId) { //if image is stored in the post
                     axios.get(`http://localhost:3001/image/postImgs/${data.value.postId}`).then(res => {
                         setPictures(res.data)
-                        setImgIndx(res.data.length===0? 0 : currPictureId!==null?res.data.map((img:any)=>img._id).indexOf(currPictureId) : 0)
+                        setImgIndx(findIndx(res.data))
                     })
                 }
             })
         return () => setImgIndx(0)
     }, [sliderTrue])
-
+    function findIndx(images:ImageModel[]) {return images.length===0? 0 : currPictureId!==null?images.map((img:any)=>img._id).indexOf(currPictureId) : 0}
     function hideSlider(e:React.SyntheticEvent<HTMLElement>) {
         if(e.target instanceof Element === false) return 
         if(e.target.className === 'imageContainer') {

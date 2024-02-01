@@ -54,15 +54,16 @@ export class ImageService {
     try {
       const imageId = new mongoose.Types.ObjectId(id)
       if(!mongoose.Types.ObjectId.isValid(id)) throw new BadRequestException({message:"id is not valid"});
-      let image:ImageDocument;
-      if(populated) {
-        image = await this.imageModel.findById(imageId).populate([{path:'user', model:'User', select:'fullName _id avatarUrl'},{path:"album",populate:[{path:"images"}]}]) 
+      let image:ImageDocument = await this.imageModel.findById(imageId);
+      let result;
+      if(populated && image.album) {
+        result = await image.populate([{path:'user', model:'User', select:'fullName _id avatarUrl'},{path:"album",populate:[{path:"images"}]}]) 
       } else {
-        image = await this.imageModel.findById(imageId).populate({path:'user', model:'User', select:'fullName _id avatarUrl'});
+        result = await image.populate({path:'user', model:'User', select:'fullName _id avatarUrl'});
       }
-      console.log("result",image);
+      console.log("result",image, result);
       if(image!==null) {
-        return {message: 'success', value: image}
+        return {message: 'success', value: image} 
       } else {
         throw new NotFoundException();
       }

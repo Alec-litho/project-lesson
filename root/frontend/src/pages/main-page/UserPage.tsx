@@ -12,7 +12,7 @@ import {  useParams } from 'react-router-dom';
 import { getUser } from '../../features/authSlice';
 
 export default function User() {
-    window.onbeforeunload = () => window.scrollTo(0, 0);
+
     const {id} = useParams()
     const auth = useAppSelector(state => state.auth);
     const albumState = useAppSelector(state => state.albums.albums);
@@ -22,28 +22,35 @@ export default function User() {
     const [isLoaded, setFinishLoading] = useState(false);
     const [sliderTrue, setSliderTrue] = useState<boolean>(false);
     const [currPictureId, setCurrPictureId] = useState<string | null>(null);//current img id to show in slider
-    console.log("update outside of useeffect");
-        
+    console.log("update outside of useeffect",user);
+
     useEffect(() => {
         console.log("update in useeffect")
         if(auth.isAuth === false) return
         if(id === auth.userId || id===undefined) {//if user enters his own page
             setUser(auth.userInfo)
             const mainAlbum = albumState.filter(album => album.name === 'All')
-            mainAlbum.length!==0? setAlbum(mainAlbum[0]) : setUserAlbum()
-        } else {
+            if(mainAlbum.length===0)  setUserAlbum(auth.userInfo._id);
+            else {
+                setAlbum(mainAlbum[0])
+                setFinishLoading(true);
+            }
+            
+        } else {/*if its page of another user*/
             dispatch(getUser({_id:id,token:auth.userToken})).then(({payload}) => {
+                console.log(payload);
+                
                 setUser(payload)
-                setUserAlbum()
-            })/*if its page of another user*/
+                setUserAlbum(payload._id)
+            })
   
         }
         
     },[id, auth])
 
 
-    function setUserAlbum():void {
-        const data = {_id: id === auth.userId || !id? auth.userId : user._id, token:auth.userToken}
+    function setUserAlbum(userId:string):void {
+        const data = {_id: userId, token:auth.userToken}
         dispatch(fetchMyAlbums(data)).then((res:any) => {
             console.log(res); 
             setAlbum(res.payload.filter((album:IAlbumModel) => album.name === 'All')[0]);

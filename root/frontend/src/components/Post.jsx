@@ -72,6 +72,13 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
     window.scrollTo({top:messageToolCordY.current.offsetTop-400, behavior:'smooth'})
     setReplyToComment(replyToComment = true)
   }
+  function viewUser(comment) {
+    setPosts(null)
+    navigate(`/${comment.user._id}`);
+    window.scrollTo(0, 0)
+    setCurrPosts([])
+  }
+  
     return (
         <div className={classes.post} ref={postY}>
         <div className={classes.postHeader}>
@@ -113,7 +120,7 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
                 <CommentEdit  comment={comment} visitor={visitor}></CommentEdit>
                 :
                 <Comment comment={comment} visitor={visitor} reply={reply} navigate={navigate} showReplies={showReplies} setShowReplies={setShowReplies} author={author} type={"comment"}
-                  likeComment={likeComment}removeLikeComment={removeLikeComment}commentAuthorH5={commentAuthorH5}deleteComment={deleteComment}setEditComment={setEditComment}
+                  likeComment={likeComment}removeLikeComment={removeLikeComment}commentAuthorH5={commentAuthorH5}deleteComment={deleteComment}setEditComment={setEditComment} viewUser={viewUser}
                 ></Comment>
                 }   
               </div>)
@@ -125,12 +132,12 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
     )
 }
 
-function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,likeComment,commentAuthorH5,removeLikeComment,deleteComment,setEditComment, author, type}=props) {
+function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,likeComment,commentAuthorH5,removeLikeComment,deleteComment,setEditComment, author, type, viewUser}=props) {
   return (
     <div data-id={comment._id} className={classes.commentWrapper}>
       <div className={classes.comment}>
         <div className={classes.postLeftside}>
-          <img className={classes.profilePicture} src={comment.user.avatarUrl} onClick={()=>navigate(`/${comment.user._id}`)}></img>
+          <img className={classes.profilePicture} src={comment.user.avatarUrl} onClick={()=>viewUser(comment)}></img>
           <div className={classes.commentBody}>
             <div className={classes.commentHeader}>
                <h5 ref={commentAuthorH5} className={comment.user._id===visitor._id?classes.myName:classes.authorName}>{comment.user.fullName}</h5>
@@ -159,7 +166,7 @@ function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,like
           </div>
         </div>
       </div>
-      {console.log(comment.replies.length)}
+      {/* {console.log(comment.replies.length)} */}
       {comment.replies.length>0 && 
       <> {
         comment.type==="comment"? 
@@ -167,7 +174,7 @@ function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,like
         {showReplies.indexOf(comment._id)!==-1 && 
         <div className={classes.replies}>
           {comment.replies.map((comment,id) => {
-            return <Comment key={id} comment={comment} author={author} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply} showReplies={showReplies} type={"reply"}
+            return <Comment key={id} comment={comment} author={author} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply} showReplies={showReplies} type={"reply"} viewUser={viewUser}
             />
           })}
         </div>
@@ -176,7 +183,7 @@ function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,like
       :
       <div>
         {comment.replies.map((comment,id) => {
-          return <Comment key={id} comment={comment} author={author} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply} showReplies={showReplies}  type={"reply"}
+          return <Comment key={id} comment={comment} author={author} visitor={visitor} navigate={navigate} likeComment={likeComment} removeLikeComment={removeLikeComment} reply={reply} showReplies={showReplies}  type={"reply"} viewUser={viewUser}
           />
         })}
       </div>
