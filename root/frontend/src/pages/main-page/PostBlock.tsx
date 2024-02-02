@@ -39,7 +39,6 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
 
     console.log(posts, user);
     useEffect(() => {
-
             dispatch(fetchUserPosts({_id:user._id, token:"token",count:currPosts.length}))
             .then((response:any) => {
               console.log(response.payload.posts);

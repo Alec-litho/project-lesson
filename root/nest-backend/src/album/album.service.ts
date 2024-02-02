@@ -28,7 +28,8 @@ export class AlbumService {
     console.log("28",id);
     
     const userId = new mongoose.Types.ObjectId(id)
-    const albums = await this.albumModel.find({user:userId}).populate("images")
+    const albums = await this.albumModel.find({user:userId}).populate([{path:"images",model:'Image'}, {options: {limit: 1}, path:'user', model:'User'}])
+    //i need to populate user field in only one object
     if(albums.length===0) throw new NotFoundException({message: "user doesn't have any albums"})
     return albums
     

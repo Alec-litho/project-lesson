@@ -27,7 +27,7 @@ export default function Register() {
         .then(res => {
           console.log(res, res.error);
           if(!res.error) {
-            dispatch(getMe(res.payload)).then(()=>navigate(`/${res.payload._id}`));
+            dispatch(getMe(res.payload)).then(()=>navigate(`/user/${res.payload._id}`));
           }else {
             navigate('/error');//not working
           }

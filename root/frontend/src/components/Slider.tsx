@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState  } from "react"
 import { ReactComponent as Arrow } from '../assets/icons/arrow.svg'
 import  Delete from '../assets/icons/delete'
-import {deletePicture, fetchMyAlbums, fetchImg} from '../features/albumSlice'
+import {deletePicture, fetchImg} from '../features/albumSlice'
 import Loader from "./Loader"
 import axios from 'axios'
 import '../styles/gallery_slider_style.css'

@@ -74,7 +74,7 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
   }
   function viewUser(comment) {
     setPosts(null)
-    navigate(`/${comment.user._id}`);
+    navigate(`/user/${comment.user._id}`);
     window.scrollTo(0, 0)
     setCurrPosts([])
   }

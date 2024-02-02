@@ -20,15 +20,18 @@ const initialState:InitialState = {
   }
 }
 
-export const fetchMyAlbums = createAsyncThunk('albums/fetchMyAlbums', async function({_id,token}:DefaultReduxThunkDto):Promise<IAlbumModel[] | []> {
-    console.log(_id);
-    
-  let result = await axios.get(`http://localhost:3001/albums/user/${_id}`, {headers: {
-      'Content-Type': 'application/json',
-       Authorization: `Bearer ${token}`,
-    }})
-    if(result.data.value === null) return [];
-    return result.data;
+export const fetchUserAlbums = createAsyncThunk('albums/fetchUserAlbums', async function({_id,token}:DefaultReduxThunkDto,{rejectWithValue}):Promise<IAlbumModel[] | [] | any> {
+      try {
+        let result = await axios.get(`http://localhost:3001/albums/user/${_id}`, {headers: {
+          'Content-Type': 'application/json',
+           Authorization: `Bearer ${token}`,
+        }})
+        if(result.data.value === null) return [];
+        return result.data;
+      } catch (error:any) {
+        return rejectWithValue(error.response.data);
+      }
+ 
 })
 
 
@@ -97,11 +100,9 @@ const albumSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchMyAlbums.fulfilled, (state, action) => {
+      .addCase(fetchUserAlbums.fulfilled, (state, action) => {
         console.log(action.payload);
         if(Array.isArray(action.payload)) {
-          console.log('w');
-          
           const albums = action.payload as IAlbumModel[] | [] 
           state.status = 'fulfilled'
           state.albums = albums
@@ -111,7 +112,14 @@ const albumSlice = createSlice({
         }
  
       })
-
+      .addCase(fetchUserAlbums.rejected, (state, action) => {
+        console.log(action.payload);
+        
+        const payload = action.payload as any
+        state.error.message = payload.statusText 
+        state.error.value = payload.status 
+        state.status = 'error'
+      })
       .addCase(uploadImage.fulfilled, (state, action) => {
         console.log(action)
         state.status = 'fulfilled'

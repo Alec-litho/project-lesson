@@ -25,6 +25,17 @@
     border-right: 2px solid rgb(206, 215, 228);
     padding: 10px 15px;
 }
+.leftPanelHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.userProfile {
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
 .galleryBody {
     margin-left: 275px;
     background-color: white;
@@ -144,4 +155,15 @@
   cursor: pointer;
 
 }
-
+.emptyWrapper {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.emptyWrapper h1 {
+    user-select: none;
+    font-size: 44px;
+    color: rgb(179, 179, 179);
+}

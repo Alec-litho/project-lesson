@@ -107,6 +107,7 @@ interface IAlbumModel {
     user: string
     images: ImageModel[]
     description: string
+    _id: string
   }
 
 interface IUser {

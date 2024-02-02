@@ -1,48 +1,57 @@
 import classes from './gallery.module.css'
 
 import {useState, useEffect, useRef} from 'react'
-// import { ReactComponent as AddPhoto } from '../../assets/icons/addPhoto.svg'
 import { ReactComponent as Plus } from '../../assets/icons/plus.svg'
 import { useSelector, useDispatch} from 'react-redux'
 import Slider from '../../components/Slider.tsx'
-import {fetchMyAlbums, uploadImage} from '../../features/albumSlice'
+import Error from '../error-page/Error'
+import {fetchUserAlbums, uploadImage} from '../../features/albumSlice'
 import CreateModal from '../../components/Create_modal'
 import postImage  from '../../helper_functions/postImage'
 import Loader from '../../components/Loader'
-import { setToken } from '../../features/albumSlice'
+import {useParams, redirect} from 'react-router-dom'
 
-export default function Gallery(props) {
+
+export default function Gallery() {
+    const {id} = useParams()
     let auth = useSelector(state => state.auth);
+    let [user, setUser] = useState(auth.userInfo)
     let token = useSelector(state => state.auth.userToken);
-    let userAlbums = useSelector(state => state.albums.albums);
+    let userAlbums = useSelector(state => state.albums);
     let dispatch = useDispatch()
     let addPicture = useRef(null), 
     underlines = useRef([<input value={'text'}/>])
     let [sliderTrue, setSliderTrue] = useState(false)
     let [closeModal, setModal] = useState(true)
-    let [albums, setAlbums] = useState(userAlbums[0]? userAlbums : [])
+    let [albums, setAlbums] = useState(userAlbums.albums[0]? userAlbums.albums : [])
     let [isLoaded, finishLoading] = useState(false)
     let [currentAlbum, setAlbum] = useState('All')
-    let [currentAlbumId, setAlbumId] = useState(userAlbums[0]? userAlbums[0]._id : null)
+    let [currentAlbumId, setAlbumId] = useState(userAlbums.albums[0]? userAlbums.albums[0]._id : null)
     let [currPictureId, setCurrPictureId] = useState(null)
     let [updatePictures, setUpdate] = useState(false)
-    
-    console.log(albums);
+
+
     useEffect(()=> { 
-        // if((auth.userId && token)) {
-            if(albums.length===0 && userAlbums.length===0) {
-            dispatch(fetchMyAlbums({_id:auth.userId,token}))
-              .then((res) => {
-                console.log(res);
-                setAlbumId(res.payload[0]._id);
-                if(Array.isArray(res.payload)) setAlbums([...res.payload]);
-              })
-            } else if(albums.length===0 && userAlbums.length!==0) {
-                setAlbums(userAlbums[0])
-            }
+
+        if(userAlbums.status !== 'error') {
+            if(albums.length===0 && userAlbums.albums.length===0) {
+                dispatch(fetchUserAlbums({_id:id,token}))
+                  .then(({payload}) => {
+                        console.log(payload);
+                        if(payload.statusCode===500) return 
+                        setAlbumId(payload[0]._id);
+                        if(Array.isArray(payload)) setAlbums([...payload]);
+                        setUser(payload[0].user)
+                  })
+                } else if(albums.length===0 && userAlbums.albums.length!==0) {
+                    setAlbums(userAlbums.albums[0])
+                }
+                finishLoading(true)
+        } else {
             finishLoading(true)
-        // }
-    },[updatePictures,albums])
+        }
+            
+    },[updatePictures,albums,userAlbums])
     
     function showAlbum(e) {
         setAlbum(e.target.innerText)
@@ -93,34 +102,37 @@ export default function Gallery(props) {
         })
     }
 
-    if(isLoaded === false && userAlbums.length===0) return <Loader/>
+    if(isLoaded === false && userAlbums.albums.length===0) return <Loader/>
+    if(userAlbums.status === "error") return <Error message={userAlbums.error.message} errorValue={userAlbums.error.value}/>
     return (
         <div className={classes.background}>
         <div className={classes.gallery}>
             <div className={classes.leftPanel}>
                <div className={classes.albums}>
-               <h1>Albums</h1>
-               {albums.map((album, id) => {
+                <div className={classes.leftPanelHeader}>
+                    <h1>Albums</h1>
+                    <img className={classes.userProfile} src={user.avatarUrl} onClick={() => redirect(`/user/${user._id}`)}></img>
+                </div>
+              
+               {albums.map((album, indx) => {
                 return (
-                    <div id="albums" data-albumid={album._id} key={id} onClick={showAlbum} className={classes.album} onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}>
+                    <div id="albums" data-albumid={album._id} key={album._id} onClick={showAlbum} className={classes.album} onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}>
                     <p data-albumid={album._id}>{album.name}</p>
-                    <div ref={el => underlines.current[id] = el}  id={id} className={classes.underline}><p></p></div>
+                    <div ref={el => underlines.current[indx] = el}  id={id} className={classes.underline}><p></p></div>
                     </div>
                 )
                })}
-                <Plus className={classes.addAlbum} onClick={() => setModal(!closeModal)}/>
+               {auth.userId===id && <Plus className={classes.addAlbum} onClick={() => setModal(!closeModal)}/>}
                
                </div>
             </div>
             <div className={classes.galleryBody}>
                     {
-                    albums.map((album, id) => {
-                         if(album.name === currentAlbum) {
-                            return album.images.map((photo, id) => {
+                        
+                            albums.filter(a=>a._id===currentAlbumId)[0]?.length>0? 
+                            albums.filter(a=>a._id===currentAlbumId)[0]?.images.map((photo, indx) => {
                                 return (
-                                <div  key={id} 
-                                className={classes.imgWrapper} 
-                                onClick={e => showSlider(e)}>
+                                <div  key={photo._id} className={classes.imgWrapper} onClick={e => showSlider(e)}>
                                    <img 
                                       data-id={photo._id} 
                                       date={photo.date} 
@@ -131,20 +143,24 @@ export default function Gallery(props) {
                                    </img>
                                 </div>)
                             }) 
-                         }
-                    })
+                            :
+                            <div className={classes.emptyWrapper}>
+                                <h1>Album is empty</h1>
+                            </div>
                     }
-                <div className={classes.addPicture}>
                     {isLoaded === false? 
-                    <Loader/>
-                    :
+                        <Loader/>
+                        :
+                        auth.userId===id 
+                    &&
+                    <div className={classes.addPicture}>
                     <>
                        <label htmlFor="file-upload" className={classes.customUpload}><Plus className={classes.addPhoto}/></label>
                        <input className={classes.inputHide} id="file-upload" ref={addPicture} type="file" onInput={uploadPicture}/>
                     </>
+                    </div>
                     }
-                  
-               </div>
+                
             </div>
             <CreateModal closeModal={closeModal} setModal={setModal} userId={auth.userId} update={setUpdate} token={token} setAlbums={setAlbums}/>
             <Slider setUpdate={setUpdate} 

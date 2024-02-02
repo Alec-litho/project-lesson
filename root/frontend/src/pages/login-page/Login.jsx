@@ -21,7 +21,7 @@ export default function Login() {
       .then(res => {
         console.log(res.payload);
         if(res.payload.status !== 404) {
-          dispatch(getMe({_id:res.payload._id, token:res.payload.token})).then(()=>navigate(`/${res.payload._id}`));
+          dispatch(getMe({_id:res.payload._id, token:res.payload.token})).then(()=>navigate(`/user/${res.payload._id}`));
         }else {
           navigate("/error");
         }

@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {fetchMyAlbums} from '../../features/albumSlice';
+import {fetchUserAlbums} from '../../features/albumSlice';
 import Slider from '../../components/Slider';
 import classes from './style/userPage.module.css';
 import PostBlock from './PostBlock';
@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/reduxCustomHooks';
 import {  useParams } from 'react-router-dom';
 import { getUser } from '../../features/authSlice';
 
-export default function User() {
+export default function UserPage() { 
 
     const {id} = useParams()
     const auth = useAppSelector(state => state.auth);
@@ -25,33 +25,33 @@ export default function User() {
     console.log("update outside of useeffect",user);
 
     useEffect(() => {
-        console.log("update in useeffect")
-        if(auth.isAuth === false) return
-        if(id === auth.userId || id===undefined) {//if user enters his own page
-            setUser(auth.userInfo)
-            const mainAlbum = albumState.filter(album => album.name === 'All')
-            if(mainAlbum.length===0)  setUserAlbum(auth.userInfo._id);
-            else {
-                setAlbum(mainAlbum[0])
-                setFinishLoading(true);
-            }
-            
-        } else {/*if its page of another user*/
-            dispatch(getUser({_id:id,token:auth.userToken})).then(({payload}) => {
-                console.log(payload);
+        console.log("update in useeffect",id)
+        if(auth.isAuth !== false && id!==undefined ) {
+            if(id === auth.userId) {//if user enters his own page
+                setUser(auth.userInfo)
+                const mainAlbum = albumState.filter(album => album.name === 'All')
+                if(mainAlbum.length===0)  setUserAlbum(auth.userInfo._id);
+                else {
+                    setAlbum(mainAlbum[0])
+                    setFinishLoading(true);
+                }
                 
-                setUser(payload)
-                setUserAlbum(payload._id)
-            })
-  
-        }
-        
+            } else {/*if its page of another user*/
+                dispatch(getUser({_id:id,token:auth.userToken})).then(({payload}) => {
+                    console.log(payload);
+                    
+                    setUser(payload)
+                    setUserAlbum(payload._id)
+                })
+      
+            }
+        }  
     },[id, auth])
 
 
     function setUserAlbum(userId:string):void {
         const data = {_id: userId, token:auth.userToken}
-        dispatch(fetchMyAlbums(data)).then((res:any) => {
+        dispatch(fetchUserAlbums(data)).then((res:any) => {
             console.log(res); 
             setAlbum(res.payload.filter((album:IAlbumModel) => album.name === 'All')[0]);
             setFinishLoading(true);
@@ -63,7 +63,7 @@ export default function User() {
             :
         <div className={classes.mainpage}>
            <>
-           <Profile fullName={user.fullName} age={user.age} friends={user.friends} avatarUrl={user.avatarUrl} location={user.location} user={user}/>
+            <Profile fullName={user.fullName} age={user.age} friends={user.friends} avatarUrl={user.avatarUrl} location={user.location} user={user}/>
             <div className={classes.mainContent}>
                 <AboutMeBlock galleryPhotos={album?album.images:[]} setSliderTrue={setSliderTrue} isLoadedState={isLoaded}/>
                 <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue} user={user} />
