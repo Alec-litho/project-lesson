@@ -75,8 +75,6 @@ export class PostService {
             model: "User"
         }
     ])
-    console.log(userPosts);
-    
         const postsByCount = userPosts.slice(count,count+10)
         if(!userPosts) return []
         return postsByCount
@@ -98,7 +96,6 @@ export class PostService {
                     return false
                 }
             })
-            console.log(posts);
             return posts
         }));
         const friendsLikes = []

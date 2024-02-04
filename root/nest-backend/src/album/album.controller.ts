@@ -15,7 +15,12 @@ export class AlbumController {
   create(@Body() createAlbumDto: CreateAlbumDto) {
     return this.albumService.create(createAlbumDto);
   }
-
+  @Get('user/mainAlbum/:id')
+  @ApiOperation({summary:"Get user's main album"})
+  @ApiResponse({status:200,type:Album})
+  getMainAlbum(@Param('id') id: string) { 
+    return this.albumService.getMainAlbum(id);
+  }
   @Get('user/:id')
   @ApiOperation({summary:"Get all user's albums"})
   @ApiResponse({status:200,type:[Album]})

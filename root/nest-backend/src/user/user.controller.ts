@@ -29,7 +29,13 @@ export class UserController {
     const result = await this.userService.getMe(id);
     res.json(result.value);
   } 
-
+  @Post("/getPossibleFriends")
+  @ApiOperation({summary:"Get possible friends"})
+  @ApiResponse({status:201,type:[User]})
+  async getPossibleFriends(@Body() {id}:{id:string}, @Res() res: Response) {
+    const result:User[] = await this.userService.getPossibleFriends(id);
+    res.json(result);
+  } 
   @Get(":id")
   @ApiOperation({summary:"Get user"})
   @ApiResponse({status:201,type:User})

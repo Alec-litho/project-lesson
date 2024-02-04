@@ -19,15 +19,14 @@ export default function App() {
   const queryString = window.location;
   const userRouteId = queryString.pathname.split('/')[2]
   const dispatch = useDispatch();
-  dispatch(getCookie())
   const {isAuth, userToken, userId, status, error, userInfo} = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if(!isAuth) {
+    dispatch(getCookie())
+    if(!isAuth && (userToken.length>0 && userId.length>0)) {
       if(status !== 'error') dispatch(getMe({_id:userId, token:userToken}));
     }
-  if(error) {redirect("/error")/*not working*/}
-  },[error])
+  },[userToken, userId])
   return (
     <div>
       <div className="headerBackground">

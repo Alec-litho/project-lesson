@@ -18,7 +18,6 @@ interface viewCountProps {
 
 export default function viewCount({user, dispatch, currPosts, viewedPosts, setPosts,setViewedPostsCount, setLoader}:viewCountProps):number {
   if(currPosts.length===0 || !currPosts[viewedPosts]) return viewedPosts
-  console.log(currPosts.length, viewedPosts);
   
     let post = currPosts[viewedPosts] 
     if(window.scrollY >= post.positionY && !currPosts[viewedPosts].watched) {

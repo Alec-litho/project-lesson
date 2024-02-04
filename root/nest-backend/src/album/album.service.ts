@@ -34,7 +34,14 @@ export class AlbumService {
     return albums
     
   }
-
+  async getMainAlbum(id:string) {
+    const userId = new mongoose.Types.ObjectId(id);
+    const mainAlbum = await this.albumModel.findOne({user:userId, name:"All"})
+    console.log("mainAlbum",mainAlbum);
+    
+    if(!mainAlbum) throw new NotFoundException({message: "user's album is not found"})
+    return mainAlbum
+  }
   async getAlbum(id: number) {
     const album = await this.albumModel.findById(id).populate("images");
     if(!album) throw new NotFoundException({message: "there is no album that has this id"})

@@ -51,7 +51,17 @@ export const getUser = createAsyncThunk('auth/fetchData', async function({_id,to
     const response = await axios.get(`http://localhost:3001/user/${_id}`)
     return response.data
 })
-
+export const getPossibleFriends = createAsyncThunk("auth/getPossibleFriends", async ({id,token}:{id:string,token:string}):Promise<IUser[]> => {
+try {
+  const response:AxiosResponse<IUser[]> = await axios.post("http://localhost:3001/user/getPossibleFriends",{id}, {headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  }})
+  return response.data
+} catch (error:any) {
+  return error
+}
+})
 export const loginUser = createAsyncThunk('auth/loginUser', async function(dto:ILoginUserDto, {rejectWithValue}) {
   try {
     const response:AxiosResponse<ILoginResponse> = await axios.post('http://localhost:3001/user/login', dto, {headers: {

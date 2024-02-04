@@ -56,22 +56,17 @@ export class UserService {
   async getMe(id: string)/*:Promise<User|ServiceResponse>*/ {
     try {
       const userId = new mongoose.Types.ObjectId(id)
-      console.log(userId, id);
-      
       const user:User = await this.userModel.findById(userId);
       if(user===null) throw new NotFoundException("User not found");//somehow it triggers error in try catch block
       return {message:'success', value: user};
     } catch (error) {
-      console.log(error);
-      
       throw new InternalServerErrorException(error);
     }
   }
   async getUser(id:string) {
-    console.log(id);
+    console.log("id",id);
     
     const userId = new mongoose.Types.ObjectId(id)
-    console.log(userId);
     const viewUserFields = "fullName location friends birth age gender avatarUrl _id"
     const user:User = await this.userModel.findById(userId).select(viewUserFields).populate({
       path: 'friends',
@@ -80,8 +75,13 @@ export class UserService {
     if(user===null) throw new NotFoundException("User not found");//somehow it triggers error in try catch block
     return {message:'success', value: user};
   }
+  public async getPossibleFriends(id:string) {
+    const friends = await this.userModel.find().limit(8).select("_id fullName avatarUrl");
+    if(friends.length===0 || !friends) throw new NotFoundException("possible friends weren't found");
+    
+    return friends.filter(user => user._id.toString() !== id)
+  }
   private async comparePass(loginUserDto: LoginUserDto, user: User) {
-    console.log(loginUserDto.password, user.password);
     const passCompare = await compare(loginUserDto.password, user.password);
     return passCompare
   }
