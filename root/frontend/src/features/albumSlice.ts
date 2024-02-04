@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 interface InitialState {
   albums: IAlbumModel[] | []
@@ -42,6 +42,17 @@ export const fetchAlbum = createAsyncThunk('albums/fetchAlbum', async function({
        Authorization: `Bearer ${token}`,
        accept: "*/*",
        credentials: "include"
+    }})
+    return response.data
+  } catch (error:any) {
+    return error
+  }
+})
+export const fetchMainAlbum = createAsyncThunk('albums/fetchMainAlbum', async function({_id,token}:DefaultReduxThunkDto):Promise<IAlbumModel> {
+  try {
+    const response:AxiosResponse<IAlbumModel> = await axios.get(`http://localhost:3001/albums/user/mainAlbum/${_id}`,{headers: {
+      'Content-Type': 'application/json',
+       Authorization: `Bearer ${token}`,
     }})
     return response.data
   } catch (error:any) {
@@ -96,20 +107,26 @@ const albumSlice = createSlice({
   reducers: {
     setToken: (state:InitialState, action) => {
       state.userToken = action.payload
+    },
+    clearAlbums(state:InitialState, action) {
+      state.albums = []
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserAlbums.fulfilled, (state, action) => {
         console.log(action.payload);
-        if(Array.isArray(action.payload)) {
-          const albums = action.payload as IAlbumModel[] | [] 
-          state.status = 'fulfilled'
-          state.albums = albums
-        } else {
-          const error = action.payload as errorResponse
-          state.error = error
+        if(state.albums.length===0 || state.albums[0].user === action.payload._id) {
+          if(Array.isArray(action.payload)) {
+            const albums = action.payload as IAlbumModel[] | [] 
+            state.status = 'fulfilled'
+            state.albums = albums
+          } else {
+            const error = action.payload as errorResponse
+            state.error = error
+          }
         }
+       
  
       })
       .addCase(fetchUserAlbums.rejected, (state, action) => {
@@ -135,4 +152,4 @@ const albumSlice = createSlice({
 })
 
 export const albumReducer = albumSlice.reducer
-export const { setToken } = albumSlice.actions
+export const { setToken, clearAlbums} = albumSlice.actions

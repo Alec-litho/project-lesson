@@ -5,57 +5,54 @@ import { ReactComponent as Plus } from '../../assets/icons/plus.svg'
 import { useSelector, useDispatch} from 'react-redux'
 import Slider from '../../components/Slider.tsx'
 import Error from '../error-page/Error'
-import {fetchUserAlbums, uploadImage} from '../../features/albumSlice'
+import {fetchUserAlbums, uploadImage, clearAlbums} from '../../features/albumSlice'
 import CreateModal from '../../components/Create_modal'
 import postImage  from '../../helper_functions/postImage'
 import Loader from '../../components/Loader'
-import {useParams, redirect} from 'react-router-dom'
+import {useParams, useNavigate} from 'react-router-dom'
 
 
 export default function Gallery() {
+    const navigate = useNavigate()
     const {id} = useParams()
     let auth = useSelector(state => state.auth);
     let [user, setUser] = useState(auth.userInfo)
     let token = useSelector(state => state.auth.userToken);
     let userAlbums = useSelector(state => state.albums);
     let dispatch = useDispatch()
-    let addPicture = useRef(null), 
-    underlines = useRef([<input value={'text'}/>])
+    let addPicture = useRef(null)
+    let underlines = useRef([<input value={'text'}/>])
     let [sliderTrue, setSliderTrue] = useState(false)
     let [closeModal, setModal] = useState(true)
-    let [albums, setAlbums] = useState(userAlbums.albums[0]? userAlbums.albums : [])
+    let [albums, setAlbums] = useState(userAlbums.albums.length>0 && id===auth.userInfo.userId? userAlbums.albums : [])
     let [isLoaded, finishLoading] = useState(false)
     let [currentAlbum, setAlbum] = useState('All')
-    let [currentAlbumId, setAlbumId] = useState(userAlbums.albums[0]? userAlbums.albums[0]._id : null)
+    let [currentAlbumId, setAlbumId] = useState(userAlbums.albums.length>0? userAlbums.albums[0]._id : null)
     let [currPictureId, setCurrPictureId] = useState(null)
     let [updatePictures, setUpdate] = useState(false)
 
 
     useEffect(()=> { 
-
+        console.log(albums, currentAlbum, currentAlbumId, user);
         if(userAlbums.status !== 'error') {
             if(albums.length===0 && userAlbums.albums.length===0) {
                 dispatch(fetchUserAlbums({_id:id,token}))
-                  .then(({payload}) => {
+                    .then(({payload}) => {
                         console.log(payload);
                         if(payload.statusCode===500) return 
                         setAlbumId(payload[0]._id);
-                        if(Array.isArray(payload)) setAlbums([...payload]);
-                        setUser(payload[0].user)
-                  })
-                } else if(albums.length===0 && userAlbums.albums.length!==0) {
-                    setAlbums(userAlbums.albums[0])
+                        Array.isArray(payload)? setAlbums([...payload]) : setUser(payload[0].user);
+                    })
+                } else {
+                    setAlbums(userAlbums.albums)
                 }
                 finishLoading(true)
-        } else {
-            finishLoading(true)
         }
-            
-    },[updatePictures,albums,userAlbums])
+    },[updatePictures,userAlbums,currentAlbum])
     
     function showAlbum(e) {
-        setAlbum(e.target.innerText)
-        setAlbumId(e.target.dataset)
+        setAlbum(prev => prev = e.target.innerText)
+        setAlbumId(e.target.dataset.albumid)
         if(e.target.parentNode.childNodes[0].innerText !== currentAlbum) {
             console.log(currentAlbum);
             [...e.target.parentNode.parentNode.childNodes].map(album => {
@@ -77,10 +74,11 @@ export default function Gallery() {
         setCurrPictureId(e.target.dataset.id)
         setSliderTrue(!sliderTrue)
     }
-    function doAnimation(e) {e.target.childNodes.forEach(child => {
-        underlines.current.forEach(item => item.id === child.id?  item.style.width = 200 + 'px' : null)
-    })}
-    function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
+    // function doAnimation(e) {e.target.childNodes.forEach(child => {
+    //     console.log(underlines.current, child);
+    //     underlines.current.forEach(item => item.id === child.id?  item.style.width = 200 + 'px' : null)
+    // })}
+    // function removeAnimation(e) {underlines.current.forEach(underline => underline.style.width = 100 + 'px')}
 
     function uploadPicture(e) {
         finishLoading(false)
@@ -111,14 +109,13 @@ export default function Gallery() {
                <div className={classes.albums}>
                 <div className={classes.leftPanelHeader}>
                     <h1>Albums</h1>
-                    <img className={classes.userProfile} src={user.avatarUrl} onClick={() => redirect(`/user/${user._id}`)}></img>
+                    <img className={classes.userProfile} src={user.avatarUrl} onClick={() => navigate(`/user/${user._id}`)}></img>
                 </div>
-              
                {albums.map((album, indx) => {
                 return (
-                    <div id="albums" data-albumid={album._id} key={album._id} onClick={showAlbum} className={classes.album} onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}>
-                    <p data-albumid={album._id}>{album.name}</p>
-                    <div ref={el => underlines.current[indx] = el}  id={id} className={classes.underline}><p></p></div>
+                    <div id="albums" data-albumid={album._id} key={album._id} onClick={showAlbum} className={classes.album} /*onMouseEnter={doAnimation} onMouseMove={doAnimation} onMouseLeave={removeAnimation}*/>
+                       <p data-albumid={album._id}>{album.name}</p>
+                       <div ref={el => underlines.current[indx] = el}  id={id} className={classes.underline}><p></p></div>
                     </div>
                 )
                })}
@@ -128,9 +125,8 @@ export default function Gallery() {
             </div>
             <div className={classes.galleryBody}>
                     {
-                        
-                            albums.filter(a=>a._id===currentAlbumId)[0]?.length>0? 
-                            albums.filter(a=>a._id===currentAlbumId)[0]?.images.map((photo, indx) => {
+                            albums.filter(a=>a._id===currentAlbumId)[0]?
+                            albums.filter(a=>a._id===currentAlbumId)[0].images.map((photo, indx) => {
                                 return (
                                 <div  key={photo._id} className={classes.imgWrapper} onClick={e => showSlider(e)}>
                                    <img 
@@ -144,6 +140,7 @@ export default function Gallery() {
                                 </div>)
                             }) 
                             :
+                            id===auth.userInfo.userId &&
                             <div className={classes.emptyWrapper}>
                                 <h1>Album is empty</h1>
                             </div>
