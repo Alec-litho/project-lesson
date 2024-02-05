@@ -24,7 +24,9 @@ export default function Gallery() {
     let underlines = useRef([<input value={'text'}/>])
     let [sliderTrue, setSliderTrue] = useState(false)
     let [closeModal, setModal] = useState(true)
-    let [albums, setAlbums] = useState(userAlbums.albums.length>0 && id===auth.userInfo.userId? userAlbums.albums : [])
+    //it gives false but still i get userAlbums and not empty array []
+    let [albums, setAlbums] = useState(userAlbums.albums.length>0 && id===userAlbums.albums[0].user._id? userAlbums.albums : [])
+
     let [isLoaded, finishLoading] = useState(false)
     let [currentAlbum, setAlbum] = useState('All')
     let [currentAlbumId, setAlbumId] = useState(userAlbums.albums.length>0? userAlbums.albums[0]._id : null)
@@ -33,22 +35,23 @@ export default function Gallery() {
 
 
     useEffect(()=> { 
-        console.log(albums, currentAlbum, currentAlbumId, user);
+        console.log(albums, currentAlbum, currentAlbumId, userAlbums.albums, userAlbums.albums.length>0 && id===userAlbums.albums[0].user._id);
         if(userAlbums.status !== 'error') {
-            if(albums.length===0 && userAlbums.albums.length===0) {
+            if(albums.length===0 ) {
                 dispatch(fetchUserAlbums({_id:id,token}))
                     .then(({payload}) => {
                         console.log(payload);
                         if(payload.statusCode===500) return 
                         setAlbumId(payload[0]._id);
-                        Array.isArray(payload)? setAlbums([...payload]) : setUser(payload[0].user);
+                        if(Array.isArray(payload)) {
+                            setAlbums([...payload])
+                            setUser(payload[0].user);
+                        } else console.log("payload is not array", payload);
                     })
-                } else {
-                    setAlbums(userAlbums.albums)
-                }
-                finishLoading(true)
+                } 
         }
-    },[updatePictures,userAlbums,currentAlbum])
+        finishLoading(true)
+    },[updatePictures,userAlbums,id])
     
     function showAlbum(e) {
         setAlbum(prev => prev = e.target.innerText)
@@ -125,7 +128,8 @@ export default function Gallery() {
             </div>
             <div className={classes.galleryBody}>
                     {
-                            albums.filter(a=>a._id===currentAlbumId)[0]?
+                        albums[0] &&
+                            albums.filter(a=>a._id===currentAlbumId)[0].images.length>0?
                             albums.filter(a=>a._id===currentAlbumId)[0].images.map((photo, indx) => {
                                 return (
                                 <div  key={photo._id} className={classes.imgWrapper} onClick={e => showSlider(e)}>
@@ -140,7 +144,7 @@ export default function Gallery() {
                                 </div>)
                             }) 
                             :
-                            id===auth.userInfo.userId &&
+                            id!==auth.userId &&
                             <div className={classes.emptyWrapper}>
                                 <h1>Album is empty</h1>
                             </div>
