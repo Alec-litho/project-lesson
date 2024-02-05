@@ -14,7 +14,7 @@ export default function Header({userId,avatarUrl,authId}) {
             <div className='leftSideContent'>
                 <img className='logo' src={require('../assets/icons/logo.png')}></img>
                 <div className='nav'>
-                   <Link to={`/gallery/${userId}`} element={<Gallery/>}>Gallery</Link>
+                   <Link to={`/gallery/${authId}`} element={<Gallery/>}>Gallery</Link>
                    <Link to="/music" element={<Music/>}>Music</Link>
                    <Link to={`/user/${authId}`} element={<Main/>}>Home</Link>
                    <Link to="/feed" element={<Feed/>}>Feed</Link>

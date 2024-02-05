@@ -16,7 +16,7 @@ import { useEffect } from "react";
 // -----------------------------------------------//
 
 export default function App() {
-  const queryString = window.location;
+  const queryString = window.location; 
   const userRouteId = queryString.pathname.split('/')[2]
   const dispatch = useDispatch();
   const {isAuth, userToken, userId, status, error, userInfo} = useSelector((state) => state.auth);

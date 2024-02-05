@@ -115,8 +115,7 @@ const albumSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserAlbums.fulfilled, (state, action) => {
-        console.log(action.payload);
-        if(state.albums.length===0 || state.albums[0].user === action.payload._id) {
+        console.log(action.payload, state.albums[0]);
           if(Array.isArray(action.payload)) {
             const albums = action.payload as IAlbumModel[] | [] 
             state.status = 'fulfilled'
@@ -125,8 +124,6 @@ const albumSlice = createSlice({
             const error = action.payload as errorResponse
             state.error = error
           }
-        }
-       
  
       })
       .addCase(fetchUserAlbums.rejected, (state, action) => {
