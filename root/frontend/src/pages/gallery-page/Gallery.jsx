@@ -24,7 +24,6 @@ export default function Gallery() {
     let underlines = useRef([<input value={'text'}/>])
     let [sliderTrue, setSliderTrue] = useState(false)
     let [closeModal, setModal] = useState(true)
-    //it gives false but still i get userAlbums and not empty array []
     let [albums, setAlbums] = useState(userAlbums.albums.length>0 && id===userAlbums.albums[0].user._id? userAlbums.albums : [])
 
     let [isLoaded, finishLoading] = useState(false)
@@ -32,12 +31,13 @@ export default function Gallery() {
     let [currentAlbumId, setAlbumId] = useState(userAlbums.albums.length>0? userAlbums.albums[0]._id : null)
     let [currPictureId, setCurrPictureId] = useState(null)
     let [updatePictures, setUpdate] = useState(false)
-
+ console.log(albums,userAlbums.albums);
 
     useEffect(()=> { 
-        console.log(albums, currentAlbum, currentAlbumId, userAlbums.albums, userAlbums.albums.length>0 && id===userAlbums.albums[0].user._id);
+
+        console.log(albums, currentAlbum, userAlbums.albums, id, userAlbums.albums[0] && userAlbums.albums[0].user._id);
         if(userAlbums.status !== 'error') {
-            if(albums.length===0 ) {
+            if(albums.length===0 || id!==userAlbums.albums[0].user._id) {
                 dispatch(fetchUserAlbums({_id:id,token}))
                     .then(({payload}) => {
                         console.log(payload);
@@ -51,7 +51,7 @@ export default function Gallery() {
                 } 
         }
         finishLoading(true)
-    },[updatePictures,userAlbums,id])
+    },[updatePictures,id])
     
     function showAlbum(e) {
         setAlbum(prev => prev = e.target.innerText)
