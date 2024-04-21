@@ -9,7 +9,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ImageService } from '../image/image.service';
 import { CreateImageDto } from '../image/dto/create-image.dto';
-import filterOldData from 'utils/filterOldData';
+import isNotOutdated from 'utils/filterOldData';
 import axios from 'axios';
 const TAG_EXTRACTOR_KEY = "eyJvcmciOiI2NTNiOTllNjEzOGM3YzAwMDE2MDM5NTEiLCJpZCI6IjUxMzA4NjZkNjgzZjRiNjk5MTVlYzBkMzlhMjJlYzA3IiwiaCI6Im11cm11cjEyOCJ9";
 
@@ -79,43 +79,74 @@ export class PostService {
         if(!userPosts) return []
         return postsByCount
     }
-    async getUserRecommendations(id:string) {
-        //1 - Friends posts (friendsPosts)
-        //2 - Posts that user's friends like (friendsLikes)
-        //3 - Posts by keywords (keywordsPosts)
-        //4 - Posts that were created recently
+    async getRecommendations(id:string, postsOnThePage: string[]) {
+        const recommendationPosts = []
         const user = await this.userModel.findById(id);
-        let userRecommendations:string[] = []
-        Object.values(user.recommendations).forEach(category => userRecommendations = [...userRecommendations, ...category]);//{frequentlyAppearingKeyWords:[dogs,cats], newKeyWords:[politics], oldKeyWords:[food]} => [dogs,cats,politics,food]
+        let userRecommendations = user.recommendations 
+        //--------------------------friendsPosts--------------------------
         const friendsPosts = await Promise.all(user.friends.map(async(friend) => {
             const userPosts = await this.postModel.find({author:friend._id});
             const posts = userPosts.filter(post => {
-                if(!post.likes.some(userLike => userLike===user._id) || !post.views.some(userLike => userLike===user._id)) {//if post was liked by user or user already have seen this post don't return it
-                    filterOldData(14, post)? true : false
+                if(!post.likes.some(userLike => userLike===user._id) || postsOnThePage.indexOf(post.id)===-1) {/* || !post.views.some(userLike => userLike===user._id)*/ 
+                    isNotOutdated(14, post)? true : false
                 } else {
                     return false
                 }
             })
-            return posts
+            return posts.length > 5? posts.slice(0,5) : posts
         }));
-        const friendsLikes = []
-        user.friends.forEach(async(friend) => {
+        recommendationPosts.push(friendsPosts)
+        //--------------------------friends posts--------------------------
+
+        //--------------------------friends liked posts--------------------------
+        const friendsLikes = user.friends.map(async(friend) => {
             const posts = await this.postModel.find({likes:{$in:[friend._id]}})//get posts that your friend liked
-            posts.map(post => {//filter these post so user doesn't receive old posts
-                if((!post.likes.some(userLike => userLike===user._id) || !post.views.some(userLike => userLike===user._id)) && filterOldData(14, post)) friendsLikes.push(post)
+            return posts.map((post, indx) => {//filter these post so user doesn't receive old posts
+                if(indx === 2) return 
+                if((!post.likes.some(userLike => userLike===user._id) || !post.views.some(userLike => userLike===user._id)) && isNotOutdated(14, post)) return post
             })
         })
-        const posts = [];
-        for (let i = 1; posts.length <= 15; i++) {
-            // await this.postModel.find().sort({ createdAt: -1 }).limit(20*i)  // 10 latest docs
-            
-            //get latest documents while posts length is under 15
-            //after getting 20 documents, sort them by these parameters: userKeywords (popular,new,old), if user already saw that post dont return
-            //after sorting push these documents to posts
-            //if posts is under 15 repeat
+        recommendationPosts.push(friendsLikes)
+        //--------------------------friends liked posts--------------------------
+
+        //--------------------------posts by key words--------------------------
+
+        getPostsByKeyWords//pushes posts to recommendationPosts
+
+        function getPostsByKeyWords():void {
+            const keyWordsTypes = [
+                {keyWordsType:'frequentlyAppearingKeyWords', postsAmountByItsPriority:5},
+                {keyWordsType:'newKeyWords', postsAmountByItsPriority:3},
+                {keyWordsType:'oldKeyWords', postsAmountByItsPriority:2}
+            ];
+            keyWordsTypes.forEach(function({keyWordsType, postsAmountByItsPriority}) {requestPosts(keyWordsType, postsAmountByItsPriority)});
         }
+        async function requestPosts(type: string, priorityNum: number):Promise<void> {
+            console.log(this)
+            const posts:PostModel[] = await this.postModel.find({tags:[...userRecommendations[type]]})//get all posts by key words type
+            posts.filter((post:PostModel) => postsOnThePage.indexOf(post._id.toString())===-1)//filter posts that already on the page
 
+            //i need to ignore postsAmountByItsPriority if posts of previouse type with specific priority posts num is less than it should be
+            //for example - keyWordsType: frequentlyAppearingKeyWords, postsAmountByItsPriority: 5 ; result = 3 posts
+            //so next keyWordsType should have postsAmountByItsPriority = postsAmountByItsPriority + postsAmountByItsPriority(prev type) - result num of prev num (5-3)
 
+            posts.length>priorityNum? posts.slice(0,priorityNum) : posts
+            recommendationPosts.push(...posts)
+        }
+        //--------------------------posts by key words--------------------------
+
+        //--------------------------recently uploaded posts--------------------------
+        let num = 1
+        while(recommendationPosts.length <= 15) {
+            const newPosts = await this.postModel.find().sort({ createdAt: -1 }).limit(20*num)  // 10 latest docs
+            console.log(newPosts,postsOnThePage)
+            newPosts.filter((post) => postsOnThePage.indexOf(post._id.toString())===-1)
+            recommendationPosts.push(...newPosts)
+            num++
+        }
+        //--------------------------recently uploaded posts--------------------------
+        console.log(recommendationPosts)
+        return recommendationPosts
     }
     async getOnePost(id:string) {
         try {

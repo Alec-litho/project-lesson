@@ -169,7 +169,7 @@ const postSlice = createSlice({
         state.status = 'fulfilled'
         let posts = [...action.payload.posts]
         console.log(posts);
-        state.myPosts = [...state.myPosts, ...posts]
+        state.myPosts = [...state.myPosts, ...posts] 
       })
       .addCase(fetchUserPosts.rejected, (state, action:any) => {
         state.status = 'error'

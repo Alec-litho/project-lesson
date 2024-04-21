@@ -12,12 +12,13 @@ type ComponentMenuType = {
   setEditPost?: (bool:boolean) => never
   deleteComment?: (commentId:string) => never
   setEditComment?: (commentId:string) => never
+  removeFromRecommendations?: (postId:string) => never
   comment?: CommentModel
   post?: IPost
 }
 
 
-export default function ComponentMenu({type,visitor,author,deletePost,setEditPost,deleteComment,setEditComment,comment,post}:ComponentMenuType) {
+export default function ComponentMenu({type,visitor,author,deletePost,setEditPost,deleteComment,setEditComment,comment,post,removeFromRecommendations}:ComponentMenuType) {
   let [showMenu, setShowMenu] = useState(false);
   
   return (
@@ -32,7 +33,7 @@ export default function ComponentMenu({type,visitor,author,deletePost,setEditPos
               :
               <div className={classes.visitorMenu}>
                 <a onClick={() => console.log('report')}>Report</a>
-                <a onClick={() => /*removeFromRecommendations(post._id)*/ console.log('removeFromRecommendation')}>Hide from recom...</a>
+                <a onClick={() => type==="comment"? "need to make this feature" : (post&&removeFromRecommendations)&&removeFromRecommendations(post._id)}>Hide from recom...</a>
               </div>
               }
              

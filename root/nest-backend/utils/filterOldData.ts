@@ -3,7 +3,7 @@ import { PostDocument } from "src/post/entities/post-entity";
 
 
 
-export default function filterOldData(untilDaysNum:number/*num of days before data considered fresh*/,data:PostDocument | ImageDocument) {
+export default function isNotOutdated(untilDaysNum:number/*num of days before data considered fresh*/,data:PostDocument | ImageDocument) {
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth();

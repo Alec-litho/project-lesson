@@ -1,0 +1,28 @@
+
+
+
+
+
+
+
+Recommendation system:
+
+Recommendation system is based on 4 parameters:
+1. friends posts
+2. posts that your friends liked
+3. key words that User get after liking specific post with its own tags (key words) 
+4. new posts that users uploaded recently
+
+Recommendation object that contains in user mongodb document has 3 parameters:
+- frequentlyAppearingKeyWords - key words that appear most of the time when user likes posts
+- newKeyWords - key words that user got recently after liking posts
+- oldKeyWords - outdated key words
+
+User gets 15 posts per request, the priority and amount of posts for each parameter is:
+- 3 friend posts
+- 2 friends liked posts
+- 10 posts by user key words:
+  - 5 frequentlyAppearingKeyWords
+  - 3 newKeyWords
+  - 2 oldKeyWords
+- 5 new posts

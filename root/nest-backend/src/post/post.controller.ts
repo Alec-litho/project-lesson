@@ -74,5 +74,13 @@ export class PostController {
     const postId = await this.postService.removeLike(id,userId);
     res.json(postId);
   }
+  @ApiOperation({summary:"get user recommendations. "})
+  @ApiResponse({status:200,type:Boolean})
+  @Post("recommendations/:id")
+  async getRecommendations(@Param("id") id:string, @Body() {postsOnThePage}: {postsOnThePage:string[]}, @Res() res: Response) {
+    console.log(id)
+    const recommendations = await this.postService.getRecommendations(id, postsOnThePage);
+    res.json(recommendations);
+  }
 }
  
