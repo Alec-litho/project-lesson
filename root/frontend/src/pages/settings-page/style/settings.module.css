@@ -1,0 +1,21 @@
+.settingsComponent {
+    display: flex;
+    gap: 80px;
+    width: 100%;
+}
+.leftSideMenu {
+    background-color: rgb(233, 233, 233);
+    width: 20%;
+    height: auto;
+    padding: 20px 30px;
+    list-style: none;
+}
+.leftSideMenu li {
+    font-size: 20px;
+    
+}
+.rightSideBody {
+    background-color: white;
+    width: 80%;
+    min-height: 800px;
+}

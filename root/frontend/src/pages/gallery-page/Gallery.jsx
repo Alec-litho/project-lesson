@@ -85,9 +85,8 @@ export default function Gallery() {
 
     function uploadPicture(e) {
         finishLoading(false)
-        const albumId = currentAlbumId.albumid
-        console.log(albumId);
-        postImage(e.target, albumId, false/*is appended to post?*/ ).then(res => {
+        console.log(currentAlbumId);
+        postImage(e.target, currentAlbumId, false/*is appended to post?*/ ).then(res => {
             dispatch(uploadImage({image:{...res,user:auth.userId},token})).then(({payload}) => {
                 console.log(payload);
                 const newAlbums = albums.map(album => {
@@ -131,6 +130,7 @@ export default function Gallery() {
                         albums[0] &&
                             albums.filter(a=>a._id===currentAlbumId)[0].images.length>0?
                             albums.filter(a=>a._id===currentAlbumId)[0].images.map((photo, indx) => {
+                                console.log(photo, albums.filter(a=>a._id===currentAlbumId)[0])
                                 return (
                                 <div  key={photo._id} className={classes.imgWrapper} onClick={e => showSlider(e)}>
                                    <img 

@@ -73,7 +73,7 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
     setReplyToComment(replyToComment = true)
   }
   function viewUser(comment) {
-    setPosts(null)
+    setPosts([])
     navigate(`/user/${comment.user._id}`);
     window.scrollTo(0, 0)
     setCurrPosts([])
@@ -86,7 +86,7 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
           <div className={classes.date}>{`published on ${trimTime(post.createdAt)}`}</div>
           <div className={classes.postTools}>
             <ComponentMenu type={"post"} visitor={visitor} author={author} deletePost={deletePost}
-            setEditPost={setEditPost} post={post}
+            setEditPost={setEditPost} post={post} removeFromRecommendations={removeFromRecommendations}
             />
           </div>
         </div>
@@ -149,9 +149,12 @@ function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,like
               <div className={classes.commentReplies}>
                {comment.replies.length>0 && 
                   <>
-                     <div>{comment.replies.map((reply,id) => {if(id!==3) return <img key={id} className={classes.replyImgCircle} src={reply.user.avatarUrl}></img>})}</div>
-                     <a onClick={() => {setShowReplies(prev => prev.indexOf(comment._id)===-1? prev = [...prev, comment._id] : prev.splice(prev.indexOf(comment._id),1))}}
-                     >{showReplies.indexOf(comment._id)!==-1? "hide" : "show"}</a>
+                     <div>{comment.replies.map((reply,indx) => {if(indx!==3) return <img key={indx} className={classes.replyImgCircle} src={reply.user.avatarUrl}></img>})}</div>
+                     <a onClick={() => {
+                       console.log(showReplies);
+                      setShowReplies(prev => prev.indexOf(comment._id)===-1? prev = [...prev, comment._id] : prev.filter(id => id !== comment._id));
+                      console.log(showReplies)
+                    }}>{showReplies.indexOf(comment._id)===-1? "show" : "hide"}</a>
                   </>
                 }
               </div>
@@ -166,10 +169,9 @@ function Comment({comment,visitor,reply,navigate,showReplies,setShowReplies,like
           </div>
         </div>
       </div>
-      {/* {console.log(comment.replies.length)} */}
       {comment.replies.length>0 && 
       <> {
-        comment.type==="comment"? 
+        type==="comment"? 
         <div className={classes.repliesWrapper}>
         {showReplies.indexOf(comment._id)!==-1 && 
         <div className={classes.replies}>

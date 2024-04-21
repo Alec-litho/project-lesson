@@ -15,7 +15,7 @@ export default function UserPage() {
 
     const {id} = useParams()
     const auth = useAppSelector(state => state.auth);
-    const albumState = useAppSelector(state => state.albums.albums);
+    const albumState = useAppSelector(state => state.albums);
     const dispatch = useAppDispatch();
     const [user, setUser] = useState<IUser>(auth.userInfo)
     const [album, setAlbum] = useState<IAlbumModel | null>(null)
@@ -23,21 +23,20 @@ export default function UserPage() {
     const [sliderTrue, setSliderTrue] = useState<boolean>(false);
     const [currPictureId, setCurrPictureId] = useState<string | null>(null);//current img id to show in slider
     const [possibleFriends, setPossibleFriends] = useState<IUser[] | []>([])
-    console.log("update outside of useeffect",user);
+    // console.log("update outside of useeffect",user);
 
     useEffect(() => {
-        console.log("update in useeffect",id)
+        // console.log("update in useeffect",id)
         if(auth.isAuth !== false && id!==undefined ) {
             if(id === auth.userId) {//if user enters his own page
                 dispatch(getPossibleFriends({id:auth.userId, token:auth.userToken})).then(({payload}) => Array.isArray(payload)? setPossibleFriends(payload  as IUser[]) : console.log(payload))
                 setUser(auth.userInfo)
-                const mainAlbum = albumState.filter(album => album.name === 'All')
+                const mainAlbum = albumState.albums.filter(album => album.name === 'All')
                 if(mainAlbum.length===0)  setUserAlbum(auth.userInfo._id);
                 else {
                     setAlbum(mainAlbum[0])
                     setFinishLoading(true);
                 }
-                
             } else {/*if its page of another user*/
                 dispatch(getUser({_id:id,token:auth.userToken})).then(({payload}) => {
                     console.log(payload);
@@ -54,7 +53,6 @@ export default function UserPage() {
     function setUserAlbum(userId:string):void {
         const data = {_id: userId, token:auth.userToken}
         dispatch(fetchMainAlbum(data)).then(({payload}) => {
-            console.log(payload); 
             setAlbum(payload as IAlbumModel);
             setFinishLoading(true);
         })
