@@ -85,7 +85,7 @@ export class PostService {
         let userRecommendations = user.recommendations 
         //--------------------------friendsPosts--------------------------
         const friendsPosts = await Promise.all(user.friends.map(async(friend) => {
-            const userPosts = await this.postModel.find({author:friend._id});
+            const userPosts = await this.postModel.find({author:friend._id}, '_id text');
             const posts = userPosts.filter(post => {
                 if(!post.likes.some(userLike => userLike===user._id) || postsOnThePage.indexOf(post.id)===-1) {/* || !post.views.some(userLike => userLike===user._id)*/ 
                     isNotOutdated(14, post)? true : false
@@ -95,18 +95,18 @@ export class PostService {
             })
             return posts.length > 5? posts.slice(0,5) : posts
         }));
-        recommendationPosts.push(friendsPosts)
+        recommendationPosts.push(...friendsPosts)
         //--------------------------friends posts--------------------------
 
         //--------------------------friends liked posts--------------------------
         const friendsLikes = user.friends.map(async(friend) => {
-            const posts = await this.postModel.find({likes:{$in:[friend._id]}})//get posts that your friend liked
+            const posts = await this.postModel.find({likes:{$in:[friend._id]}}).select('_id text')//get posts that your friend liked
             return posts.map((post, indx) => {//filter these post so user doesn't receive old posts
                 if(indx === 2) return 
                 if((!post.likes.some(userLike => userLike===user._id) || !post.views.some(userLike => userLike===user._id)) && isNotOutdated(14, post)) return post
             })
         })
-        recommendationPosts.push(friendsLikes)
+        recommendationPosts.push(...friendsLikes)
         //--------------------------friends liked posts--------------------------
 
         //--------------------------posts by key words--------------------------
@@ -123,7 +123,7 @@ export class PostService {
         }
         async function requestPosts(type: string, priorityNum: number):Promise<void> {
             console.log(this)
-            const posts:PostModel[] = await this.postModel.find({tags:[...userRecommendations[type]]})//get all posts by key words type
+            const posts:PostModel[] = await this.postModel.find({tags:[...userRecommendations[type]]}).select('_id text')//get all posts by key words type
             posts.filter((post:PostModel) => postsOnThePage.indexOf(post._id.toString())===-1)//filter posts that already on the page
 
             //i need to ignore postsAmountByItsPriority if posts of previouse type with specific priority posts num is less than it should be
@@ -136,16 +136,17 @@ export class PostService {
         //--------------------------posts by key words--------------------------
 
         //--------------------------recently uploaded posts--------------------------
-        let num = 1
-        while(recommendationPosts.length <= 15) {
-            const newPosts = await this.postModel.find().sort({ createdAt: -1 }).limit(20*num)  // 10 latest docs
-            console.log(newPosts,postsOnThePage)
-            newPosts.filter((post) => postsOnThePage.indexOf(post._id.toString())===-1)
-            recommendationPosts.push(...newPosts)
-            num++
+        let postsAmountToSkip = 0
+        while(recommendationPosts.length < 15) {
+            let postsAmountNeeded = 15-recommendationPosts.length;
+            const newPosts = await this.postModel.find({},'_id text createdAt').sort({ createdAt: -1 }).limit(postsAmountNeeded + postsAmountToSkip).skip(postsAmountToSkip);
+            postsAmountToSkip += postsAmountNeeded;
+            console.log('recently posts',newPosts.map(post => post._id),postsAmountNeeded, postsAmountToSkip);
+            newPosts.filter((post) => postsOnThePage.indexOf(post._id.toString())===-1);
+            recommendationPosts.push(...newPosts);
         }
         //--------------------------recently uploaded posts--------------------------
-        console.log(recommendationPosts)
+        console.log(recommendationPosts.map(post => post._id), recommendationPosts.length)
         return recommendationPosts
     }
     async getOnePost(id:string) {

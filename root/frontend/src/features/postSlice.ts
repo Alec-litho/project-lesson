@@ -152,6 +152,12 @@ export const removeLikePost = createAsyncThunk('posts/removeLikePost', async fun
   const response:AxiosResponse<boolean> = await axios.post(`http://localhost:3001/post/remove-like/${id}`, {userId})
   return response.data
 })
+
+export const getRecommendations = createAsyncThunk('posts/getRecommendations', async function({userId,postsOnThePage}:{userId:string,postsOnThePage:string[]}):Promise<boolean> {
+  const response:AxiosResponse<boolean> = await axios.post(`http://localhost:3001/post/recommendations/${userId}`, {postsOnThePage})
+  return response.data
+})
+
 const postSlice = createSlice({
   name: 'posts',
   initialState,
@@ -207,6 +213,16 @@ const postSlice = createSlice({
       .addCase(deletePostReducer.rejected, (state,action:any) => {
         state.status = 'error'
         state.error = action.payload
+      })
+      .addCase(getRecommendations.fulfilled, (state,action:any) => {
+        console.log(action.payload);
+        state.posts = action.payload;
+        state.status = 'fulfilled';
+        state.error = null;
+      })
+      .addCase(getRecommendations.rejected, (state,action:any) => {
+        state.status = 'error';
+        state.error = action.payload;
       })
   }
 })
