@@ -3,6 +3,11 @@
 
 
 
+All requests to backend are done through Redux, using thunks. Requests to backend should't be made directly from components (There are may be exceptions)
+This way response's data is loaded in global state and then i query data from global state
+Even if data is not loaded to global state, request still should be made through Redux  
+
+
 
 
 Recommendation system:

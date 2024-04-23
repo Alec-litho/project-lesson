@@ -10,6 +10,7 @@ import viewCount from '../../helper_functions/viewCount'
 import axios from "axios";
 import { Dispatch, SetStateAction } from "react";
 import Loader from "../../components/Loader";
+import removeFromRecommendations from "../../helper_functions/removeFromRecommendations";
 
 type PostBlock = {
     setSliderTrue: Dispatch<SetStateAction<boolean>>;
@@ -17,13 +18,9 @@ type PostBlock = {
     currPictureId: string | null;
     user: IUser;
 }
-type currPostType = { 
-    postId:string,
-    watched:boolean,
-    positionY:number
-}
+
 export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,user}:PostBlock) {
-    let userPosts = useAppSelector(state => state.userPosts)
+    let userPosts = useAppSelector(state => state.posts)
     let auth = useAppSelector(state => state.auth)
     let tools = useRef<HTMLDivElement>(null)
     let append = useRef(null)
@@ -37,14 +34,13 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let viewedPosts = user._id===auth.userId? userPosts.lastViewedPosts : 0//number of posts that were viewed to user after loading another new posts (initially its 0)
     window.onscroll = () => viewedPosts = viewCount({user, dispatch, currPosts, viewedPosts, setPosts, setViewedPostsCount, setLoader});
 
-    console.log(posts, user, currPosts);
+
     useEffect(() => {
         //when user changes
         setCurrPosts([])
         viewedPosts = 0
         dispatch(fetchUserPosts({_id:user._id, token:"token",count:viewedPosts}))
             .then((response:any) => {
-              console.log(response.payload.posts);
               setPosts(response.payload.posts)
               setLoader(false)
             })
@@ -85,11 +81,6 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
             }
           })
     }
-    function removeFromRecommendations(postId:string) {
-        const filteredPosts = posts.filter(post => post._id !== postId) as IPost[];
-        setPosts(filteredPosts);
-        dispatch(removeRecommendation({postId, userId:user._id}))
-    }
     function showTools() { if(tools.current) tools.current.style.display = "flex"};
     function hideTools() {if(focus==false && imagesToAppend.length === 0)setTimeout(() => {if(tools.current) tools.current.style.display = "none"},200)};
     return (
@@ -124,7 +115,7 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
             </div>}
             <div className={classes.postsList}>{
                 posts.map((post,id) => {
-                    return <Post key={id} author={user} visitor={auth.userInfo} post={post}setCurrPosts={setCurrPosts}setSliderTrue={setSliderTrue}token={"token"} 
+                    return <Post key={post._id} author={user} visitor={auth.userInfo} post={post}setCurrPosts={setCurrPosts}setSliderTrue={setSliderTrue}token={"token"} 
                     setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} removeFromRecommendations={removeFromRecommendations} setPosts={setPosts}
                     />
                 })

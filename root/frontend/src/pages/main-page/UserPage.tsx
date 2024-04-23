@@ -1,6 +1,5 @@
 import {useState, useEffect} from 'react';
 import {fetchMainAlbum, fetchUserAlbums} from '../../features/albumSlice';
-import Slider from '../../components/Slider';
 import classes from './style/userPage.module.css';
 import PostBlock from './PostBlock';
 import Loader from '../../components/Loader.jsx';
@@ -10,8 +9,16 @@ import AdditionalInfoBlock from './AdditionalInfoBlock';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxCustomHooks';
 import {  useParams } from 'react-router-dom';
 import { getPossibleFriends, getUser } from '../../features/authSlice';
+import { SetStateAction, Dispatch } from 'react';
 
-export default function UserPage() { 
+type UserPage = {
+    setSliderTrue: Dispatch<SetStateAction<boolean>>;
+    sliderTrue: Boolean;
+    setCurrPictureId: Dispatch<SetStateAction<string | null>>;
+    currPictureId: string | null;
+}
+
+export default function UserPage({setSliderTrue, sliderTrue, currPictureId, setCurrPictureId}:UserPage) { 
 
     const {id} = useParams()
     const auth = useAppSelector(state => state.auth);
@@ -20,13 +27,9 @@ export default function UserPage() {
     const [user, setUser] = useState<IUser>(auth.userInfo)
     const [album, setAlbum] = useState<IAlbumModel | null>(null)
     const [isLoaded, setFinishLoading] = useState(false);
-    const [sliderTrue, setSliderTrue] = useState<boolean>(false);
-    const [currPictureId, setCurrPictureId] = useState<string | null>(null);//current img id to show in slider
     const [possibleFriends, setPossibleFriends] = useState<IUser[] | []>([])
-    // console.log("update outside of useeffect",user);
 
     useEffect(() => {
-        // console.log("update in useeffect",id)
         if(auth.isAuth !== false && id!==undefined ) {
             if(id === auth.userId) {//if user enters his own page
                 dispatch(getPossibleFriends({id:auth.userId, token:auth.userToken})).then(({payload}) => Array.isArray(payload)? setPossibleFriends(payload  as IUser[]) : console.log(payload))
@@ -39,8 +42,6 @@ export default function UserPage() {
                 }
             } else {/*if its page of another user*/
                 dispatch(getUser({_id:id,token:auth.userToken})).then(({payload}) => {
-                    console.log(payload);
-                    
                     setUser(payload)
                     setUserAlbum(payload._id)
                 })
@@ -69,7 +70,7 @@ export default function UserPage() {
                 <PostBlock  setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} setSliderTrue={setSliderTrue} user={user} />
             </div>
             <AdditionalInfoBlock possibleFriends={possibleFriends} user={auth.userId} visitor={id}/>
-            <Slider sliderTrue={sliderTrue} token={auth.userToken} setSliderTrue={setSliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}></Slider></>
+            </>
         </div>
           }
         </>);

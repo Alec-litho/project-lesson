@@ -47,8 +47,8 @@ export const getMe = createAsyncThunk('auth/getMe', async function({_id,token}:D
   }
 })
 export const getUser = createAsyncThunk('auth/fetchData', async function({_id,token}:DefaultReduxThunkDto, {rejectWithValue}) {
-    console.log(token,_id);
     const response = await axios.get(`http://localhost:3001/user/${_id}`)
+    console.log(response.data);
     return response.data
 })
 export const getPossibleFriends = createAsyncThunk("auth/getPossibleFriends", async ({id,token}:{id:string,token:string}):Promise<IUser[]> => {
@@ -115,7 +115,7 @@ const authSlice = createSlice({
       console.log("log out");
       
     },
-    getCookie: (state, action) => {
+    getCookie: (state) => {
       let result = false;
       let token:string = '';
       let _id:string = '';

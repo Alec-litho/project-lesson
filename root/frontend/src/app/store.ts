@@ -4,7 +4,7 @@ import { albumReducer } from '../features/albumSlice'
 import { authReducer } from '../features/authSlice'
 
 const rootReducer = combineReducers({
-  userPosts: postSlice,
+  posts: postSlice,
   auth: authReducer,
   albums: albumReducer
 })

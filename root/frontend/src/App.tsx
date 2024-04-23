@@ -1,6 +1,6 @@
 import "./App.css";
 import { Route, Routes,redirect } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "./hooks/reduxCustomHooks";
 import {getCookie, logout, getMe} from "./features/authSlice";
 import Dialog from "./pages/dialog-page/DialogPage";
 import UserPage from "./pages/main-page/UserPage";
@@ -12,15 +12,18 @@ import Register from "./pages/register-page/Register";
 import Header from "./components/Header";
 import Error from "./pages/error-page/Error"
 import Settings from "./pages/settings-page/SettingsPage"
-import { useEffect } from "react";
+import Slider from './components/Slider';
+import { useEffect, useState } from "react";
 // -----------------------------------------------//
 
 export default function App() {
   const queryString = window.location; 
   const userRouteId = queryString.pathname.split('/')[2]
-  const dispatch = useDispatch();
-  const {isAuth, userToken, userId, status, error, userInfo} = useSelector((state) => state.auth);
-
+  const dispatch = useAppDispatch();
+  const {isAuth, userToken, userId, status, userInfo} = useAppSelector((state) => state.auth);
+  const [sliderTrue, setSliderTrue] = useState<boolean>(false);
+  const [currPictureId, setCurrPictureId] = useState<string | null>(null);//current img id to show in slider
+ 
   useEffect(() => {
     dispatch(getCookie())
     if(!isAuth && (userToken.length>0 && userId.length>0)) {
@@ -31,7 +34,9 @@ export default function App() {
     <div>
       <div className="headerBackground">
         <div className="wrapper">
-          <Header isAuth={isAuth} dispatch={dispatch} logout={logout} avatarUrl={userInfo.avatarUrl} userId={userRouteId} authId={userInfo._id}/>
+          <Header avatarUrl={userInfo.avatarUrl} authId={userInfo._id} setSliderTrue={setSliderTrue} sliderTrue={sliderTrue} currPictureId={currPictureId} 
+          setCurrPictureId={setCurrPictureId}
+          />
         </div>
       </div>
       <div className="body">
@@ -47,9 +52,10 @@ export default function App() {
           ) : (
             <Routes>
               <Route path="/dialogs" element={<Dialog />} />
-              <Route path="/user/:id" element={<UserPage />} />
+            
+              <Route path="/user/:id" element={<UserPage setSliderTrue={setSliderTrue} sliderTrue={sliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}/>} />
               <Route path="/music" element={<Music />} />
-              <Route path="/feed" element={<Feed />} />
+              <Route path="/feed" element={<Feed setSliderTrue={setSliderTrue} sliderTrue={sliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}/>} />
               <Route path="/gallery/:id" element={<Gallery />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -60,6 +66,7 @@ export default function App() {
           )}
         </div>
       </div>
+      <Slider sliderTrue={sliderTrue} token={userToken} setSliderTrue={setSliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}></Slider>
     </div>
   );
 }

@@ -85,7 +85,11 @@ interface IUpdatePostDto {
     tags: string[]
     images: ImageModel[]
 }
-
+type currPostType = { 
+    postId:string,
+    watched:boolean,
+    positionY:number
+}
 //------------Post---------------//
 
 //----------------------MODELS----------------------//

@@ -4,11 +4,13 @@ import { ReactComponent as Search } from '../assets/icons/search.svg';
 import Dialog from '../pages/dialog-page/DialogPage.jsx'
 import Main from '../pages/main-page/UserPage'
 import Music from '../pages/music-page/MusicPage.jsx'
-import Feed from '../pages/feed-page/FeedPage.tsx'
+import Feed from '../pages/feed-page/FeedPage'
 import Gallery from '../pages/gallery-page/Gallery.jsx'
 
 
-export default function Header({userId,avatarUrl,authId}) {
+
+export default function Header({avatarUrl,authId, setSliderTrue, sliderTrue, currPictureId, setCurrPictureId}) {
+    console.log(authId)
     return (
         <div className="header">
             <div className='leftSideContent'>
@@ -16,8 +18,8 @@ export default function Header({userId,avatarUrl,authId}) {
                 <div className='nav'>
                    <Link to={`/gallery/${authId}`} element={<Gallery/>}>Gallery</Link>
                    <Link to="/music" element={<Music/>}>Music</Link>
-                   <Link to={`/user/${authId}`} element={<Main/>}>Home</Link>
-                   <Link to="/feed" element={<Feed/>}>Feed</Link>
+                   <Link to={`/user/${authId}`} element={<Main setSliderTrue={setSliderTrue} sliderTrue={sliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}/>}>Home</Link>
+                   <Link to="/feed" element={<Feed setSliderTrue={setSliderTrue} sliderTrue={sliderTrue} currPictureId={currPictureId} setCurrPictureId={setCurrPictureId}/>}>Feed</Link>
                    <Link to="/dialogs" element={<Dialog/>}>Dialogs</Link>
                 </div>
             </div>

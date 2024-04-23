@@ -12,7 +12,7 @@ import trimTime from "../helper_functions/trimTime"
 type Islider = {
     setSliderTrue: Dispatch<SetStateAction<boolean>>;
     currPictureId: string | null;
-    sliderTrue: boolean;
+    sliderTrue: Boolean;
     setCurrPictureId: Dispatch<SetStateAction<string | null>>
     desc?: string;
     token: string

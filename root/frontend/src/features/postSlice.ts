@@ -153,9 +153,9 @@ export const removeLikePost = createAsyncThunk('posts/removeLikePost', async fun
   return response.data
 })
 
-export const getRecommendations = createAsyncThunk('posts/getRecommendations', async function({userId,postsOnThePage}:{userId:string,postsOnThePage:string[]}):Promise<boolean> {
-  const response:AxiosResponse<boolean> = await axios.post(`http://localhost:3001/post/recommendations/${userId}`, {postsOnThePage})
-  return response.data
+export const getRecommendations = createAsyncThunk('posts/getRecommendations', async function({userId,postsOnThePage}:{userId:string,postsOnThePage:string[]}):Promise<{posts:IPost[] | []}> {
+  const response:AxiosResponse<IPost[]> = await axios.post(`http://localhost:3001/post/recommendations/${userId}`, {postsOnThePage})
+  return {posts:[...response.data]};
 })
 
 const postSlice = createSlice({
