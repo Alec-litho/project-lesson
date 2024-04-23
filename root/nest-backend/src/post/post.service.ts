@@ -85,7 +85,7 @@ export class PostService {
         let userRecommendations = user.recommendations 
         //--------------------------friendsPosts--------------------------
         const friendsPosts = await Promise.all(user.friends.map(async(friend) => {
-            const userPosts = await this.postModel.find({author:friend._id}, '_id text');
+            const userPosts = await this.postModel.find({author:friend._id});
             const posts = userPosts.filter(post => {
                 if(!post.likes.some(userLike => userLike===user._id) || postsOnThePage.indexOf(post.id)===-1) {/* || !post.views.some(userLike => userLike===user._id)*/ 
                     isNotOutdated(14, post)? true : false
@@ -100,7 +100,7 @@ export class PostService {
 
         //--------------------------friends liked posts--------------------------
         const friendsLikes = user.friends.map(async(friend) => {
-            const posts = await this.postModel.find({likes:{$in:[friend._id]}}).select('_id text')//get posts that your friend liked
+            const posts = await this.postModel.find({likes:{$in:[friend._id]}})//get posts that your friend liked
             return posts.map((post, indx) => {//filter these post so user doesn't receive old posts
                 if(indx === 2) return 
                 if((!post.likes.some(userLike => userLike===user._id) || !post.views.some(userLike => userLike===user._id)) && isNotOutdated(14, post)) return post
@@ -123,7 +123,7 @@ export class PostService {
         }
         async function requestPosts(type: string, priorityNum: number):Promise<void> {
             console.log(this)
-            const posts:PostModel[] = await this.postModel.find({tags:[...userRecommendations[type]]}).select('_id text')//get all posts by key words type
+            const posts:PostModel[] = await this.postModel.find({tags:[...userRecommendations[type]]})//get all posts by key words type
             posts.filter((post:PostModel) => postsOnThePage.indexOf(post._id.toString())===-1)//filter posts that already on the page
 
             //i need to ignore postsAmountByItsPriority if posts of previouse type with specific priority posts num is less than it should be
@@ -134,12 +134,42 @@ export class PostService {
             recommendationPosts.push(...posts)
         }
         //--------------------------posts by key words--------------------------
-
+ 
         //--------------------------recently uploaded posts--------------------------
         let postsAmountToSkip = 0
         while(recommendationPosts.length < 15) {
             let postsAmountNeeded = 15-recommendationPosts.length;
-            const newPosts = await this.postModel.find({},'_id text createdAt').sort({ createdAt: -1 }).limit(postsAmountNeeded + postsAmountToSkip).skip(postsAmountToSkip);
+
+            //JUST FOR A TEST BECAUSE I NEED TO PROPERLY POPULATE REPLIES-----------------
+            const newPosts = await this.postModel.find().sort({ createdAt: -1 }).limit(postsAmountNeeded + postsAmountToSkip).skip(postsAmountToSkip).populate([{//--------------------------i need to populate replies recursive until replies array in every comment is empty
+                path: "comments",
+                model: "Comment",
+                select: "text user createdAt likes post replies replyTo",
+                populate: [{
+                    path: "replies",
+                    model: "Comment",
+                    select: "text user createdAt likes post replies replyTo",
+                    populate: [{
+                        path: "user",
+                        model: "User",
+                        select: "avatarUrl fullName gender"
+                    }]
+    
+                }, {
+                    path: "user",
+                    model: "User",
+                    select: "avatarUrl fullName gender"
+                }]
+            },{
+                path: 'images',
+                model: "Image"
+            },
+            {
+                path: 'author',
+                model: "User"
+            }
+        ]);
+        //JUST FOR A TEST BECAUSE I NEED TO PROPERLY POPULATE REPLIES-----------------
             postsAmountToSkip += postsAmountNeeded;
             console.log('recently posts',newPosts.map(post => post._id),postsAmountNeeded, postsAmountToSkip);
             newPosts.filter((post) => postsOnThePage.indexOf(post._id.toString())===-1);
