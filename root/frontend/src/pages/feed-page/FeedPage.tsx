@@ -23,21 +23,26 @@ export default function({setSliderTrue, sliderTrue, currPictureId, setCurrPictur
     const [loader, setLoader] = useState<Boolean>(true);
     let [currPosts, setCurrPosts] = useState<currPostType[] | []>([]);
     const dispatch = useDispatch();
-    let viewedPosts = 0
-    window.onscroll = () => viewedPosts = viewCount({user:user.userInfo, dispatch, currPosts, viewedPosts, setPosts, setViewedPostsCount, setLoader});
+    let [viewedPosts,setViewedPosts] = useState(0)
+    window.onscroll = () => viewCount({dispatch, currPosts, viewedPosts, setViewedPosts})
 
-    console.log(posts)
+    console.log(posts,currPosts.length, viewedPosts)
+
     useEffect(() => {
-        setLoader(true);
-        setCurrPosts([]);
-        const postsOnThePage = posts.map((post:IPost)=>post._id);
-        dispatch<any>(getRecommendations({userId: user.userId, postsOnThePage}))
-        .then(({payload}:{payload:{posts:IPost[]}}) => {
-            console.log(payload)
-            setPosts((prev) => [...prev,...payload.posts])
-            setLoader(false)
-          });
-    },[])
+        if(posts.length===0 || currPosts.length === viewedPosts) {//if posts array is empty or if we need to request more posts
+            setLoader(true);
+            //setCurrPosts([]);
+            const postsOnThePage = posts.map((post:IPost)=>post._id);
+            dispatch<any>(getRecommendations({userId: user.userId, postsOnThePage}))
+            .then(({payload}:{payload:{posts:IPost[]}}) => {
+                console.log(payload)
+                setPosts((prev) => [...prev,...payload.posts])
+                setLoader(false)
+              });
+            dispatch(setViewedPostsCount(currPosts.length))
+        }
+        
+    },[viewedPosts])
 
     return (
         <div className={classes.feedBody}>
@@ -45,16 +50,18 @@ export default function({setSliderTrue, sliderTrue, currPictureId, setCurrPictur
 
             </div>
             <div className={classes.mainContent}>
+                
                 {posts.map((post) => {
                      return <Post key={post._id} author={user} visitor={user.userInfo} post={post}setCurrPosts={setCurrPosts}setSliderTrue={setSliderTrue}token={"token"} 
                      setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} removeFromRecommendations={removeFromRecommendations} setPosts={setPosts}
                      />
                 })}
+                {loader? <Loader></Loader> : <div style={{"height":"100px"}}/*without this user cant scroll last post to the top of the screen to make it viewed*//>}
             </div>
             <div className={classes.rightSideContent}>
 
             </div>
-            {loader? <Loader></Loader> : <div style={{"height":"100px"}}/*without this user cant scroll last post to the top of the screen to make it viewed*//>}
+            
         </div>
     )
 }
