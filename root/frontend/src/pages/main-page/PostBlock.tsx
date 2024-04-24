@@ -20,6 +20,7 @@ type PostBlock = {
 }
 
 export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,user}:PostBlock) {
+    let [lastVisitedUserId, setLastVisitedUserId] = useState<string>(user._id)//either other users or user itself
     let userPosts = useAppSelector(state => state.posts)
     let auth = useAppSelector(state => state.auth)
     let tools = useRef<HTMLDivElement>(null)
@@ -31,21 +32,26 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let [loader, setLoader] = useState(true)
     let [imagesToAppend, setImagesToAppend] = useState<ImageModel[] | []>([])
     let dispatch = useAppDispatch()
-    let viewedPosts = user._id===auth.userId? userPosts.lastViewedPosts : 0//number of posts that were viewed to user after loading another new posts (initially its 0)
-    window.onscroll = () => viewedPosts = viewCount({user, dispatch, currPosts, viewedPosts, setPosts, setViewedPostsCount, setLoader});
+    let [viewedPosts, setViewedPosts] = useState<number>(user._id===auth.userId? userPosts.lastViewedPosts : 0)//number of posts that were viewed to user after loading another new posts (initially its 0)
+    window.onscroll = () => viewCount({dispatch, currPosts, viewedPosts, setViewedPosts});
 
 
     useEffect(() => {
-        //when user changes
-        setCurrPosts([])
-        viewedPosts = 0
-        dispatch(fetchUserPosts({_id:user._id, token:"token",count:viewedPosts}))
-            .then((response:any) => {
-              setPosts(response.payload.posts)
-              setLoader(false)
-            })
-        
-    }, [user])
+        if(posts.length===0 || currPosts.length === viewedPosts) {//if posts array is empty or if we need to request more posts
+            if(viewedPosts !== 0) setViewedPosts(prev => prev-1);
+            dispatch(setViewedPostsCount(currPosts.length));
+            dispatch(fetchUserPosts({_id:user._id, token:"token", count:viewedPosts}))
+                .then((response:any) => {
+                  setPosts((prev) => [...prev, ...response.payload.posts])
+                  setLoader(false)
+                })
+        } else if(user._id !== lastVisitedUserId) {//its should be called when user changes
+            setPosts([]);
+            setViewedPosts(0);
+            setCurrPosts([]);
+            setLastVisitedUserId(user._id);
+        }
+    }, [user, viewedPosts])
 
     
     function appendImage(target:EventTarget) {
@@ -85,7 +91,8 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     function hideTools() {if(focus==false && imagesToAppend.length === 0)setTimeout(() => {if(tools.current) tools.current.style.display = "none"},200)};
     return (
         <div>
-            {user._id === auth.userId && <div className={classes.makePost} onMouseLeave={hideTools} onMouseEnter={showTools}>
+            {user._id === auth.userId && 
+            <div className={classes.makePost} onMouseLeave={hideTools} onMouseEnter={showTools}>
                 <h2>Make post</h2>
                 <textarea ref={textArea} placeholder='Text' onFocus={_ => setFocus(true)} onBlur={_ => setFocus(false)} onInput={()=>/*({target}:{target:any}) => setTextLeng(target.value.length)*/console.log("input")}></textarea>
                 <div className={imagesToAppend.length !== 0? classes.imagesToAppend_show :  classes.imagesToAppend_hide}>
