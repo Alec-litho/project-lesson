@@ -11,18 +11,19 @@ import { RolesModule } from './roles/roles.module';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
 import { ConfigModule } from '@nestjs/config';
+import { NotificationModule } from './notifications/notification.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    MongooseModule.forRoot('mongodb+srv://opaltaco:eamV2B1PXGjNFX3y@cluster0.iyapupi.mongodb.net/blog?retryWrites=true&w=majority'),
     ImageModule,
     UserModule,
     AlbumModule,
-    MongooseModule.forRoot('mongodb+srv://opaltaco:eamV2B1PXGjNFX3y@cluster0.iyapupi.mongodb.net/blog?retryWrites=true&w=majority'),
     RolesModule,
     PostModule,
     CommentModule,
-
+    NotificationModule
   ],
   controllers: [AppController, RolesController],
   providers: [AppService, RolesService],

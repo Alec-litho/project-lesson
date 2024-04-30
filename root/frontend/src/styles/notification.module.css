@@ -1,0 +1,45 @@
+.notificationsParentComponent {
+    position: relative;
+}
+
+.newNotificationMark {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: red;
+}
+.notificationsComponent {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    width: 400px;
+    height: 600px;
+    background-color: white;
+}
+.notificationsComponent.show {
+    display: flex;
+}
+.notificationIcon {
+    width: 25px;
+    height: 25px;
+    fill: rgb(95, 95, 95);
+    cursor: pointer;
+}
+.notificationsMessages {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 40px;
+    border-bottom: 2px solid gray;
+
+}
+.leftSide {
+    display: flex;
+    flex-direction: column;
+}
+.rightSide img {
+    width: 40px;
+    height: 40px;
+}
