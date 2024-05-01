@@ -8,17 +8,16 @@
 .mainContent {
     width: 60%;
     height: 1000px;
-    border: 1px solid red;
     border-radius: 10px;
 }
 .leftSideContent {
-    width: 10%;
+    width: 15%;
     height: 500px;
     border: 1px solid rgb(19, 5, 209);
     border-radius: 10px;
 }
 .rightSideContent {
-    width: 30%;
+    width: 25%;
     height: 500px;
     border: 1px solid rgb(19, 5, 209);
     border-radius: 10px;

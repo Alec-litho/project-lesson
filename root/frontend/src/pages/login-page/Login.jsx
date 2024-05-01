@@ -61,7 +61,7 @@ export default function Login() {
               rules={{
                 required:{value:true, message:"password field is required"},
                 minLength:{value:8, message:"password field length is too short"},
-                maxLength:{value:20, message:"password field length is too long"}
+                maxLength:{value:100, message:"password field length is too long"}
               }}
               render={() => {
                 return <input

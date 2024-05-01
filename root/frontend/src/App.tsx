@@ -14,6 +14,7 @@ import Error from "./pages/error-page/Error"
 import Settings from "./pages/settings-page/SettingsPage"
 import Slider from './components/Slider';
 import { useEffect, useState } from "react";
+import { getNotificationMessages, setNewNotificationMessages } from "./features/notificationsSlice";
 // -----------------------------------------------//
 
 export default function App() {
@@ -23,7 +24,18 @@ export default function App() {
   const {isAuth, userToken, userId, status, userInfo} = useAppSelector((state) => state.auth);
   const [sliderTrue, setSliderTrue] = useState<boolean>(false);
   const [currPictureId, setCurrPictureId] = useState<string | null>(null);//current img id to show in slider
- 
+
+  useEffect(() => {//connect to get notifications updates
+    if(userId) {
+      console.log('w', userId)
+      const eventSource = new EventSource(`http://localhost:3001/notifications/listen_for/${userId}`);
+      dispatch(getNotificationMessages({userId, messagesNum:0}));
+      eventSource.onmessage = ({data}:{data:NotificationMessage[]}) => {
+          dispatch(setNewNotificationMessages(data))
+      }
+    }
+  },[userId]/*it supposed to invoke hook only 2 times*/)
+
   useEffect(() => {
     dispatch(getCookie())
     if(!isAuth && (userToken.length>0 && userId.length>0)) {

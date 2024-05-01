@@ -86,11 +86,24 @@ interface IUpdatePostDto {
     images: ImageModel[]
 }
 type currPostType = { 
-    postId:string,
+    itemId:string,
     watched:boolean,
     positionY:number
 }
 //------------Post---------------//
+
+
+//----------Notifications----------//
+
+interface NotificationMessage {
+    _id: string
+    text: string
+    date: string
+    type: {description: string, image: string}
+    viewed: string
+}
+
+//----------Notifications----------//
 
 //----------------------MODELS----------------------//
 

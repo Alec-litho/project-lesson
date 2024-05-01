@@ -6,7 +6,7 @@ import Main from '../pages/main-page/UserPage'
 import Music from '../pages/music-page/MusicPage.jsx'
 import Feed from '../pages/feed-page/FeedPage'
 import Gallery from '../pages/gallery-page/Gallery.jsx'
-
+import { Notification } from './Notification';
 
 
 export default function Header({avatarUrl,authId, setSliderTrue, sliderTrue, currPictureId, setCurrPictureId}) {
@@ -24,6 +24,7 @@ export default function Header({avatarUrl,authId, setSliderTrue, sliderTrue, cur
                 </div>
             </div>
             <div className='rightSideContent'>
+                <Notification userId={authId}/>
                 <div className='search'>
                     <Search className='searchSvg'/>
                     <input placeholder='search'></input>

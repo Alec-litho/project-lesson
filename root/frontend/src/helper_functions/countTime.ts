@@ -28,7 +28,7 @@ export const countTime = function(trimmedTime:string/*"Feb 24 2024 at 12:44:05"*
         ["day", "days"],
         ["hour", "hours"],
         ["minute", "minutes"],
-        ["second", "seconds"],
+        ["second", "seconds"], 
     ]
     for (let i = 0; i < toCheck.length; i++) {
         let timeAgo = (+currTime[i])-(+toCheck[i])//next date culc

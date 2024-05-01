@@ -57,7 +57,7 @@ try {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json"
   }})
-  return response.data
+  return response.data 
 } catch (error:any) {
   return error
 }

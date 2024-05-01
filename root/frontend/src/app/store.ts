@@ -2,11 +2,13 @@ import { configureStore, combineReducers, ThunkAction, Action } from '@reduxjs/t
 import postSlice from '../features/postSlice'
 import { albumReducer } from '../features/albumSlice'
 import { authReducer } from '../features/authSlice'
+import { notificationsReducer } from '../features/notificationsSlice'
 
 const rootReducer = combineReducers({
   posts: postSlice,
   auth: authReducer,
-  albums: albumReducer
+  albums: albumReducer,
+  notifications: notificationsReducer
 })
 function makeStore() {
   const store = configureStore({
