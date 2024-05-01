@@ -26,19 +26,19 @@ export class NotificationController {
     @Post("/")
     async createNotificationMessage(@Body() dto: CreateNotificationDTO) { 
         const result = await this.service.createNotificationMessage(dto);
-        return result;
-    }
-    @ApiOperation({summary:"set message status to viewed"})
-    @Get("/updateViewedMessages/:id")
+        return result;    }
+    @ApiOperation({summary:"set notification message status to viewed"})
+    @Get("/updateViewedMessage/:id")
     updateViewedMessages(@Param("id") id: string) {
         console.log("id --> ", id)
-        this.service.updateViewedMessages(id)
-    }
+        this.service.updateViewedMessage(id)
+    }  
     @ApiOperation({summary:"get notification messages"}) 
-    @Get("/:id/:num")
-    getNotificationMessages(@Param("id") id: string, @Param("num") messageNum: number) {
+    @Get("/get/:id/:num")
+    async getNotificationMessages(@Param("id") id: string, @Param("num") messageNum: number) {
         console.log("id getNotifi --> ",id)
-        this.service.getNotificationMessages(id, messageNum)
+        const response = await this.service.getNotificationMessages(id, messageNum)
+        return response
     }
 }
 

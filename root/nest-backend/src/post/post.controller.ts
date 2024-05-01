@@ -17,10 +17,7 @@ export class PostController {
   @ApiResponse({status:201,type:PostModel})
   @Post() 
   async createPost(@Body() createPostDto:CreatePostDto, @Res() res:Response) {
-
     const newPost = await this.postService.createPost(createPostDto);
-    console.log(newPost);
-    
     res.send(newPost);
   }
   @ApiOperation({summary:"Get all user's posts"})
@@ -62,8 +59,6 @@ export class PostController {
   @ApiResponse({status:200,type:Boolean})
   @Post("liked/:id")
   async likePost(@Param("id") id:string, @Body() {userId}:{userId:string}, @Res() res: Response) {
-    console.log(userId);
-    
     const postId = await this.postService.likePost(id,userId);
     res.json(postId);
   }
@@ -78,7 +73,7 @@ export class PostController {
   @ApiResponse({status:200,type:Boolean})
   @Post("recommendations/:id")
   async getRecommendations(@Param("id") id:string, @Body() {postsOnThePage}: {postsOnThePage:string[]}, @Res() res: Response) {
-    console.log(id)
+    console.log(postsOnThePage)
     const recommendations = await this.postService.getRecommendations(id, postsOnThePage);
     res.json(recommendations);
   }

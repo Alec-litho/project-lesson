@@ -18,23 +18,27 @@ export class NotificationService {
         const mongooseId = new mongoose.Types.ObjectId(id)
         const notifications:NotificationModel[] = await this.notificationModel.find({sentTo:mongooseId})
             .skip(messageNum)
-            .limit(30)
+            .limit(15)
             .populate("sentBy", "fullName avatarUrl")
             console.log(notifications)
         return notifications
     }
-    async updateViewedMessages(id:string):Promise<void> {
-        console.log("user id ----> ",id)
-        const mongooseId = new mongoose.Types.ObjectId(id)
-        this.notificationModel.updateMany({sentTo:mongooseId}, {viewed: true})
+    async updateViewedMessage(id:string):Promise<void> {
+        const mongooseId = new mongoose.Types.ObjectId(id);
+        const updatedModel = await this.notificationModel.findByIdAndUpdate(mongooseId, {viewed: true});
+        console.log(updatedModel)
+        if(updatedModel) updatedModel.save()
     }
     async createNotificationMessage(dto:CreateNotificationDTO) {
+      
         const notificationMessage = {
-            ...dto,
+            text: dto.text,
+            type: dto.type,
             sentBy: new mongoose.Types.ObjectId(dto.sentBy),
             sentTo: new mongoose.Types.ObjectId(dto.sentTo),
             viewed: false
         }
+        console.log(notificationMessage,dto)
         const notification = new this.notificationModel(notificationMessage);
         if(!notification) throw new HttpException("something went wrong while creating notification", HttpStatus.BAD_REQUEST);
         notification.save()
