@@ -1,26 +1,47 @@
+import { updateViewedMessages } from "../features/notificationsSlice";
 import { fetchUserPosts, watched } from "../features/postSlice";
 //to detect if user reached specific post to increase view count of the post, returns an index of the post that will be detected next
 
-type currPostType = {
-    postId:string,
+type currItemType = {
+    itemId:string,
     watched:boolean,
     positionY:number,
 }
 interface viewCountProps {
   dispatch:any
-  currPosts:currPostType[]
-  viewedPosts:number
-  setViewedPosts: (callback:(prev: number) => number | 0) => void 
+  currItems:currItemType[] 
+  viewedItems:number
+  setViewedItems: (callback:(prev: number) => number | 0) => void 
+  type:string
+  parentObj: typeof window | HTMLDivElement
 }
 
-export default function viewCount({dispatch, currPosts, viewedPosts, setViewedPosts}:viewCountProps):void {
 
-  if(currPosts.length===0 || !currPosts[viewedPosts]) return
-  
-    let post = currPosts[viewedPosts] 
-    if(window.scrollY >= post.positionY && !currPosts[viewedPosts].watched) {
-        currPosts[viewedPosts].watched = true
-        dispatch(watched({id:post.postId,token:"token"}))
-        setViewedPosts(prev => prev += 1);
+export default function viewCount({dispatch, currItems, viewedItems, setViewedItems, type, parentObj}:viewCountProps):void {
+ 
+  if(currItems.length===0 || !currItems[viewedItems]) return
+    let parentObjYPosition = getYPosition(parentObj)
+    let item = currItems[viewedItems] 
+    if(type==="post") {
+      if(parentObjYPosition >= item.positionY && !currItems[viewedItems].watched) {
+        currItems[viewedItems].watched = true
+        dispatch(watched({id:item.itemId,token:"token"}))
+        setViewedItems(prev => prev += 1);
+      }
+    } else if(type==="notification" && parentObj instanceof HTMLDivElement) {
+      let bottomScrollPosition = parentObj.scrollHeight - parentObjYPosition - parentObj.clientHeight;
+      if(bottomScrollPosition >= item.positionY && !currItems[viewedItems].watched) {
+        console.log("notification was viewed")
+        currItems[viewedItems].watched = true;
+        dispatch(updateViewedMessages(currItems[viewedItems].itemId));
+        setViewedItems(prev => prev += 1);
+      }
+    }
+    function getYPosition(el:typeof window | HTMLElement) {
+      if(el instanceof Window) {
+        return el.scrollY
+      } else {
+        return el.scrollTop
+      }
     }
 }

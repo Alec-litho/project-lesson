@@ -24,14 +24,13 @@ export default function({setSliderTrue, sliderTrue, currPictureId, setCurrPictur
     let [currPosts, setCurrPosts] = useState<currPostType[] | []>([]);
     const dispatch = useDispatch();
     let [viewedPosts,setViewedPosts] = useState(0)
-    window.onscroll = () => viewCount({dispatch, currPosts, viewedPosts, setViewedPosts})
+    window.onscroll = () => viewCount({dispatch, currItems:currPosts, viewedItems:viewedPosts, setViewedItems:setViewedPosts,type:"post",parentObj:window});
 
     console.log(posts,currPosts.length, viewedPosts)
 
     useEffect(() => {
         if(posts.length===0 || currPosts.length === viewedPosts) {//if posts array is empty or if we need to request more posts
             setLoader(true);
-            //setCurrPosts([]);
             const postsOnThePage = posts.map((post:IPost)=>post._id);
             dispatch<any>(getRecommendations({userId: user.userId, postsOnThePage}))
             .then(({payload}:{payload:{posts:IPost[]}}) => {
@@ -52,7 +51,7 @@ export default function({setSliderTrue, sliderTrue, currPictureId, setCurrPictur
             <div className={classes.mainContent}>
                 
                 {posts.map((post) => {
-                     return <Post key={post._id} author={user} visitor={user.userInfo} post={post}setCurrPosts={setCurrPosts}setSliderTrue={setSliderTrue}token={"token"} 
+                     return <Post key={post._id} author={post.author} visitor={user.userInfo} post={post}setCurrPosts={setCurrPosts}setSliderTrue={setSliderTrue}token={"token"} 
                      setCurrPictureId={setCurrPictureId} currPictureId={currPictureId} removeFromRecommendations={removeFromRecommendations} setPosts={setPosts}
                      />
                 })}

@@ -33,7 +33,7 @@ export default function PostBlock({setSliderTrue,setCurrPictureId,currPictureId,
     let [imagesToAppend, setImagesToAppend] = useState<ImageModel[] | []>([])
     let dispatch = useAppDispatch()
     let [viewedPosts, setViewedPosts] = useState<number>(user._id===auth.userId? userPosts.lastViewedPosts : 0)//number of posts that were viewed to user after loading another new posts (initially its 0)
-    window.onscroll = () => viewCount({dispatch, currPosts, viewedPosts, setViewedPosts});
+    window.onscroll = () => viewCount({dispatch, currItems:currPosts, viewedItems:viewedPosts, setViewedItems:setViewedPosts,type:"post",parentObj:window});
 
 
     useEffect(() => {

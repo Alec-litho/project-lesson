@@ -39,7 +39,7 @@ export default function Post({author, visitor, post, setCurrPictureId, setSlider
 
     setComments(post.comments)
     setCommentsLeng(countComments(post.comments))
-    setCurrPosts((prevState) => [...prevState, {postId:post._id, watched:false, positionY:postY.current.offsetTop}])
+    setCurrPosts((prevState) => [...prevState, {itemId:post._id, watched:false, positionY:postY.current.offsetTop}])
   },[])
 
   function deletePost(componentId){
