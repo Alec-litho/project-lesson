@@ -9,13 +9,21 @@
     border-radius: 50%;
     background-color: red;
 }
+
 .notificationsComponent {
+    overflow-y:scroll;
+    overflow: hidden;
     display: none;
     flex-direction: column;
     position: absolute;
-    width: 400px;
-    height: 600px;
+    left: 0px;
+    top: 45px;
+    border-radius: 15px;
+    width: 340px;
+    height: 450px;
     background-color: white;
+    box-shadow:  15px 15px 30px rgba(0, 0, 0, 0.212);
+    padding: 10px 5px;
 }
 .notificationsComponent.show {
     display: flex;
@@ -32,7 +40,7 @@
     justify-content: space-between;
     width: 100%;
     min-height: 40px;
-    border-bottom: 2px solid gray;
+    border-bottom: 2px solid rgb(53, 121, 199);
 
 }
 .leftSide {
@@ -40,6 +48,11 @@
     flex-direction: column;
 }
 .rightSide img {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.leftSide .header p {
+    color: rgb(53, 121, 199);
+    font-weight: 500;
 }
