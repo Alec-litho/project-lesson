@@ -4,6 +4,7 @@ import classes from '../styles/notification.module.css'
 import { useRef, useState, useEffect } from 'react';
 import { getNotificationMessages, updateViewedMessages } from "../features/notificationsSlice";
 import viewCount from '../helper_functions/viewCount';
+import { acceptFriendRequest, discardFriendRequest } from '../features/notificationsSlice';
 
 export function Notification({userId}:{userId:string}) {
     const dispatch = useAppDispatch();
@@ -30,19 +31,14 @@ export function Notification({userId}:{userId:string}) {
     function handleNotificationWindow() {
         const [parent,child] = [notificationsComponent.current!,notificationMessageRef.current!]
         notificationOpened.current = !notificationOpened.current 
-  
-        //So i want to set all notification messages that user can see after opening notification window to viewed=true
-        //the amount of notification messages depends on height of notification window and notification message
-        //if i divide first with second i should get 7, but offsetHeight returns 0 -- fix it
-        const msgsAmountOnThePage = Math.floor(parent.offsetHeight/child.offsetHeight);
-        console.log(parent,parent.offsetHeight,child,child.offsetHeight)
-        setViewedNotifications(msgsAmountOnThePage)
-
-
-
         if(notificationOpened.current ) {
             parent.style.display = "flex"
-                currNotifications.slice(0,msgsAmountOnThePage).forEach((msg) => dispatch(updateViewedMessages(msg.itemId)))
+            if(child!==null) {
+                console.log(parent,parent.offsetHeight,child,child.offsetHeight);
+                const msgsAmountOnThePage = Math.floor(parent.offsetHeight/child.offsetHeight);
+                setViewedNotifications(msgsAmountOnThePage);    
+                currNotifications.slice(0,msgsAmountOnThePage).forEach((msg) => dispatch(updateViewedMessages(msg.itemId)));
+            }
         } else {
             parent.style.display = "none"
         }
@@ -51,7 +47,7 @@ export function Notification({userId}:{userId:string}) {
     return (
         <div className={classes.notificationsParentComponent}>
             <div className={classes.newNotificationMark} ref={notificationMark} 
-            style={{display:notifications.newNotificationMessages.length>0?"flex":"nones"}}>
+            style={{display:notifications.newNotificationMessages.length>0?"flex":"none"}}>
             </div>
             <Notifications className={classes.notificationIcon} onClick={handleNotificationWindow}/>
             <div className={classes.notificationsComponent} ref={notificationsComponent} 
@@ -59,7 +55,7 @@ export function Notification({userId}:{userId:string}) {
                 {
                     [...notifications.archivedNotificationMessages, ...notifications.newNotificationMessages]
                     .map((message:NotificationMessage, indx:number, arr) => {
-                        return <NotificationMessageComponent key={message._id} 
+                        return <NotificationMessageComponent key={message._id} dispatch={dispatch}
                         setCurrNotifications={setCurrNotifications} message={message} notificationMessageRef={notificationMessageRef}/>
                     })
                 }
@@ -71,11 +67,11 @@ interface INotificationMessage {
     setCurrNotifications: (callback:(prev: currPostType[]) => currPostType[] | []) => void 
     message: NotificationMessage
     notificationMessageRef:any
+    dispatch:any
 }
 
-function NotificationMessageComponent({setCurrNotifications, message, notificationMessageRef}:INotificationMessage) {
+function NotificationMessageComponent({setCurrNotifications, message, notificationMessageRef,dispatch}:INotificationMessage) {
     // let notificationMessageY = useRef<null|HTMLDivElement>(null);
-
 
     useEffect(() => {
         const positionY = notificationMessageRef.current!.offsetTop
@@ -83,11 +79,23 @@ function NotificationMessageComponent({setCurrNotifications, message, notificati
     },[])
     return <div className={classes.notificationsMessages} ref={notificationMessageRef}>
                 <div className={classes.leftSide}>
-                    <div className={classes.header}><p>{message.type.description}</p></div>
-                    <div className={classes.body}><p>{message.text}</p></div>
+                    <div className={classes.header}><p>{message.type.split("_").join(" ")}</p></div>
+                    <div className={classes.body}>
+                        <p>{message.text}</p>
+                        {message.type==="friend_request"?
+                            <div className={classes.acceptDiscardBody}>
+                                <button className={classes.accept} onClick={dispatch(acceptFriendRequest({notificationId:message._id}))}>Accept</button>
+                                <button className={classes.discard} onClick={dispatch(discardFriendRequest({notificationId:message._id}))}>Discard</button>
+                            </div>
+                            :
+                            <div>
+                                <a href="#">take a look...</a>
+                            </div>
+                        }
+                    </div>
                 </div>
                 <div  className={classes.rightSide}>
-                    <img src={message.type.image}></img>
+                    <img src={message.imageUrl}></img>
                 </div>
             </div>
 }

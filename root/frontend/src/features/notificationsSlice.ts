@@ -23,7 +23,31 @@ export const getNotificationMessages = createAsyncThunk("notifications/getNotifi
 export const updateViewedMessages = createAsyncThunk("notifications/updateViewedMessages", async(userId:string) => {
     await axios.get(`http://localhost:3001/notifications/updateViewedMessage/${userId}`);
 })
-
+export const sendNotification = createAsyncThunk("notifications/sendNotification", async function({type,from,to}:{type:string,from:string,to:string}) {
+    try {
+        const response = await axios.post(`http://localhost:3001/notifications`, {type,sentBy:from,sentTo:to});
+        return response.data
+    } catch (error) {
+        console.log(error)
+    }
+})
+export const acceptFriendRequest = createAsyncThunk("notifications/acceptFriendRequest", async function({notificationId}:{notificationId:string}) {
+    try {
+        const response = await axios.get(`http://localhost:3001/notifications/accept/${notificationId}`);
+        console.log(response.data, response)
+        return response
+    } catch (error) {
+        console.log(error)
+    }
+})
+export const discardFriendRequest = createAsyncThunk("notifications/acceptFriendRequest", async function({notificationId}:{notificationId:string}) {
+    try {
+        const response = await axios.get(`http://localhost:3001/notifications/discard/${notificationId}`);
+        return response
+    } catch (error) {
+        console.log(error)
+    }
+})
 const notificationsSlice = createSlice({
     name: "notifications",
     initialState,
