@@ -16,7 +16,7 @@
 }
 .form{
     position: absolute;
-    max-width: 430px;
+    max-width: 430px; 
     width: 100%;
     padding: 30px;
     border-radius: 6px;
