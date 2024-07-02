@@ -53,11 +53,15 @@ export function Notification({userId}:{userId:string}) {
             <div className={classes.notificationsComponent} ref={notificationsComponent} 
             onScroll={() => viewCount({dispatch,currItems:currNotifications,viewedItems:viewedNotifications, setViewedItems:setViewedNotifications,type:"notification",parentObj:notificationsComponent.current!})}>
                 {
-                    [...notifications.archivedNotificationMessages, ...notifications.newNotificationMessages]
-                    .map((message:NotificationMessage, indx:number, arr) => {
+
+                    [...notifications.archivedNotificationMessages, ...notifications.newNotificationMessages].length>0 ?
+
+                    [...notifications.archivedNotificationMessages, ...notifications.newNotificationMessages].map((message:NotificationMessage, indx:number, arr) => {
                         return <NotificationMessageComponent key={message._id} dispatch={dispatch}
                         setCurrNotifications={setCurrNotifications} message={message} notificationMessageRef={notificationMessageRef}/>
                     })
+                    :
+                    <p>You don't have any notifications yet</p>
                 }
             </div>
         </div>
@@ -75,7 +79,7 @@ function NotificationMessageComponent({setCurrNotifications, message, notificati
 
     useEffect(() => {
         const positionY = notificationMessageRef.current!.offsetTop
-        setCurrNotifications((prevState) => [...prevState, {itemId:message._id, watched:JSON.parse(message.viewed), positionY}])
+        setCurrNotifications((prevState) => [...prevState, {itemId:message._id, watched: message.viewed, positionY}])
     },[])
     return <div className={classes.notificationsMessages} ref={notificationMessageRef}>
                 <div className={classes.leftSide}>
@@ -95,7 +99,7 @@ function NotificationMessageComponent({setCurrNotifications, message, notificati
                     </div>
                 </div>
                 <div  className={classes.rightSide}>
-                    <img src={message.imageUrl}></img>
+                    <img ></img>
                 </div>
             </div>
 }

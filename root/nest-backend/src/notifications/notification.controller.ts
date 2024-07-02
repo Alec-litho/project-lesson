@@ -4,13 +4,12 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { NotificationService } from "./notifications.service";
 import { CreateNotificationDTO } from "./dto/CreateNotificationDTO";
-import { NotificationDocument } from "./entities/notification.entity";
 
 @Controller("notifications")
 export class NotificationController {
     constructor(
         private eventEmitter: EventEmitter2,
-        private service: NotificationService
+        private service: NotificationService 
     ){}
 
     @ApiOperation({summary:"allows us to propagate real-time updates"})

@@ -8,7 +8,7 @@ export class CreateNotificationDTO {
     text: string
     @ApiProperty({example: "{description: Friend request, image: http://imgbb.com/image-14532-id-9842}",description:"notification type"})
     @IsNotEmpty()
-    type: {description: string, imageUrl: string}
+    type: string
     @ApiProperty({example: "656395f24db3c1a422c2e8c9",description:"user who sent notification message"})
     @IsNotEmpty()
     sentBy:string;

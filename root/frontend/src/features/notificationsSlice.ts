@@ -58,14 +58,14 @@ const notificationsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(updateViewedMessages.fulfilled, (state,action) => {
-            const viewedMessages = [...state.newNotificationMessages].map((msg) => {return {...msg, viewed:"true"}})
+            const viewedMessages = [...state.newNotificationMessages].map((msg) => {return {...msg, viewed:true}})
             state.archivedNotificationMessages = [...state.archivedNotificationMessages, ...viewedMessages]
             state.newNotificationMessages = []
         }),
         builder.addCase(getNotificationMessages.fulfilled, (state,action) => {
             console.log(action, action.payload)
-            state.archivedNotificationMessages = action.payload.filter(message=>message.viewed.toString()==='true')
-            state.newNotificationMessages = action.payload.filter(message=>message.viewed.toString()==='false')
+            state.archivedNotificationMessages = action.payload.filter(message=>message.viewed===true)
+            state.newNotificationMessages = action.payload.filter(message=>message.viewed===false)
         })
     }
 })

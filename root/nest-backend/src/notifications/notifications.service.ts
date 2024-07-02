@@ -7,7 +7,7 @@ import { Model } from "mongoose";
 import mongoose from "mongoose";
 import { CreateNotificationDTO } from "./dto/CreateNotificationDTO";
 import { HttpException, HttpStatus} from "@nestjs/common";
-import {notificationDescriptionGenerator} from '../../utils/notificationDescriptionList'
+import {notificationDescriptionGenerator} from '../../utils/notificationDescriptionList';
 
 
 @Injectable()
@@ -61,7 +61,7 @@ export class NotificationService {
         const notification = await this.notificationModel.findById(mongooseId)
         switch(notification.type) {
             case "friend_request":
-                const dto = {type:"friend_request_discarded", sentBy:notification.sentTo.toString(), sentTo:notification.sentBy.toString()}
+                const dto = {type:"friend_request_discarded", text: "user discarded your friend request", sentBy:notification.sentTo.toString(), sentTo:notification.sentBy.toString()}
                 this.createNotificationMessage(dto)
             break;
         }
@@ -76,7 +76,7 @@ export class NotificationService {
                     user.friends.push(users[indx===0?1:0]._id)
                     user.save()
                 })
-                const dto = {type:"friend_request_accepted", sentBy:notification.sentTo.toString(), sentTo:notification.sentBy.toString()}
+                const dto = {type:"friend_request_accepted", text:"user accepted your friend request", sentBy:notification.sentTo.toString(), sentTo:notification.sentBy.toString()}
                 this.createNotificationMessage(dto)
             break;
         }

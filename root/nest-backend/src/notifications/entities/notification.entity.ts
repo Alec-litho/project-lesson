@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
-import mongoose from "mongoose";
+import mongoose, {HydratedDocument} from "mongoose";
 
  
 @Schema({timestamps:true})
@@ -10,10 +10,10 @@ export class NotificationModel {
     text: string
     // @ApiProperty({example: "20.04.2024/12:22:10",description:"notification message received at"})
     // @Prop({type:String})
-    // date: string
+    // date: string 
     @ApiProperty({example: "{description: Friend request, image: http://imgbb.com/image-14532-id-9842}",description:"notification type"})
     @Prop({type:{description: String, imageUrl: String}})
-    type: {description: string, imageUrl: string}
+    type: string
     @ApiProperty({example: "true",description:"if notification was viewed to user (new notification)"})
     @Prop({type:String})
     viewed: boolean
@@ -30,5 +30,7 @@ export class NotificationModel {
     @Prop({default:Date.now()})
     createdAt?: Date
 }
+
+export type NotificationDocument = HydratedDocument<NotificationModel>;
 
 export const NotificationSchema = SchemaFactory.createForClass(NotificationModel);
