@@ -43,17 +43,19 @@ export default function MessageTool({type,setReplyToComment,messageToolCordY,pos
             <Send className={inputNum>0? classes.sendIcon : classes.sendIconHide} onClick={async() => {
                 if(inputNum>0) {
                     if(type === 'comment')  {
+                        const userId = user.userInfo._id as string
                         const text = message.current? message.current.value : "";
-                        const response = await dispatch(uploadComment({comment:{text, user:user.userInfo._id,post:postId, replyTo:false}, token:user.userToken}));
+                        const response = await dispatch(uploadComment({comment:{text, user:userId ,post:postId, replyTo:false}, token:user.userToken}));
                         const payload = response.payload as CommentModel 
                         const comment = {...payload,user:user.userInfo} as CommentModel 
                         setComment((prev:CommentModel[]) => [...prev, comment])
                         setCommentsLeng((prev:number) => prev+1)
                     }
                     if(type === 'reply') {
+                        const userId = user.userInfo._id as string
                         console.log(userReplyTo);
                         const text = message.current? message.current.value : "";
-                        const comment = {text, user:user.userInfo._id, authorName:user.userInfo.fullName,authorPicture:user.userInfo.avatarUrl, commentId:userReplyTo.commentId, replyTo: userReplyTo.name, post:postId}
+                        const comment = {text, user:userId, authorName:user.userInfo.fullName,authorPicture:user.userInfo.avatarUrl, commentId:userReplyTo.commentId, replyTo: userReplyTo.name, post:postId}
                         dispatch(uploadReply({comment, id:userReplyTo.commentId, token:user.userToken}))
                         setReplyToComment(false)
                         setCommentsLeng((prev:number) => prev+1)

@@ -8,7 +8,7 @@ import mongoose, {Model} from 'mongoose';
 import {InjectModel} from '@nestjs/mongoose';
 import { Album } from 'src/album/entities/album.entity';
 import { LoginUserDto } from './dto/login-user.dto';
-import { genSaltSync, hashSync, genSalt, hash, compare } from 'bcrypt';
+import { genSaltSync, hashSync, genSalt, hash, compare } from 'bcryptjs';
 import {getAge} from '../../utils/getUserAge'
 
 @Injectable()

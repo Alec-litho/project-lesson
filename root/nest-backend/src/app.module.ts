@@ -16,7 +16,7 @@ import { NotificationModule } from './notifications/notification.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb+srv://opaltaco:eamV2B1PXGjNFX3y@cluster0.iyapupi.mongodb.net/blog?retryWrites=true&w=majority'),
+    MongooseModule.forRoot('mongodb+srv://opallitho:OLEG2005@cluster0.pjgujdq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
     ImageModule,
     UserModule,
     AlbumModule,

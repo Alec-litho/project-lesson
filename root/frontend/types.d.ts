@@ -53,7 +53,7 @@ interface IUpdateImageDto {
 //------------Comment---------------//
 interface CreateCommentDto {
     text: string
-    user: IUser | string 
+    user: string 
     post:string
     replyTo:string | Boolean
 }
@@ -97,10 +97,12 @@ type currPostType = {
 
 interface NotificationMessage {
     _id: string
+    sender: string
+    receiver: string
     text: string
     date: string
-    type: {description: string, image: string}
-    viewed: string
+    type: string
+    viewed: boolean
 }
 
 //----------Notifications----------//

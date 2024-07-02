@@ -29,11 +29,11 @@ export default function({setSliderTrue, sliderTrue, currPictureId, setCurrPictur
     console.log(posts,currPosts.length, viewedPosts)
 
     useEffect(() => {
-        if(posts.length===0 || currPosts.length === viewedPosts) {//if posts array is empty or if we need to request more posts
+        if((posts.length===0 || currPosts.length === viewedPosts) && user.userInfo._id) {//if posts array is empty or if we need to request more posts
             setLoader(true);
             const postsOnThePage = posts.map((post:IPost)=>post._id);
-            dispatch<any>(getRecommendations({userId: user.userId, postsOnThePage}))
-            .then(({payload}:{payload:{posts:IPost[]}}) => {
+            dispatch<any>(getRecommendations({userId: user.userInfo._id, postsOnThePage}))
+            .then(({payload}:{payload:{posts:IPost[] | []}}) => {
                 console.log(payload)
                 setPosts((prev) => [...prev,...payload.posts])
                 setLoader(false)
