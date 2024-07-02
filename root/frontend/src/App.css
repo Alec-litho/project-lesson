@@ -93,6 +93,7 @@ body {
   fill: rgb(119, 119, 119);
 }
 .rightSideContent .profile {
+  position: relative;
   cursor: pointer;
   display: flex;
   gap: 10px;
@@ -105,7 +106,35 @@ body {
   border-radius: 50%;
 }
 
-
+.profileMenu {
+  padding: 10px 5px;
+  position: absolute;
+  left: -20px;
+  top: 55px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 120px;
+  height: 80px;
+  background-color: white;
+}
+.profileMenu ul {
+  list-style: none;
+  width: 100%;
+}
+.profileMenu li {
+  border-bottom: 1px solid rgb(180, 180, 180); 
+  display: flex; 
+  justify-content: center;
+}
+.profileMenu li a {
+  text-decoration: none;
+  color:rgb(53, 121, 199);
+  font-weight: 500;
+}
+.profileMenu li a:hover {
+  color:rgb(48, 109, 180);
+}
 @media only screen and (max-width: 1500px) {
   
 }

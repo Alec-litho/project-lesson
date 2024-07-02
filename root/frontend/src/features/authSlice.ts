@@ -25,7 +25,7 @@ const initialState:InitialState = {
     age: 0,
     gender: "not mentioned",
     avatarUrl: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp",
-    _id: "656395f24db3c1a422c2e8c9"
+    _id: ""
   },
   role: "anonymous",
   status: 'undefined',
@@ -112,14 +112,32 @@ const authSlice = createSlice({
   initialState,
   reducers: { 
     logout: (state, action) => {
-      console.log("log out");
-      
+      state =  {
+        isAuth: false,
+        userToken: '',
+        userId: '',
+        userInfo: {
+          fullName: "Test",
+          email: "test@gmail.com",
+          password: "123",
+          location: "not mentioned",
+          friends: 0,
+          age: 0,
+          gender: "not mentioned",
+          avatarUrl: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp",
+          _id: ""
+        },
+        role: "anonymous",
+        status: 'undefined',
+        error: null
+      }
+      document.cookie = "token='';id=''"
     },
     getCookie: (state) => {
       let result = false;
       let token:string = '';
       let _id:string = '';
-      const cookies = document.cookie.toString();
+      const cookies = document.cookie
 
       cookies.split(';').forEach(cookie => {
       let key = cookie.split("=")[0].trim();

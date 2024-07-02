@@ -7,10 +7,15 @@ import Music from '../pages/music-page/MusicPage.jsx'
 import Feed from '../pages/feed-page/FeedPage'
 import Gallery from '../pages/gallery-page/Gallery.jsx'
 import { Notification } from './Notification';
-
+import { useState } from 'react';
+import Settings from '../pages/settings-page/SettingsPage';
+import Login from '../pages/login-page/Login';
+import { useDispatch } from 'react-redux';
+import { logout } from '../features/authSlice';
 
 export default function Header({avatarUrl,authId, setSliderTrue, sliderTrue, currPictureId, setCurrPictureId}) {
-    console.log(authId)
+    let [profileMenuViewed, setProfileMenuViewed] = useState(false);
+    let dispatch = useDispatch();
     return (
         <div className="header">
             <div className='leftSideContent'>
@@ -29,8 +34,16 @@ export default function Header({avatarUrl,authId, setSliderTrue, sliderTrue, cur
                     <Search className='searchSvg'/>
                     <input placeholder='search'></input>
                 </div>
-                <div className='profile'>
-                <div><img  className="profileCircle" src={avatarUrl}></img></div>
+                <div className='profile' onClick={() => setProfileMenuViewed(!profileMenuViewed)}>
+                        <img  className="profileCircle" src={avatarUrl}></img>
+                       { profileMenuViewed &&
+                        <div className="profileMenu">
+                            <ul>
+                                <li><Link to={`/settings/${authId}`} element={<Settings/>}>Settings</Link></li>
+                                <li onClick={() => dispatch(logout())}><Link to={`/login`} element={<Login/>}>Log out</Link></li>
+                            </ul>
+                        </div>}
+
                 </div>
             </div>
         </div>
