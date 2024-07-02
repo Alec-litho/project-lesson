@@ -34,12 +34,19 @@ export default function UserPage({setSliderTrue, sliderTrue, currPictureId, setC
             if(id === auth.userId) {//if user enters his own page
                 dispatch(getPossibleFriends({id:auth.userId, token:auth.userToken})).then(({payload}) => Array.isArray(payload)? setPossibleFriends(payload  as IUser[]) : console.log(payload))
                 setUser(auth.userInfo)
-                const mainAlbum = albumState.albums.filter(album => album.name === 'All')
-                if(mainAlbum.length===0)  setUserAlbum(auth.userInfo._id);
+
+                // Don't forget to remove this after getting exception and fixing it
+                if(auth.userInfo._id===undefined) console.log(auth.userInfo._id, "EMPTY USER ID")
                 else {
-                    setAlbum(mainAlbum[0])
-                    setFinishLoading(true);
+                    const mainAlbum = albumState.albums.filter(album => album.name === 'All')
+                    if(mainAlbum.length===0)  setUserAlbum(auth.userInfo._id);
+                    else {
+                        setAlbum(mainAlbum[0])
+                        setFinishLoading(true);
+                    }
                 }
+                //
+
             } else {/*if its page of another user*/
                 dispatch(getUser({_id:id,token:auth.userToken})).then(({payload}) => {
                     setUser(payload)
