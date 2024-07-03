@@ -1,21 +1,89 @@
 .settingsComponent {
     display: flex;
-    gap: 80px;
+    gap: 40px;
     width: 100%;
 }
 .leftSideMenu {
     background-color: rgb(233, 233, 233);
     width: 20%;
-    height: auto;
-    padding: 20px 30px;
+    min-height: 100px;
+    padding: 20px 20px;
     list-style: none;
 }
 .leftSideMenu li {
+    transition: .2s;
     font-size: 20px;
+    font-weight: 500;
+    color: rgb(53, 121, 199);
+    list-style: none;
+    cursor: pointer;
+    margin-bottom: 10px;
     
 }
+.leftSideMenu li:hover {
+    color: rgb(44, 100, 163);
+}
 .rightSideBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 70px 40px 0 40px;
     background-color: white;
     width: 80%;
-    min-height: 800px;
+    min-height: 400px; 
+}
+
+.ageSetting, .nameSetting, .locationSetting, .genderSetting, .loginSetting, .passwordSetting{
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.publicInformationSett p, .privateInformationSett  p {
+    font-size: 16px;
+    font-weight: 500;
+    user-select: none;
+    border-bottom: 1px solid rgb(180, 180, 180);
+}
+.publicInformationSett input, .privateInformationSett input {
+    outline: none;
+    background-color: rgb(226, 226, 226);
+    border: none;
+    border-radius: 5px;
+    margin-right: 50px;
+    width: 30%;
+    height: 40px;
+}
+
+.genderBox {
+    display: flex;
+    width: 40px;
+    justify-content: space-between;
+    margin-right: 50px;
+
+}
+.genderBox input {
+    width: 20xp;
+    height: 20px;
+    margin-right: 0;
+    
+}
+.publishChanges {
+    width: 100%;
+    height: 50px;
+}
+.publishChanges button {
+    transition: .2s;
+    cursor: pointer;
+    width: 150px;
+    height: 40px;
+    background-color: rgb(53, 121, 199);
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+}
+.publishChanges button:hover {
+    background-color: rgb(46, 104, 171);
+    color: rgb(236, 236, 236);
 }

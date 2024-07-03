@@ -31,7 +31,7 @@ export default function Header({avatarUrl,authId, setSliderTrue, sliderTrue, cur
             <div className='rightSideContent'>
                 <Notification userId={authId}/>
                 <div className='search'>
-                    <Search className='searchSvg'/>
+                    <Search className='searchSvg'/> 
                     <input placeholder='search'></input>
                 </div>
                 <div className='profile' onClick={() => setProfileMenuViewed(!profileMenuViewed)}>
@@ -39,7 +39,7 @@ export default function Header({avatarUrl,authId, setSliderTrue, sliderTrue, cur
                        { profileMenuViewed &&
                         <div className="profileMenu">
                             <ul>
-                                <li><Link to={`/settings/${authId}`} element={<Settings/>}>Settings</Link></li>
+                                <li><Link to={`/settings`} element={<Settings/>}>Settings</Link></li>
                                 <li onClick={() => dispatch(logout())}><Link to={`/login`} element={<Login/>}>Log out</Link></li>
                             </ul>
                         </div>}
