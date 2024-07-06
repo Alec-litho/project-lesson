@@ -57,5 +57,11 @@ export class UserController {
     res.header("withCredentials",'true')
     res.json({token:result.value.access_token, _id:result.value.id}).status(201);
   }
-
+  @Patch("/update/:id")
+  @ApiOperation({summary:"Update user data"})
+  @ApiResponse({status:200})
+  async updateUser(@Body() updatedUserDataDto: UpdatedUserDataDto, @Param() id: string, @Res() res: Response) {
+    const response = await this.userService.updateUser(id, updatedUserDataDto);
+    res.send(response);
+  }
 }

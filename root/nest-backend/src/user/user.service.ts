@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 // import getAge from '../../utils/getAge'; //rewrite this func in fe
 import { JwtService } from '@nestjs/jwt';
 import {User, UserDocument} from './entities/user.entity'
-import mongoose, {Model} from 'mongoose';
+import mongoose, {Model, mongo} from 'mongoose';
 import {InjectModel} from '@nestjs/mongoose';
 import { Album } from 'src/album/entities/album.entity';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -84,5 +84,16 @@ export class UserService {
   private async comparePass(loginUserDto: LoginUserDto, user: User) {
     const passCompare = await compare(loginUserDto.password, user.password);
     return passCompare
+  }
+
+  async updateUser(id: string, updatedUserData: IUpdateUserDto):Promise<{response:boolean, data: User}> {
+    try {
+      const mongooseId = new mongoose.Types.ObjectId(id);
+      const updatedUser = await this.userModel.findOneAndUpdate(mongooseId, updatedUserData);
+      if(!updatedUser) throw new NotFoundException(updatedUser);
+      return {response:true, data: updatedUser};
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

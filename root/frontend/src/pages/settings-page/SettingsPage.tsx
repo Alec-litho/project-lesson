@@ -2,34 +2,41 @@ import { ReactComponentElement, useState } from 'react'
 import classes from './style/settings.module.css'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../app/store'
- import { Controller, useForm } from 'react-hook-form'
+ import { Control, Controller, useForm } from 'react-hook-form'
+import { useAppDispatch } from '../../hooks/reduxCustomHooks'
+import { updateUserData } from '../../features/authSlice'
 
-interface IDefaultValuesDTOs {
-    public: {name: string, location: string, age: number},
-    private: {password: string, email: string}
-}
+
+/*
+I cant use displaying errors because i have a problem with passing props to component - it gives me this error:
+"Type '{ fullName: string; email: string; password: string; location: string; friends: number; age: number; gender: string; avatarUrl: string; _id: string; privateInfo: true; }' 
+is not assignable to type 'IntrinsicAttributes & IUser'.
+Property 'privateInfo' does not exist on type 'IntrinsicAttributes & IUser'
+
+*/
 
 
 export default function Settings() {
+    const dispatch = useAppDispatch();
     let userData = useSelector((state:RootState) => state.auth.userInfo)
     let [currSettingComponent, setCurrSettingComponent] = useState<JSX.Element>(<PublicInformationSettings {...userData}/>);
-    let [currSettingDTO, setCurrSettingDTO] = useState<string>("public");
-    const defaultValuesDTOs:IDefaultValuesDTOs = {
-        public: {name: userData.fullName, location: userData.location, age: userData.age},
-        private: {password: userData.password, email:userData.email}
-    }
+    const defaultValuesDTOs:IUserData = {name: userData.fullName, location: userData.location, age: userData.age, password: userData.password, email:userData.email}
     const {
         register,
         handleSubmit,
         control,
         formState: { errors, isValid }
-    } = useForm({defaultValues: defaultValuesDTOs[currSettingDTO  as keyof IDefaultValuesDTOs]})
+    } = useForm({defaultValues: defaultValuesDTOs})
+    const onSubmit = (defVals: IUserData) => {
+        dispatch(updateUserData({_id: userData._id, updatedUserData: defVals}))
+         
+      };
     return (
         <div className={classes.settingsComponent}>
             <div className={classes.leftSideMenu}>
                 <ul>
-                    <li onClick={() => {setCurrSettingComponent(<PublicInformationSettings {...userData}/>);setCurrSettingDTO("public")}}>Public information</li>
-                    <li onClick={() => {setCurrSettingComponent(<PrivateInformationSettings {...userData}/>);setCurrSettingDTO("private")}}>Private information</li>
+                    <li onClick={() => {setCurrSettingComponent(<PublicInformationSettings {...userData}/>)}}>Public information</li>
+                    <li onClick={() => {setCurrSettingComponent(<PrivateInformationSettings {...userData} />)}}>Private information</li>
                     <li onClick={() => setCurrSettingComponent(<PreferenceSettings/>)}>Preference</li>
                 </ul>
             </div>
@@ -90,11 +97,18 @@ function PrivateInformationSettings(privateInfo:IUser) {
     return (
         <div className={classes.privateInformationSett}>
             <div className={classes.loginSetting}>
-                <input type="email" className={classes.loginInp} />
+                <input
+                type="email"
+                placeholder="Email" 
+                className={classes.loginInp}
+              />
                 <p className={classes.currLogin}>{privateInfo.email}</p>
             </div>
             <div className={classes.passwordSetting}>
-                <input type="password" className={classes.passwordInp} />
+                <input type="password" 
+                className={classes.passwordInp}
+                placeholder="Password" 
+                 />
                 <p className={classes.currPassword}>{passwordLengthWithStars(privateInfo.password)}</p>
             </div>
         </div>

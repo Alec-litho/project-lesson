@@ -24,6 +24,13 @@ type registerResponse = {
     _id: string
     token: string
 }
+interface UpdatedUserDataDto {
+    name: string, 
+    location: string, 
+    age: number,
+    password: string, 
+    email: string
+}
 //------------User---------------//
 
 //------------Image---------------//

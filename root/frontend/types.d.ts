@@ -27,6 +27,14 @@ interface ILoginResponse {
 interface IUpdateUserDto {
 
 }
+interface IUserData {
+    name: string, 
+    location: string, 
+    age: number,
+    password: string, 
+    email: string
+}
+
 //------------User---------------//
 
 //------------Image---------------//

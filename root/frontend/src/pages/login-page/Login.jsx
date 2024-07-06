@@ -17,7 +17,7 @@ export default function Login() {
     formState: { errors, isValid },
   } = useForm({ defaultValues: { email: "", password: "" }, mode: "onChange" });
   const onSubmit = (values) => {
-    dispatch(loginUser(values))
+    dispatch(loginUser(values)) 
       .then(res => {
         console.log(res.payload);
         if(res.payload.status !== 404) {

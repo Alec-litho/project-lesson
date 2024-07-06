@@ -46,6 +46,12 @@ export const getMe = createAsyncThunk('auth/getMe', async function({_id,token}:D
       return rejectWithValue(error.response.data);
   }
 })
+export const updateUserData = createAsyncThunk("auth/updateUserData", async function({_id, updatedUserData}:{_id:string, updatedUserData: IUserData}) {
+  const response:{response:boolean, data: IUser} = await axios.patch(`http://localhost:3001/user/update/${_id}`, updateUserData);
+  console.log(response)
+  return response;
+});
+
 export const getUser = createAsyncThunk('auth/fetchData', async function({_id,token}:DefaultReduxThunkDto, {rejectWithValue}) {
     const response = await axios.get(`http://localhost:3001/user/${_id}`)
     console.log(response.data);
@@ -189,6 +195,15 @@ const authSlice = createSlice({
         state.userToken = action.payload.token;
       })
       .addCase(registerUser.rejected, (state,action:any) => {
+        state.status = 'error';
+        state.error = action.payload;
+      })
+      .addCase(updateUserData.fulfilled, (state, action) => {
+        state.status = 'fulfilled';
+        state.error = null;
+        state.userInfo = action.payload.data;
+      })
+      .addCase(updateUserData.rejected, (state, action) => {
         state.status = 'error';
         state.error = action.payload;
       })
