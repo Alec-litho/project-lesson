@@ -17,6 +17,7 @@ const initialState:InitState = {
     error: null
 }
 export const getNotificationMessages = createAsyncThunk("notifications/getNotificationMessages", async({userId,messagesNum}:{userId:string,messagesNum:number}) => {
+    console.log(`http://localhost:3001/notifications/get/${userId}/${messagesNum}`)
     const response:AxiosResponse<NotificationMessage[]> = await axios.get(`http://localhost:3001/notifications/get/${userId}/${messagesNum}`);
     return response.data
 })

@@ -1,7 +1,9 @@
+import "./style.css"
+
 export default function Subscriptions() {
     return (
-        <div>
-            <h1>Music</h1>
+        <div className="music-body">
+            <h1>Work in progress...</h1>
         </div>
     )
 }

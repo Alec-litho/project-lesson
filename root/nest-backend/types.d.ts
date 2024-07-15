@@ -17,9 +17,7 @@ interface ILoginResponse {
     token: string
     _id: string
 }
-interface IUpdateUserDto {
 
-}
 type registerResponse = {
     _id: string
     token: string
@@ -30,6 +28,7 @@ interface UpdatedUserDataDto {
     age: number,
     password: string, 
     email: string
+    gender: string
 }
 //------------User---------------//
 

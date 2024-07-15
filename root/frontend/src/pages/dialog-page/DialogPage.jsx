@@ -18,17 +18,6 @@ export default function DialogPage() {
         setName(name)
     }
     console.log(messages);
-    useEffect(_ => {
-        axios.get('https://api.jsonbin.io/v3/b/64413cfbebd26539d0af171c', {
-            headers: {
-                "X-MASTER-KEY": "$2b$10$y3p8j1CGw2n5ZUmWh4kE9OW8R.RqoGXrYo7Q7tlS2mAPj5SKqu.o2"
-            }
-        }).then(res => {
-            setMessages(res.data.record)
-            setLoading(true)
-        }).catch(err => console.log(err))
-        
-    }, [])
 
     return (
         <div className={classes.container}>
@@ -60,6 +49,7 @@ function MessagesWindow(props) {
     return (
         <div className={classes.dialogBody} onScroll={handleScroll} >
             <div className={classes.friendsMessage}>
+                <h1>Work in progress...</h1>
                     {/* {props.people.map(person => {
                         if(person.name === name) {
                             let messages = []

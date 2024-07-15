@@ -10,19 +10,18 @@ export default function AboutMeBlock(props) {
         <div className={classes.aboutMeBlock}>
             <div className={classes.aboutMeHeader}> 
             <a className={classes.goToGallery} onClick={() => {navigate(`/gallery/${props.userId}`)}}>go to the Gallery</a>
-            <Arrow className={classes.goToGalleryArrow}/>
             </div>
             <div className={classes.gallery}>
-                {props.galleryPhotos.map((image,indx) => {
-                    if(indx>=4) return
+                {props.galleryPhotos.length>0? props.galleryPhotos.map((image,indx) => {
+                    if(indx>=4) return;
                     return <div className={classes.photoGallery} onClick={_ => props.setSliderTrue(true)} key={indx}>
                                 <img src={image.imageURL}></img>
                             </div>
-                })}
-                <div className={classes.arrowWrapper}>
-                    <div className={classes.arrowBackground}></div>
-                    <Arrow className={classes.showMoreArrow}/>
-                </div>
+                })
+                :
+                <h3 style={{color:"gray", margin:"0 auto", paddingTop:"150px"}}>You haven't saved any photo yet</h3>
+            
+            }
 
             </div>
         </div>

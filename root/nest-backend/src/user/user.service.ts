@@ -8,8 +8,8 @@ import mongoose, {Model, mongo} from 'mongoose';
 import {InjectModel} from '@nestjs/mongoose';
 import { Album } from 'src/album/entities/album.entity';
 import { LoginUserDto } from './dto/login-user.dto';
-import { genSaltSync, hashSync, genSalt, hash, compare } from 'bcryptjs';
-import {getAge} from '../../utils/getUserAge'
+import { genSaltSync, hashSync, genSalt, hash, compare, } from 'bcryptjs';
+import getAge from '../../utils/getUserAge'
 
 @Injectable()
 export class UserService {
@@ -58,6 +58,7 @@ export class UserService {
       const userId = new mongoose.Types.ObjectId(id)
       const user:User = await this.userModel.findById(userId);
       if(user===null) throw new NotFoundException("User not found");//somehow it triggers error in try catch block
+      user.password
       return {message:'success', value: user};
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -86,8 +87,9 @@ export class UserService {
     return passCompare
   }
 
-  async updateUser(id: string, updatedUserData: IUpdateUserDto):Promise<{response:boolean, data: User}> {
+  async updateUser(id: string, updatedUserData: UpdatedUserDataDto):Promise<{response:boolean, data: User}> {
     try {
+      console.log(updatedUserData)
       const mongooseId = new mongoose.Types.ObjectId(id);
       const updatedUser = await this.userModel.findOneAndUpdate(mongooseId, updatedUserData);
       if(!updatedUser) throw new NotFoundException(updatedUser);

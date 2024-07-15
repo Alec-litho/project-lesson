@@ -1,4 +1,16 @@
-export default function getAge(birthDate) {
+
+
+describe('get age', () => {
+    it('getage', () => {
+      expect(getAge('2005-09-13')).toBe(18)
+    })
+  })
+  
+  
+
+
+
+export function getAge(birthDate:string/*'2005-09-13'*/):number {
     let date = birthDate.split('-').slice(1,3)
     let i = 0
     let currDate = new Date();
@@ -15,5 +27,5 @@ export default function getAge(birthDate) {
         i++;
     }
     return Number(age);
-  }
+}
 

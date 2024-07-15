@@ -46,7 +46,7 @@ export default function({setSliderTrue, sliderTrue, currPictureId, setCurrPictur
     return (
         <div className={classes.feedBody}>
             <div className={classes.leftSideContent}> 
-
+                <h3>Work in progress...</h3>
             </div>
             <div className={classes.mainContent}>
                 
@@ -58,7 +58,7 @@ export default function({setSliderTrue, sliderTrue, currPictureId, setCurrPictur
                 {loader? <Loader></Loader> : <div style={{"height":"100px"}}/*without this user cant scroll last post to the top of the screen to make it viewed*//>}
             </div>
             <div className={classes.rightSideContent}>
-
+                <h3>Work in progress...</h3>
             </div>
             
         </div>

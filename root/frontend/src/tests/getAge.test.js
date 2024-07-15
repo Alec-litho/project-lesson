@@ -2,14 +2,12 @@
 
 describe('get age test', () => {
   it('getage', () => {
-    expect(getAge('1999-09-22')).toBe(23)
+    expect(getAge('2005-09-09')).toBe(18)
   })
 })
 
 
-
-
-function getAge(birthDate/*'2005-09-13'*/) {
+function getAge(birthDate) {
   let date = birthDate.split('-').slice(1,3)
   let i = 0
   let currDate = new Date();
@@ -25,5 +23,10 @@ function getAge(birthDate/*'2005-09-13'*/) {
       }
       i++;
   }
+  console.log(age)
   return Number(age);
 }
+
+// function getAge(age) {
+
+// }

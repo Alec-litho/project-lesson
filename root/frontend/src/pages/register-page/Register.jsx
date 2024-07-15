@@ -124,12 +124,12 @@ export default function Register() {
           </div>
         </div>
         <div className="line" />
-        <div className="media-options">
+        {/* <div className="media-options">
           <a href="/register" className="field facebook">
             <i className="bx bxl-facebook facebook-icon" />
             <span>Login with Facebook</span>
           </a>
-        </div>
+        </div> */}
         <div className="media-options">
           <a href="/register" className="field google">
             <img src="#" alt="" className="google-img" />

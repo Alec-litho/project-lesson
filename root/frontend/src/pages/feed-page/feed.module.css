@@ -10,15 +10,18 @@
     height: 1000px;
     border-radius: 10px;
 }
+
+.leftSideContent, .rightSideContent {
+    height: 500px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.656);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .leftSideContent {
     width: 15%;
-    height: 500px;
-    border: 1px solid rgb(19, 5, 209);
-    border-radius: 10px;
 }
 .rightSideContent {
     width: 25%;
-    height: 500px;
-    border: 1px solid rgb(19, 5, 209);
-    border-radius: 10px;
 }

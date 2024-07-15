@@ -32,7 +32,8 @@ interface IUserData {
     location: string, 
     age: number,
     password: string, 
-    email: string
+    email: string,
+    gender: string
 }
 
 //------------User---------------//

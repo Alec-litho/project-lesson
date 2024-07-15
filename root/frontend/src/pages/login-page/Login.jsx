@@ -98,15 +98,15 @@ export default function Login() {
           </div>
         </div>
         <div className="line" />
-        <div className="media-options">
+        {/* <div className="media-options">
           <a href="/login" className="field facebook">
             <i className="bx bxl-facebook facebook-icon" />
             <span>Login with Facebook</span>
           </a>
-        </div>
+        </div> */}
         <div className="media-options">
           <a href="/login" className="field google">
-            <img src="#" alt="" className="google-img" />
+            <img src="https://www.flaticon.com/free-icon/google_300221" alt="" className="google-img" />
             <span>Login with Google</span>
           </a>
         </div>

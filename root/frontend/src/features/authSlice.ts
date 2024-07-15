@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, createAction, createReducer, Action } from '@reduxjs/toolkit'
 import axios, { AxiosError, AxiosResponse } from 'axios'
-
+import get_cookie from '../helper_functions/getCookie'
 interface InitialState {
   isAuth: boolean
   userToken: string
@@ -119,25 +119,13 @@ const authSlice = createSlice({
   reducers: { 
     logout: (state, action) => {
       state =  {
-        isAuth: false,
-        userToken: '',
-        userId: '',
-        userInfo: {
-          fullName: "Test",
-          email: "test@gmail.com",
-          password: "123",
-          location: "not mentioned",
-          friends: 0,
-          age: 0,
-          gender: "not mentioned",
-          avatarUrl: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp",
-          _id: ""
-        },
-        role: "anonymous",
-        status: 'undefined',
-        error: null
-      }
-      document.cookie = "token='';id=''"
+        isAuth: false,userToken: '',userId: '',userInfo: {fullName: "Test",email: "test@gmail.com",password: "123",location: "not mentioned",friends: 0,age: 0,gender: "not mentioned",avatarUrl: "https://i.ibb.co/7YGBqxN/empty-Profile-Picture.webp",_id: ""},role: "anonymous",status: 'undefined',error: null
+      };
+      ["token","id"].forEach(name => {
+        if(get_cookie(name)) {
+          document.cookie = name + "=" + ";path=/" + ";domain=" + window.location.hostname + ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        }
+      })
     },
     getCookie: (state) => {
       let result = false;
